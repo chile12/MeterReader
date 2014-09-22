@@ -42,6 +42,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import ccc.android.meterdata.types.GaugeDevice;
 import ccc.android.meterreader.R;
+import ccc.android.meterreader.gaugedisplaydialog.CccNumberPicker;
 import ccc.android.meterreader.gaugedisplaydialog.GaugeDisplayDialog;
 import ccc.android.meterreader.internaldata.InternalGaugeDevice;
 import ccc.android.meterreader.statics.StaticGaugeLibrary;
@@ -64,7 +65,10 @@ public class DigitReaderFragment extends DialogFragment
     private int callCount = 0;
     private boolean isFocused = false;
     private List<String> readings = new ArrayList<String>();
-    private DigitReadingProcessor processor;
+	private List<CccNumberPicker> readerPickers = new ArrayList<CccNumberPicker>();
+
+
+	private DigitReadingProcessor processor;
     private Rect frame;
     private int count =0;
     
@@ -96,7 +100,6 @@ public class DigitReaderFragment extends DialogFragment
         try{
 	        int deviceId = ((ccc.android.meterreader.gaugedisplaydialog.GaugeDisplayDialog)(this.getActivity())).getCurrentDeviceID();
 			InternalGaugeDevice zeroDevice = StaticGaugeLibrary.getGauge(0);
-	        standardOcr = new DigitOcr(zeroDevice.getBinaryPatterns());
 			device = StaticGaugeLibrary.getGauges().get(deviceId);
 			processor = new DigitReadingProcessor(zeroDevice.getBinaryPatterns(), ImageFormat.NV21);
 			processor.initializeReadingSession(BackGroundShade.GetBackGroundShade(device.getBackGround()), device.getDigitCount(), device.getDecimalPlaces());
@@ -165,9 +168,9 @@ public class DigitReaderFragment extends DialogFragment
 		    List<Camera.Size> pSizes = p.getSupportedPreviewSizes();
 		    Collections.sort(pSizes, Statics.previewSizeComp);
 		    p.setPreviewSize(pSizes.get(1).width, pSizes.get(1).height);
-            int x = (int)(pSizes.get(1).width*((float)7/(float)16));
+            int x = (int)(pSizes.get(1).width*((float)3/(float)12));
             int y = 0;
-    		int x2 =(int)(pSizes.get(1).width*((float)2/(float)16));
+    		int x2 =(int)(pSizes.get(1).width*((float)2/(float)12));
     		int y2 = pSizes.get(1).height-1;
 			frame = new Rect(x, y, x2, y2);
 	        
@@ -216,7 +219,13 @@ public class DigitReaderFragment extends DialogFragment
 
 				            processor.processLastEntry();
 				            processor.alignResults();
-				            
+
+							String aligned = processor.getAligner().getCurrentResult();
+							String result = aligned == null ? processor.getCurrent().getPreciseChars() : aligned;
+							result = result.substring(0, Math.min(result.length(), device.getDigitCount()));
+							
+							((GaugeDisplayDialog)getActivity()).SetValue(result.toCharArray());
+							((GaugeDisplayDialog)getActivity()).showValue();
 				            
 //							Mat bgra = new Mat(h, w, org.bytedeco.javacpp.opencv_core.CV_8UC3);
 //							Mat b565= new Mat(h + (h/2), w, org.bytedeco.javacpp.opencv_core.CV_8UC1);
@@ -269,11 +278,12 @@ public class DigitReaderFragment extends DialogFragment
 //							imProc.release();
 //							//readings.add(imProc.getPreciseChars());
 //							Log.d("ExecTime", String.valueOf(Statics.getDateDiff(d, new Date(), TimeUnit.MILLISECONDS)));
-							View zw = (((GaugeDisplayDialog)(getActivity())).findViewById(R.id.debugDigitLA));
-							String aligned = processor.getAligner().getCurrentResult();
-							String result = aligned == null ? processor.getCurrent().getPreciseChars() : aligned;
-							count++;
-							((android.widget.TextView)zw).setText(count + " - " + result);
+				            
+//							View zw = (((GaugeDisplayDialog)(getActivity())).findViewById(R.id.debugDigitLA));
+//							count++;
+//							((android.widget.TextView)zw).setText(count + " - " + result);
+				            
+				            
 						//} catch (FrameNotFoundException e) {
 						} catch (Exception e) {	
 							if(e.getMessage() == null || !e.getMessage().contains("java.awt")) //not!!
@@ -285,6 +295,16 @@ public class DigitReaderFragment extends DialogFragment
             }
         };
         
+        public List<CccNumberPicker> getReaderPickers()
+    	{
+    		return readerPickers;
+    	}
+
+    	public void setReaderPickers(List<CccNumberPicker> readerPickers)
+    	{
+    		this.readerPickers = readerPickers;
+    	}
+    	
         public static Bitmap IplImageToBitmap(IplImage src) {
             int width = src.width();
             int height = src.height();

@@ -318,39 +318,50 @@
                             android:textColor="#000000"
                             android:visibility="invisible" />
                     </LinearLayout>
-
                     <LinearLayout
-                        android:id="@+id/numPickerLL"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/rectbackgreen"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:visibility="invisible" >
-
-                        <TextView
-                            android:id="@+id/gaugeDisplayTitleNameLA"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="."
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textSize="32sp"
-                            android:visibility="invisible" />
-
-                        <TextView
-                            android:id="@+id/displayUnitLA"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="3dp"
-                            android:layout_marginRight="3dp"
-                            android:text="."
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:textSize="22sp"
-                            android:visibility="invisible" />
+	                     android:layout_width="wrap_content"
+	                     android:layout_height="wrap_content"
+	                     android:gravity="center"
+	                     android:orientation="vertical" >
+	                    <LinearLayout
+	                        android:id="@+id/numPickerLL"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:layout_gravity="center_horizontal"
+	                        android:layout_marginTop="10dp"
+	                        android:background="@drawable/rectbackgreen"
+	                        android:gravity="center"
+	                        android:orientation="horizontal"
+	                        android:visibility="invisible" >
+	
+	                        <TextView
+	                            android:id="@+id/point1"
+	                            android:layout_width="wrap_content"
+	                            android:layout_height="wrap_content"
+	                            android:text="."
+	                            android:textAppearance="?android:attr/textAppearanceLarge"
+	                            android:textSize="32sp"
+	                            android:visibility="invisible" />
+	
+	                        <!-- <TextView
+	                            android:id="@+id/displayUnitLA"
+	                            android:layout_width="wrap_content"
+	                            android:layout_height="wrap_content"
+	                            android:layout_marginLeft="3dp"
+	                            android:layout_marginRight="3dp"
+	                            android:text="."
+	                            android:textAppearance="?android:attr/textAppearanceMedium"
+	                            android:textSize="22sp"
+	                            android:visibility="invisible" />-->
+	                    </LinearLayout>
+	                    <TextView
+	                           android:id="@+id/unitDisplayLA"
+	                           android:layout_width="wrap_content"
+	                           android:layout_height="wrap_content"
+	                           android:textAlignment="center"
+	                           android:textAppearance="?android:attr/textAppearanceMedium"
+	                           android:visibility="visible" />
                     </LinearLayout>
-
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -404,7 +415,7 @@
                     android:layout_height="fill_parent"
                     android:orientation="horizontal" >
 
-                    <LinearLayout
+                    <FrameLayout
                         android:layout_width="fill_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical" >
@@ -435,7 +446,7 @@
                                 android:layout_gravity="right|bottom"
                                 android:text="@string/abort_scan" />
                         </LinearLayout>
-                    </LinearLayout>
+                    </FrameLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/digitReaderLL"
@@ -446,7 +457,7 @@
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:weightSum="3"
+                        android:weightSum="1"
                         android:orientation="vertical">
 
                         <FrameLayout
@@ -465,13 +476,13 @@
 		                        android:layout_width="fill_parent"
 		                        android:layout_height="fill_parent"
 		                        android:orientation="vertical"
-		                        android:weightSum="18" >
+		                        android:weightSum="12" >
 		                        <LinearLayout
 			                        android:layout_width="fill_parent"
 			                        android:layout_height="0dp"
 			                        android:orientation="vertical"
 			                        android:background="#00000000"
-			                        android:layout_weight="7" />
+			                        android:layout_weight="3" />
 	                            <LinearLayout
 		                            android:id="@+id/displayPreviewOuttakeLL"
 		                            android:layout_width="match_parent"
@@ -479,34 +490,90 @@
 		                            android:layout_gravity="center_horizontal"
 		                            android:background="@drawable/green_preview_rect"
 		                            android:gravity="center"
-		                            android:layout_weight="4"
+		                            android:layout_weight="2"
 		                            android:orientation="horizontal" />
 	                            <LinearLayout
 			                        android:layout_width="fill_parent"
 			                        android:layout_height="0dp"
 			                        android:orientation="vertical"
 			                        android:background="#00000000"
-			                        android:layout_weight="7" />
+			                        android:gravity="center"
+			                        android:layout_weight="7">
+			                        <LinearLayout
+				                        android:layout_width="wrap_content"
+				                        android:layout_height="wrap_content"
+	                     				android:gravity="center"
+					                    android:orientation="vertical" >
+								        <LinearLayout
+					                        android:id="@+id/readerNumPickerLL"
+					                        android:layout_width="wrap_content"
+					                        android:layout_height="wrap_content"
+					                        android:layout_gravity="center_horizontal"
+					                        android:layout_marginTop="10dp"
+					                        android:background="@drawable/rectbackgreen"
+					                        android:gravity="center"
+					                        android:orientation="horizontal"
+					                        android:visibility="visible" >
+					
+					                        <TextView
+					                            android:id="@+id/point2"
+					                            android:layout_width="wrap_content"
+					                            android:layout_height="wrap_content"
+					                            android:text="."
+					                            android:textAppearance="?android:attr/textAppearanceLarge"
+					                            android:textSize="32sp"
+					                            android:visibility="visible" />
+					                    </LinearLayout>
+					                    <TextView
+					                            android:id="@+id/unitReaderLA"
+					                            android:layout_width="wrap_content"
+					                            android:layout_height="wrap_content"
+	                           					android:textAlignment="center"
+					                            android:textAppearance="?android:attr/textAppearanceMedium"
+					                            android:visibility="visible" />
+				                    </LinearLayout>
+				                    <RelativeLayout
+				                        android:layout_width="wrap_content"
+				                        android:layout_height="wrap_content" 
+				                        android:layout_gravity="bottom" >"
+				                        <Button
+			                                android:id="@+id/suspendReaderBT"
+			                                style="@style/ButtonBaseStyle"
+			                                android:layout_width="wrap_content"
+			                                android:layout_height="wrap_content"
+			                                android:layout_gravity="left"
+			                                android:layout_alignParentLeft="true"
+			                                android:text="@string/abort_scan" />
+				                        <Button
+			                                android:id="@+id/confirmReaderBT"
+			                                style="@style/ButtonBaseStyle"
+			                                android:layout_width="wrap_content"
+			                                android:layout_height="wrap_content"
+			                                android:layout_gravity="right"
+			                                android:layout_alignParentRight="true"
+			                                android:text="@string/common_confirm" />
+			                        </RelativeLayout>
+			                     </LinearLayout>
                             </LinearLayout>
                         </FrameLayout>
-
+<!-- change visibility and weight for debug! and weightsum -->
                             <TextView
                                 android:id="@+id/debugDigitLA"
                                 android:layout_width="fill_parent"
                                 android:layout_height="0dp"
-                             android:layout_weight="1"  
+                             	android:layout_weight="0"  
                                 android:layout_marginLeft="3dp"
                                 android:layout_marginRight="3dp"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:textSize="22sp"
-                        		android:visibility="visible" />
+                        		android:visibility="gone" />
 
                             <LinearLayout
                                 android:id="@+id/debugPreviewLL"
                                 android:layout_width="fill_parent"
                                 android:layout_height="0dp"
                                 android:layout_gravity="center_horizontal"
-                                android:layout_weight="1"
+                                android:layout_weight="0"
                                 android:gravity="bottom"
                                 android:orientation="vertical"
                         		android:visibility="gone" >
@@ -517,20 +584,6 @@
                                     android:layout_height="fill_parent"
                                     android:layout_gravity="left|top" />
                             </LinearLayout>
-                       <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:orientation="vertical" >
-
-                            <Button
-                                android:id="@+id/suspendReaderBT"
-                                style="@style/ButtonBaseStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="right|bottom"
-                                android:text="@string/abort_scan" />
-                        </LinearLayout>
             </LinearLayout>
             </LinearLayout>
                 

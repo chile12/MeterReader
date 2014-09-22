@@ -52,17 +52,19 @@ import ccc.android.meterreader.statics.Statics;
 public class GaugeDisplayDialog extends Activity implements android.view.View.OnClickListener 
 {
 	private MeterReaderKeyboard keyboard;
-	private List<CccNumberPicker> pickers = new ArrayList<CccNumberPicker>();
+	private List<CccNumberPicker> displayPickers = new ArrayList<CccNumberPicker>();
+	private List<CccNumberPicker> readerPickers = new ArrayList<CccNumberPicker>();
 	private ViewFlipper displayViewFlipper;
 	private VerticalButton showDisplayBT;
 	private VerticalButton showScannerBT;
 	private VerticalButton showDigitReaderBT;
-	private LinearLayout numLL;
+	private LinearLayout numPickerLL;
+	private LinearLayout numPickerReaderLL;
 	private RelativeLayout gaugeDisplayLL;
 	private LinearLayout infoDisplayLL;
 	private char[] value;
 	private int firstNonDecimalDigitPos = -1;
-	private CccNumberPicker lastSelected = null;
+	//private CccNumberPicker lastSelected = null;
 	private boolean isDecimalPlace = false;
 	private boolean isFirstChange = true;
 	private boolean valueChangeListenerOn = true;
@@ -122,7 +124,6 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	   Intent i = getIntent();
 	   i.setAction(Statics.ANDROID_INTENT_ACTION_GDR);
 	    onNewIntent(i);
-	    initializeViews();
 	    
 	    if(gaugeData != null)
 	    {
@@ -148,7 +149,8 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		this.findViewById(R.id.saveReadingBT).setOnClickListener(saveReadingClickListener);		
 		this.findViewById(R.id.closeDiaBT).setOnClickListener(closeDisplayView);	
     	this.registerReceiver(finishRec, finishFilter);
-		numLL = (LinearLayout)this.findViewById(R.id.numPickerLL);	    
+		numPickerLL = (LinearLayout)this.findViewById(R.id.numPickerLL);	
+		numPickerReaderLL = (LinearLayout)this.findViewById(R.id.readerNumPickerLL);	
 		gaugeDisplayLL = (RelativeLayout)this.findViewById(R.id.gaugeDisplayLL);	
 		infoDisplayLL = (LinearLayout)this.findViewById(R.id.infoDisplayLL);	
 
@@ -188,9 +190,10 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			insertNumberPickers();
 		}
 		
-		TextView displayUnitLA = (TextView) numLL.getChildAt(numLL.getChildCount()-1);
-		displayUnitLA.setText(String.valueOf((Object)gaugeData.getUnit()));
-		lastSelected = pickers.get(firstNonDecimalDigitPos);
+		TextView displayUnitLA = (TextView) this.findViewById(R.id.unitDisplayLA);
+		displayUnitLA.setText(String.valueOf((Object)gaugeData.getUnitLong()) + " (" + String.valueOf((Object)gaugeData.getUnit()) + ")");
+		TextView readerUnitLA = (TextView) this.findViewById(R.id.unitReaderLA);
+		readerUnitLA.setText(String.valueOf((Object)gaugeData.getUnitLong()) + " (" + String.valueOf((Object)gaugeData.getUnit()) + ")");
 		currentDeviceID = gaugeData.getGaugeDeviceId();
 
 	}
@@ -264,7 +267,6 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	    	isFirstChange = true;
 	    	valueChangeListenerOn = true;
 		    initializeViews();
-	    	setValues(gaugeData);
 	    	showViewFirst = Statics.GAUGE_INFO_VIEW;
 	    }
 	    else
@@ -328,15 +330,23 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			for (int i = 0; i < value.length; i++)
 			{
 				if(value[i] == '-')
-					setValueForNumPicker(pickers.get(i), 10);
+				{
+					setValueForNumPicker(displayPickers.get(i), 10);
+					if(digitReaderFragment != null)
+						setValueForNumPicker(digitReaderFragment.getReaderPickers().get(i), 10);
+				}
 				else
-					setValueForNumPicker(pickers.get(i), Integer.parseInt(String.valueOf(value[i])));
+				{
+					setValueForNumPicker(displayPickers.get(i), Integer.parseInt(String.valueOf(value[i])));
+					if(digitReaderFragment != null)
+						setValueForNumPicker(digitReaderFragment.getReaderPickers().get(i), Integer.parseInt(String.valueOf(value[i])));
+				}
 			}
 
 		if (simplePlausibilityCheck())
-			numLL.setBackgroundResource(R.drawable.rectbackgreen);
+			numPickerLL.setBackgroundResource(R.drawable.rectbackgreen);
 		else
-			numLL.setBackgroundResource(R.drawable.rectbackred);
+			numPickerLL.setBackgroundResource(R.drawable.rectbackred);
 		valueChangeListenerOn = true;
 	}
 	
@@ -390,6 +400,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	{
 		@Override
 		public void onClick(View v) {
+			GaugeDisplayDialog.this.hideDigitReaderFragment();
 			setDisplayView();
 		}
 
@@ -493,6 +504,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		showDigitReaderBT.setVisibility(View.GONE);
 		keyboard.getmKeyboardView().setVisibility(View.GONE);
 		displayViewFlipper.setDisplayedChild(Statics.DIGIT_READER_VIEW);
+		prepareValueArray(); 
 		getDigitReaderFragment();
 	}
 	
@@ -502,6 +514,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			FragmentManager fragmentManager = this.getFragmentManager();
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			digitReaderFragment = (DigitReaderFragment) fragmentManager.findFragmentByTag("digitReader");
+			
 			if(digitReaderFragment != null)
 			{
 				digitReaderFragment.InitializeCamera();
@@ -510,6 +523,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			else
 			{
 				digitReaderFragment = new ccc.android.meterreader.qrreading.DigitReaderFragment();
+				digitReaderFragment.setReaderPickers(readerPickers);
 				fragmentTransaction.add(R.id.digitPreviewLL, digitReaderFragment, "digitReader");
 			}
 			fragmentTransaction.commit();
@@ -605,26 +619,34 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 
 	private void insertNumberPickers() 
 	{
-		pickers.clear();
-		for(int i=numLL.getChildCount()-1;i>=0;i--)
+		displayPickers.clear();
+		for(int i=numPickerLL.getChildCount()-1;i>=0;i--)
 		{
-			if(numLL.getChildAt(i) instanceof CccNumberPicker)
-				numLL.removeViewAt(i);
+			if(numPickerLL.getChildAt(i) instanceof CccNumberPicker)
+				numPickerLL.removeViewAt(i);
+			if(this.numPickerReaderLL.getChildAt(i) instanceof CccNumberPicker)
+				numPickerReaderLL.removeViewAt(i);
 		}
 		for (int i = 0; i < gaugeData.getDigitCount(); i++) {
 			CccNumberPicker npN = new CccNumberPicker(this);
+			CccNumberPicker npR = new CccNumberPicker(this);
 			//set background
 			if(gaugeData.getDigitCount() - gaugeData.getDecimalPlaces() <= i)
 			{
 				LayoutParams lp = configureNumberPicker(npN, i);
-				numLL.addView(npN, i+1, lp);
+				numPickerLL.addView(npN, i+1, lp);
+				LayoutParams lpR = configureNumberPicker(npR, i);
+				numPickerReaderLL.addView(npR, i+1, lpR);
 			}
 			else
 			{
 				LayoutParams lp = configureNumberPicker(npN, i);
-				numLL.addView(npN, i, lp);
+				numPickerLL.addView(npN, i, lp);
+				LayoutParams lpR = configureNumberPicker(npR, i);
+				numPickerReaderLL.addView(npR, i, lpR);
 			}
-			pickers.add(npN);
+			displayPickers.add(npN);
+			readerPickers.add(npR);
 		}
     	NumPickerTextWatcher.SetActivateTimer(500);
 	}
@@ -661,7 +683,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			}
 		});
 		int npWidth = Statics.DISPLAY_WIDTH / 15;
-		LayoutParams lp = new LayoutParams(npWidth,200);
+		LayoutParams lp = new LayoutParams(npWidth,250);
 		char val = value[pos];
 		for(int i=0;i<10;i++)
 			if(npN.getDisplayedValues()[i].charAt(0) == val)
@@ -714,9 +736,9 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	
 	private Character getValueFromPicker(CccNumberPicker p)
 	{
-    	for(int i =0;i< pickers.size();i++)
+    	for(int i =0;i< displayPickers.size();i++)
     	{
-    		if(p.equals(pickers.get(i)))
+    		if(p.equals(displayPickers.get(i)))
     		{
     			return value[i];
     		}
@@ -726,9 +748,13 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	
 	private int getPositionOfPicker(NumberPicker p)
 	{
-    	for(int i =0;i< pickers.size();i++)
+    	for(int i =0;i< displayPickers.size();i++)
     	{
-    		if(p.equals(pickers.get(i)))
+    		if(p.equals(displayPickers.get(i)))
+    		{
+    			return i;
+    		}
+    		if(p.equals(readerPickers.get(i)))
     		{
     			return i;
     		}
@@ -741,7 +767,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
     	int digitCount = gaugeData.getDigitCount();
     	for(int i =0;i< digitCount;i++)
     	{
-    		if(p.equals(pickers.get(i)))
+    		if(p.equals(displayPickers.get(i)))
     		{
     			if(this.isDecimalPlace)
     			{
@@ -749,13 +775,13 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
     				{
     					this.isDecimalPlace = false;
     					this.isFirstChange = true;
-    					return pickers.get(this.firstNonDecimalDigitPos);
+    					return displayPickers.get(this.firstNonDecimalDigitPos);
     				}
     				else
-    					return pickers.get((i+1));
+    					return displayPickers.get((i+1));
     			}
     			else
-    				return pickers.get((i));
+    				return displayPickers.get((i));
     		}
     	}
     	return null;
@@ -772,9 +798,9 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
     		}
     		isFirstChange = false;
     	}
-    	for(int i =0;i< pickers.size();i++)
+    	for(int i =0;i< displayPickers.size();i++)
     	{
-    		if(p == pickers.get(i))
+    		if(p == displayPickers.get(i))
     		{
     			if(simpleValueChange || i > this.firstNonDecimalDigitPos)
     				value[i] = val;
@@ -815,7 +841,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	    	Character zz = (getValueFromPicker(la));
 	    	//la.setValue(Integer.parseInt(String.valueOf(zz)));
 	    	getInputFieldFromNumberPicker(la).setText(new char[]{zz}, 0, 1);
-			lastSelected = getNextPicker(la);
+			//lastSelected = getNextPicker(la);
 			//setSelectTimer(30);
 			NumPickerTextWatcher.isActive().set(true);
     	}
@@ -827,7 +853,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
     	{
 	    	CccNumberPicker thisPicker = ((CccNumberPicker)((ViewGroup)edit.getParent()));
 			setNewValue(thisPicker, value, false);
-			lastSelected = getNextPicker(thisPicker);
+			//lastSelected = getNextPicker(thisPicker);
 			//setSelectTimer(30);
 			NumPickerTextWatcher.isActive().set(true);
     	}

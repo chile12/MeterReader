@@ -19,6 +19,8 @@ public class InternalDialogDisplayData implements Parcelable
 	private Date utcTo;
 	private String gaugeName;
 	private String unit;
+	private String unitLong;
+
 	private String location;
 	private String description;
 	
@@ -117,6 +119,7 @@ public class InternalDialogDisplayData implements Parcelable
 		this.setDigitCount(ga.getGaugeDevice().getDigitCount());
 		this.setLocation(ga.getLocation());
 		this.setUnit(ga.getUnit().getName());
+		this.setUnitLong(ga.getUnit().getDescription());
 		this.setGaugeName(ga.getName());
 		this.setDescription(ga.getDescription());
 	}
@@ -146,6 +149,7 @@ public class InternalDialogDisplayData implements Parcelable
 		this.setDigitCount(re.readInt());
 		this.setLocation(readStringFromParcel(re));
 		this.setUnit(readStringFromParcel(re));
+		this.setUnitLong(readStringFromParcel(re));
 		this.setGaugeName(readStringFromParcel(re));
 		this.setDescription(readStringFromParcel(re));
 	}
@@ -165,6 +169,7 @@ public class InternalDialogDisplayData implements Parcelable
 		out.writeInt(this.getDigitCount() == null ? 8 : this.getDigitCount());
 		writeStringToParcel(out, this.getLocation());
 		writeStringToParcel(out, this.getUnit());
+		writeStringToParcel(out, this.getUnitLong());
 		writeStringToParcel(out, this.getGaugeName());
 		writeStringToParcel(out, this.getDescription());
 	}
@@ -205,5 +210,14 @@ public class InternalDialogDisplayData implements Parcelable
 
 	public void setGaugeDeviceId(Integer gaugeDeviceId) {
 		this.gaugeDeviceId = gaugeDeviceId;
+	}
+	public String getUnitLong()
+	{
+		return unitLong;
+	}
+
+	public void setUnitLong(String unitLong)
+	{
+		this.unitLong = unitLong;
 	}
 }

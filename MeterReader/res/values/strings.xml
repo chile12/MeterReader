@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_confirm">Confirm</string>
+    
+    <string name="qr_not_recognized">Gauge-Id was not recognized. Please check the provided QR-code and try again.</string>
+    <string name="main_display_size_warning">The display-size of your device is too small. Please use at least a 540x960 display.</string>
+    
+    <string name="main_menu">Menu</string>
+    <string name="main_sync_not_done">synchronization not yet completed</string>
+    <string name="main_sync_done">synchronization was successful</string>
+    <string name="main_sync_inprog">Synchronization in progress. Please wait.</string>
+    <string name="main_sync_not_successful">Youre device could not be synchronized with a local database!</string>
+    <string name="main_sync_abort">abort synchronization</string>
+    <string name="main_sync_aborted">Synchronization aborted!</string>
+    <string name="main_sync_faild_upload">New entries were not saved to the database!</string>
+    
+    <string name="main_button_panel_new_session">new session</string>
+    <string name="main_button_panel_load_session">load session</string>
+    <string name="main_button_panel_meter_list">meter list</string>
+    <string name="main_button_panel_configurations">configurations</string>
+    <string name="main_button_panel_qr_scanner">collect new reading</string>
+    <string name="main_button_panel_close">close</string>
+        
+    <string name="app_name">EPVI</string>
+    <string name="action_settings">Settings</string>
+    <string name="generic_exception_warning">an exception occurred: </string>
+    <string name="no_base_ws_url_warning">No EPVI-Service endpoint has been specified. Please configure connection-settings first.</string>
+    
+    <string name="gauge_display_last_read">last:</string>
+    <string name="gauge_display_gauge_id">gauge id:</string>
+    <string name="gauge_display_gauge_location">location:</string>
+    <string name="gauge_display_barcode_scan">qr-code scanner</string>
+    <string name="gauge_display_meter_scan">digit scanner</string>
+    <string name="gauge_display_show_display">manual input</string>
+    <string name="gauge_display_gauge_date">date of reading:</string>
+        
+    <string name="gauge_display_read_warning_less">The entered value is less than the value of the last reading!</string>
+    <string name="gauge_display_data_warning">The current reading has been corrupted, please start this dialog again.</string>
+    <string name="gauge_display_no_data_warning">There is no data for this gauge.</string>
+    
+    <string name="abort_scan">abort scan</string>
+    <string name="list_item_last_read">last reading: </string>
+    <string name="list_item_medium">medium: </string>
+    
+    <string name="action_new_reading" formatted="false">A new reading was added for gauge %s at %s</string>
+    
+    <string name="connection_dia_title">connection settings</string>
+    <string name="connection_dia_subtitle">specify the epvi-service endpoint</string>
+    <string name="connection_dia_address">address:</string>
+    <string name="connection_dia_abort">Cancel</string>
+    <string name="connection_dia_confirm">confirm</string>
+    <string name="connection_dia_no_endpoint">please enter a valid endpoint address</string>
+    <string name="connection_dia_malformed_url">Wrong uri format! Please start with \'http://\' and end with \'/MobileGaugeReading\'</string>
+
+    <string name="epvi_options_show_options">groups and filter</string>
+    <string name="epvi_options_show_list">update list</string>
+    <string name="epvi_options_reset_list">reset list</string>
+    <string name="group_prompt">group by:</string>
+    <string-array name="group_array">
+        <item>medium</item>
+        <item>name</item>
+        <item>description</item>
+        <item>location</item>
+        <item>last reading date</item>
+        <item>days since reading</item>
+    </string-array>
+    
+    <string name="filter_prompt">filter by:</string>
+    <string-array name="filter_array">
+        <item></item>
+        <item>name</item>
+        <item>description</item>
+        <item>location</item>
+        <item>last reading date</item>
+    </string-array>
+</resources>

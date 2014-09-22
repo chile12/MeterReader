@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ccc.android.meterreader"
+    android:versionCode="1"
+    android:versionName="1.0" >
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="16" />
+
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    
+   <supports-screens android:normalScreens="true" />
+   <supports-screens android:largeScreens="true" />
+    
+    <application
+        android:allowBackup="true"
+        android:largeHeap="true"
+        android:icon="@drawable/logo_titlebar"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        android:debuggable="true"
+        android:vmSafeMode="true"       
+        android:allowClearUserData="true"
+        android:hardwareAccelerated="true" >
+        <activity
+            android:name="ccc.android.meterreader.MainActivity"
+            android:label="@string/app_name" 
+            android:launchMode= "singleTop" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="ccc.android.meterreader.gaugedisplaydialog.GaugeDisplayDialog"
+            android:theme="@android:style/Theme.Dialog"
+            android:excludeFromRecents="false"
+            android:launchMode= "singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

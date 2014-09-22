@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_cancel">Abbrechen</string>
+    <string name="common_confirm">Übernehmen</string>
+    
+    <string name="qr_not_recognized">Zähler-ID konnte nicht identifiziert werden, bitte vesuchen Sie es erneut.</string>
+     <string name="main_display_size_warning">Die Auflösung Ihres Bildschirms muss mindestens 540x960 betragen.</string>
+    
+    <string name="main_menu">Menü</string>
+    <string name="main_sync_not_done">Die Synchronisation ist noch nicht abgeschlossen.</string>
+    <string name="main_sync_done">Synchronisation erfolgreich beendet.</string>
+    <string name="main_sync_inprog">Synchronisation läuft.</string>
+    <string name="main_sync_not_successful">Die Synchronisation war nicht erfolgreich!</string>
+    <string name="main_sync_abort">Synchronisation abbrechen</string>
+    <string name="main_sync_aborted">Synchronisation abgebrochen!</string>
+    <string name="main_sync_faild_upload">Neue Einträge konnten nicht auf die Datenbank geschrieben werden!</string>
+   
+    <string name="main_button_panel_new_session">Neuer Vorgang</string>
+    <string name="main_button_panel_load_session">Vorgang laden</string>
+    <string name="main_button_panel_meter_list">Zähler Übersicht</string>
+    <string name="main_button_panel_configurations">Einstellungen</string>
+    <string name="main_button_panel_qr_scanner">Zähler direkt erfassen</string>
+    <string name="main_button_panel_close">Beenden</string>
+    
+    <string name="app_name">EPVI</string>
+    <string name="action_settings">Settings</string>
+    <string name="generic_exception_warning">eine Fehler ist aufgetreten: </string>
+    <string name="no_base_ws_url_warning">Keine EPVI-Service Adresse vorhanden. Bitte ändern Sie die Verbindungseinstellungen.</string>
+    
+    <string name="gauge_display_last_read">letzte:</string>
+    <string name="gauge_display_gauge_id">Zähler Id:</string>
+    <string name="gauge_display_gauge_location">Ort:</string>
+    <string name="gauge_display_barcode_scan">QR-Code Scanner</string>
+    <string name="gauge_display_meter_scan">Zählerstanderkennung</string>
+    <string name="gauge_display_show_display">Handeingabe</string>
+    <string name="gauge_display_gauge_date">Ablesedatum:</string>
+    
+    <string name="gauge_display_read_warning_less">Der eingegebene Zählerstand ist kleiner als der letzte Stand!</string>
+    <string name="gauge_display_data_warning">Die Ablesedaten wurden beeinträchtigt. Bitte starten Sie diesen Dialog erneut.</string>
+    <string name="gauge_display_no_data_warning">Es existieren keine Daten zu diesem Zähler.</string>
+    
+    <string name="connection_dia_title">Verbindungseinstellungen</string>
+    <string name="connection_dia_subtitle">bestimmen Sie die Adresse des EPVI-Service</string>
+    <string name="connection_dia_address">Adresse:</string>
+    <string name="connection_dia_abort">Abbrechen</string>
+    <string name="connection_dia_confirm">Bestätigen</string>
+    <string name="connection_dia_no_endpoint">bitte geben Sie eine Adresse ein</string>
+    <string name="connection_dia_malformed_url">Falsches Format! Die uri sollte mit \'http://\' beginnen und mit: \'/MobileGaugeReading\' enden.</string>
+    
+    
+    <string name="action_new_reading" formatted="false">Ein neuer Zählerstand von %s wurde am %s aufgenommen.</string>
+    
+    <string name="abort_scan">Abbrechen</string>
+    <string name="list_item_last_read">letzte: </string>
+    <string name="list_item_medium">Medium: </string>
+
+    <string name="epvi_options_show_options">Filtern und Gruppieren</string>
+    <string name="epvi_options_show_list">Liste Aktualisieren</string>
+    <string name="epvi_options_reset_list">Zurücksetzen</string>
+    <string name="group_prompt">Gruppierung:</string>
+    <string-array name="group_array">
+        <item>Medium</item>
+        <item>Name</item>
+        <item>Beschreibung</item>
+        <item>Ort</item>
+        <item>Ablesedatum</item>
+        <item>Tage ohne Abl.</item>
+    </string-array>
+    
+    <string name="filter_prompt">Filter:</string>
+    <string-array name="filter_array">
+        <item></item>
+        <item>Name</item>
+        <item>Beschreibung</item>
+        <item>Ort</item>
+        <item>Ablesedatum</item>
+    </string-array>
+</resources>

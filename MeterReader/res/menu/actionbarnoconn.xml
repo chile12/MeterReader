@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yourapp="http://schemas.android.com/apk/ccc.android.meterreader"  >
+   
+        <item
+        android:id="@+id/onlineStatus"
+        android:orderInCategory="100"
+        yourapp:showAsAction="always"
+        android:icon="@drawable/wifi_icon_red"
+        android:title="not connected"/>
+
+</menu>

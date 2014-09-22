@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pixlui="http://schemas.android.com/apk/com.neopixl.pixlui"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+
+	        <Button
+	            android:id="@+id/epviListOptionsBT"
+	            style="@style/ButtonWithMargins"
+	            android:layout_width="fill_parent"
+	            android:layout_height="33dp"
+	            android:layout_marginBottom="2dp"
+	            android:layout_marginLeft="2dp"
+	            android:layout_marginRight="2dp"
+	            android:layout_marginTop="2dp"
+	            android:text="@string/epvi_options_show_options" />
+
+	        <LinearLayout
+            	android:id="@+id/epviListOptions1LL"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal"
+		        android:visibility="gone"   >
+		        <com.neopixl.pixlui.components.textview.TextView
+		            android:layout_width="wrap_content"
+		        	android:layout_height="wrap_content"
+		        	android:padding="3dp"
+		            android:text="@string/group_prompt"
+		            android:textAppearance="?android:attr/textAppearanceMedium"
+		            android:typeface="normal" 
+            		pixlui:typeface="SourceSansPro.ttf" />
+		        <Spinner
+			        android:id="@+id/groupByDD"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:entries="@array/group_array"
+			        android:prompt="@string/group_prompt" />
+		    </LinearLayout>    
+		    <LinearLayout
+            	android:id="@+id/epviListOptions2LL"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal"
+		        android:visibility="gone"  >
+		        <com.neopixl.pixlui.components.textview.TextView
+		            android:layout_width="wrap_content"
+		        	android:layout_height="wrap_content"
+		        	android:padding="3dp"
+		            android:text="@string/filter_prompt"
+		            android:textAppearance="?android:attr/textAppearanceMedium"
+		            android:typeface="normal"
+		            pixlui:typeface="SourceSansPro.ttf" />
+		        <Spinner
+			        android:id="@+id/filterDD"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:entries="@array/filter_array"
+			        android:prompt="@string/filter_prompt" />
+		        <EditText
+                    android:id="@+id/filterListTB"
+		            android:inputType="textLongMessage"
+		            android:imeOptions="actionDone"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10">
+                </EditText>
+		    </LinearLayout> 
+		    <LinearLayout
+            	android:id="@+id/epviListOptions3LL"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal"
+		        android:visibility="gone"  >
+			    <Button
+		            android:id="@+id/resetListViewBT"
+		            style="@style/ButtonWithMargins"
+		            android:layout_width="fill_parent"
+		            android:layout_height="33dp"
+		            android:layout_marginBottom="2dp"
+		            android:layout_marginLeft="2dp"
+		            android:layout_marginRight="2dp"
+		            android:layout_marginTop="2dp"
+		            android:layout_weight="1"
+		            android:text="@string/epvi_options_reset_list" />
+			    <Button
+		            android:id="@+id/showListViewBT"
+		            style="@style/ButtonWithMargins"
+		            android:layout_width="fill_parent"
+		            android:layout_height="33dp"
+		            android:layout_marginBottom="2dp"
+		            android:layout_marginLeft="2dp"
+		            android:layout_marginRight="2dp"
+		            android:layout_marginTop="2dp"
+		            android:layout_weight="1"
+		            android:text="@string/epvi_options_show_list" />
+			</LinearLayout>
+
+		    <LinearLayout
+		        android:id="@+id/filterSummaryLL"
+		        android:layout_width="match_parent"
+		        android:layout_height="15dp"
+		        android:background="@color/LightGrey"
+		        android:gravity="center_horizontal"
+		        android:orientation="vertical" >
+
+		        <com.neopixl.pixlui.components.textview.TextView
+		            android:id="@+id/epviListFilterSummaryLA"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="dd"
+		            android:textAppearance="?android:attr/textAppearanceSmall"
+		            android:textColor="@color/Black"
+		            android:textColorHint="@color/Black"
+		            android:textSize="@dimen/verysmalltext" 
+		            pixlui:typeface="SourceSansPro.ttf"/>
+
+		    </LinearLayout>
+ 
+	        <ExpandableListView
+	            android:id="@+id/stationsELV"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent" >
+	        </ExpandableListView>
+</LinearLayout>

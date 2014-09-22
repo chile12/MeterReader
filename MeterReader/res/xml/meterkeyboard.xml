@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="25%p"
+    android:keyHeight="9%p"
+    android:verticalGap="1%p" >
+
+    <Row>
+        <Key android:codes="145"    android:keyLabel="1" android:horizontalGap="2%p"  android:keyEdgeFlags="left" />
+        <Key android:codes="146"    android:keyLabel="2" android:horizontalGap="2%p"/>
+        <Key android:codes="147"    android:keyLabel="3" android:horizontalGap="2%p"/>
+        <Key android:codes="4" 	   android:keyIcon="@drawable/sym_keyboard_delete" android:isRepeatable="true" android:keyWidth="19%p" android:horizontalGap="2%p" android:keyEdgeFlags="right" />
+    </Row>
+    <Row>
+        <Key android:codes="148"    android:keyLabel="4" android:horizontalGap="2%p" android:keyEdgeFlags="left"  />
+        <Key android:codes="149"    android:keyLabel="5" android:horizontalGap="2%p"/>
+        <Key android:codes="150"    android:keyLabel="6" android:horizontalGap="2%p"/>
+        <Key android:codes="69" android:keyLabel="-" android:keyWidth="19%p" android:horizontalGap="2%p" android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="151"    android:keyLabel="7" android:horizontalGap="2%p" android:keyEdgeFlags="left" />
+        <Key android:codes="152"    android:keyLabel="8" android:horizontalGap="2%p"/>
+        <Key android:codes="153"    android:keyLabel="9" android:horizontalGap="2%p" />
+        <Key android:codes="55" android:keyLabel="," android:keyWidth="19%p" android:horizontalGap="2%p" android:keyEdgeFlags="right" />
+    </Row>
+    <Row>
+        <Key android:codes="144"    android:keyLabel="0"  android:keyWidth="52%p" android:keyEdgeFlags="left"  />
+        <Key android:codes="16"    android:keyLabel="@string/common_confirm" android:keyWidth="46%p" android:horizontalGap="2%p" android:keyEdgeFlags="right" />
+    </Row>
+</Keyboard>
+<!-- <Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="25%p"
+    android:keyHeight="9%p"
+    android:verticalGap="1%p" >
+
+    <Row>
+        <Key android:codes="145"    android:keyLabel="1"  android:horizontalGap="2%p" android:keyEdgeFlags="left" />
+        <Key android:codes="146"    android:keyLabel="2" android:horizontalGap="2%p"/>
+        <Key android:codes="147"    android:keyLabel="3"/>
+        <Key android:codes="4" 	   android:keyIcon="@drawable/sym_keyboard_delete" android:isRepeatable="true" android:keyWidth="19%p" android:horizontalGap="2%p" android:keyEdgeFlags="right" />
+    </Row>
+    <Row>
+        <Key android:codes="148"    android:keyLabel="4" android:horizontalGap="2%p" android:keyEdgeFlags="left"  />
+        <Key android:codes="149"    android:keyLabel="5" android:horizontalGap="2%p"/>
+        <Key android:codes="150"    android:keyLabel="6"/>
+        <Key android:codes="69" android:keyLabel="-" android:keyWidth="19%p" android:horizontalGap="2%p" android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="151"    android:keyLabel="7" android:horizontalGap="2%p" android:verticalGap="2%p" android:keyEdgeFlags="left" />
+        <Key android:codes="152"    android:keyLabel="8" android:horizontalGap="2%p"/>
+        <Key android:codes="153"    android:keyLabel="9" android:verticalGap="2%p" />
+        <Key android:codes="55" android:keyLabel="," android:keyWidth="19%p" android:horizontalGap="2%p" android:verticalGap="2%p" android:keyEdgeFlags="right" />
+    </Row>
+    <Row>
+        <Key android:codes="144"    android:keyLabel="0"  android:keyWidth="52%p" android:keyEdgeFlags="left"  />
+        <Key android:codes="16"    android:keyLabel="@string/common_confirm" android:horizontalGap="2%p" android:keyWidth="46%p" android:keyEdgeFlags="right" />
+    </Row>
+</Keyboard>-->

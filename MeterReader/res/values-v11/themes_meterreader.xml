@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- <style name="MeterReader" parent="@style/_MeterReader"/>
+
+  <style name="_MeterReader" parent="Theme.AppCompat.Light">
+
+    <item name="android:editTextBackground">@drawable/meterreader_edit_text_holo_light</item>
+
+    <item name="android:textColorHighlight">#9966cc00</item>
+    <item name="android:textSelectHandleLeft">@drawable/meterreader_text_select_handle_left</item>
+    <item name="android:textSelectHandleRight">@drawable/meterreader_text_select_handle_right</item>
+    <item name="android:textSelectHandle">@drawable/meterreader_text_select_handle_middle</item>
+
+    <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMeterReader</item>
+
+    <item name="android:listChoiceIndicatorMultiple">@drawable/meterreader_btn_check_holo_light</item>
+
+    <item name="android:listChoiceIndicatorSingle">@drawable/meterreader_btn_radio_holo_light</item>
+
+    <item name="android:buttonStyle">@style/ButtonMeterReader</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonMeterReader</item>
+
+    <item name="android:dropDownSpinnerStyle">@style/SpinnerMeterReader</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarMeterReader</item>
+
+    <item name="android:seekBarStyle">@style/SeekBarMeterReader</item>
+
+    <item name="android:ratingBarStyle">@style/RatingBarMeterReader</item>
+
+    <item name="android:ratingBarStyleIndicator">@style/RatingBarBigMeterReader</item>
+
+    <item name="android:ratingBarStyleSmall">@style/RatingBarSmallMeterReader</item>
+
+    <item name="android:buttonStyleToggle">@style/ToggleMeterReader</item>
+
+    <item name="android:listChoiceBackgroundIndicator">@drawable/meterreader_list_selector_holo_light</item>
+
+    <item name="android:activatedBackgroundIndicator">@drawable/meterreader_activated_background_holo_light</item>
+
+    <item name="android:fastScrollThumbDrawable">@drawable/meterreader_fastscroll_thumb_holo</item>
+
+  </style>-->
+
+</resources>

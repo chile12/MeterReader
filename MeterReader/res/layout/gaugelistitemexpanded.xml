@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:tag="epviListItemExpanded" >
+
+    <GridLayout
+        android:id="@+id/listItemGrid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:columnCount="4"
+        android:rowCount="4"
+        android:tag="epviListItemExpanded" >
+
+        <TextView
+            android:id="@+id/gaugeSubTItleExLA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="3"
+            android:layout_gravity="top|right"
+            android:maxLines="1"
+            android:layout_row="0"
+            android:layout_weight="2"
+            android:text="medium Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/gaugeBelowTitleRightExLA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="3"
+            android:maxLines="1"
+            android:layout_gravity="right"
+            android:layout_row="1"
+            android:layout_weight="2"
+            android:text="medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/gaugeBottomRightExLA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:layout_column="3"
+            android:layout_gravity="right"
+            android:layout_row="3"
+            android:layout_weight="2"
+            android:text="medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/gaugeListItemExImage"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:layout_rowSpan="1"
+            android:src="@drawable/dampf" />
+
+        <TextView
+            android:id="@+id/gaugeBottomLeftExLA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_gravity="left|top"
+            android:maxLines="1"
+            android:layout_row="3"
+            android:layout_weight="2"
+            android:text="medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/gaugeAboveBottomLeftExLA"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_gravity="left|top"
+            android:maxLines="1"
+            android:layout_row="2"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/gaugeAboveBottomLRightExLA"
+            android:layout_column="3"
+            android:layout_gravity="right"
+            android:maxLines="1"
+            android:layout_row="2"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/gaugeTitleExLA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_gravity="right|top"
+            android:maxLines="1"
+            android:layout_row="0"
+            android:layout_weight="2"
+            android:paddingLeft="3dp"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/gaugeBelowTitleLeftExLA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:maxLines="1"
+            android:layout_columnSpan="2"
+            android:layout_gravity="left|top"
+            android:layout_row="1"
+            android:layout_weight="2"
+            android:text="medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+    </GridLayout>
+
+</LinearLayout>

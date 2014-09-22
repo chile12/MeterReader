@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Program Files/adt-bundle-windows-x86_64-20131030/jars/apache/commons-io-2.4/commons-io-2.4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/MeterReaderData"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/RestClient"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/opencv/javacv-bin/ffmpeg.jar"/>
+	<classpathentry kind="lib" path="C:/opencv/javacv-bin/javacpp.jar" sourcepath="C:/Users/Chile/.m2/repository/org/bytedeco/javacpp/0.9/javacpp-0.9-sources.jar"/>
+	<classpathentry kind="lib" path="C:/opencv/javacv-bin/javacv.jar" sourcepath="C:/Users/Chile/.m2/repository/org/bytedeco/javacv/0.9/javacv-0.9-sources.jar"/>
+	<classpathentry kind="lib" path="C:/opencv/javacv-bin/opencv.jar" sourcepath="C:/Users/Chile/.m2/repository/org/bytedeco/javacpp-presets/opencv/2.4.9-0.9/opencv-2.4.9-0.9-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/adt-bundle-windows-x86_64-20131030/jars/apache/commons-lang3-3.3.2/commons-lang3-3.3.2.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+	<referencedentry kind="lib" path="C:/Program Files (x86)/adt-bundle-windows-x86_64-20131030/javacv-windows-x86.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/opencv/opencv/build/java/x64"/>
+		</attributes>
+	</referencedentry>
+	<referencedentry kind="lib" path="C:/Program Files (x86)/adt-bundle-windows-x86_64-20131030/javacv-windows-x86_64.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/opencv/opencv/build/java/x64"/>
+		</attributes>
+	</referencedentry>
+</classpath>

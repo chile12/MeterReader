@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pixlui="http://schemas.android.com/apk/com.neopixl.pixlui"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <com.neopixl.pixlui.components.textview.TextView
+            android:id="@+id/connectionDiaTitleLA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:text="@string/connection_dia_title"
+            android:textColor="@color/EPVI"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            pixlui:typeface="SourceSansPro.ttf"  />
+
+        <com.neopixl.pixlui.components.textview.TextView
+            android:id="@+id/connectionDiaSubTitleLA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
+            android:text="@string/connection_dia_subtitle"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            pixlui:typeface="SourceSansPro.ttf" />
+
+        <com.neopixl.pixlui.components.textview.TextView
+            android:id="@+id/connectionDiaAddressLA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/connection_dia_address"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/activity_vertical_margin"
+            pixlui:typeface="SourceSansPro.ttf" />
+
+        <EditText
+            android:id="@+id/connectionDiaAddressTB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+        	android:inputType="textWebEmailAddress"
+            android:ems="10"
+            android:textSize="@dimen/mediumsmalltext" />
+"
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/connectionDiaAbortBT"
+            style="@style/ButtonWithMargins"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:text="@string/connection_dia_abort" />
+
+        <Button
+            android:id="@+id/connectionDiaConfirmBT"
+            style="@style/ButtonWithMargins"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:text="@string/connection_dia_confirm" />
+
+    </LinearLayout>
+
+</LinearLayout>

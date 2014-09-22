@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+   
+        <item
+        android:id="@+id/onlineStatus"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/wifi_icon_green"
+        android:title="not connected"/>
+
+</menu>

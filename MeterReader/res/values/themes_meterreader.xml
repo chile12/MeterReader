@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- <style name="MeterReader" parent="@style/_MeterReader"/>
+
+  <style name="_MeterReader" parent="Theme.AppCompat.Light">
+
+    <item name="android:editTextStyle">@style/EditTextMeterReader</item>
+
+    <item name="android:textColorHighlight">#9966cc00</item>
+
+    <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMeterReader</item>
+
+    <item name="android:checkboxStyle">@style/CheckBoxMeterReader</item>
+
+    <item name="android:radioButtonStyle">@style/RadioButtonMeterReader</item>
+
+    <item name="android:buttonStyle">@style/ButtonMeterReader</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonMeterReader</item>
+
+    <item name="android:spinnerStyle">@style/SpinnerMeterReader</item>
+
+    <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemMeterReader</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarMeterReader</item>
+
+    <item name="android:seekBarStyle">@style/SeekBarMeterReader</item>
+
+    <item name="android:ratingBarStyle">@style/RatingBarMeterReader</item>
+
+    <item name="android:ratingBarStyleIndicator">@style/RatingBarBigMeterReader</item>
+
+    <item name="android:ratingBarStyleSmall">@style/RatingBarSmallMeterReader</item>
+
+    <item name="android:buttonStyleToggle">@style/ToggleMeterReader</item>
+
+    <item name="android:listViewStyle">@style/ListViewMeterReader</item>
+
+    <item name="android:listViewWhiteStyle">@style/ListViewMeterReader.White</item>
+
+    <item name="android:spinnerItemStyle">@style/SpinnerItemMeterReader</item>
+
+  </style>-->
+
+</resources>

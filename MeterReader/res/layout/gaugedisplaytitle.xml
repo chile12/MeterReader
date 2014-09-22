@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ButtonBaseStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/WhiteSmoke"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp" >
+
+    <TextView
+        android:id="@+id/gaugeDisplayTitleNameLA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@color/WhiteSmoke"
+        android:text="gaugeDisplayTitleNameLA"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/gaugeDisplayTitleIdLA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="gaugeDisplayTitleIdLA"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</LinearLayout>

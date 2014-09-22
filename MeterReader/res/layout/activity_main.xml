@@ -1,0 +1,287 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ViewLL"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="0dp"
+    android:baselineAligned="false"
+    android:gravity="right|top"
+    android:orientation="horizontal"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:id="@+id/OptionLL"
+        style="@style/AppTheme"
+        android:layout_width="33dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:textAlignment="center" >
+
+        <ccc.android.meterreader.gaugedisplaydialog.VerticalButton
+            android:id="@+id/OptionBT"
+            style="@style/ButtonBaseStyle"
+            android:layout_width="33dp"
+            android:layout_height="fill_parent"
+            android:layout_margin="2dp"
+            android:text="@string/main_menu"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/menuButtonsLL"
+        style="@style/AppTheme"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.05"
+        android:orientation="vertical"
+        android:visibility="visible" >
+
+        <ImageView
+            android:id="@+id/welcomeLogoIV"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/logoccc" />
+
+        <Button
+            android:id="@+id/newSessionBT"
+            style="@style/InactiveButton"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_margin="2dp"
+            android:layout_marginTop="0dp"
+            android:tag="dontClose"
+            android:text="@string/main_button_panel_new_session"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/loadSessionBT"
+            style="@style/ButtonWithMargins"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_margin="2dp"
+            android:layout_marginTop="0dp"
+            android:tag="dontClose"
+            android:text="@string/main_button_panel_load_session"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/showAllStationsBT"
+            style="@style/InactiveButton"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_margin="2dp"
+            android:layout_marginTop="0dp"
+            android:text="@string/main_button_panel_meter_list"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/ScanGaugeBT"
+            style="@style/InactiveButton"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_margin="2dp"
+            android:layout_marginTop="0dp"
+            android:text="@string/main_button_panel_qr_scanner"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/optionsBT"
+            style="@style/ButtonWithMargins"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_margin="2dp"
+            android:layout_marginTop="0dp"
+            android:text="@string/main_button_panel_configurations"
+            android:visibility="visible" />
+        
+        <Button
+            android:id="@+id/closeMainBT"
+            style="@style/ButtonWithMargins"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_margin="2dp"
+            android:layout_marginTop="0dp"
+            android:tag="dontClose"
+            android:text="@string/main_button_panel_close"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:gravity="bottom"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/mainTickerLA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+			    android:singleLine="true"
+			    android:ellipsize="marquee" 
+			    android:marqueeRepeatLimit="marquee_forever"
+			    android:scrollHorizontally="true" 
+			    android:paddingLeft="15dip" 
+			    android:paddingRight="15dip" 
+			    android:focusable="true" 
+			    android:focusableInTouchMode="true" 
+			    android:freezesText="true"
+                android:text="some large string to ticker about at the bottom of the screen"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ViewFlipper
+        android:id="@+id/MainFlipperVF"
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_weight="1.54" >
+
+        <ScrollView
+            android:id="@+id/newSessionSV"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <EditText
+                    android:id="@+id/logInTB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="time" />
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/placeHolder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/placeHolder2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/listViewContainerLL"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/PreviewContainerLL"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/newStationSV"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <Button
+                    android:id="@+id/syncContextWithDbBT"
+		            style="@style/ButtonWithMargins"
+		            android:layout_width="fill_parent"
+		            android:layout_height="45dp"
+		            android:layout_margin="2dp"
+		            android:layout_marginTop="0dp"
+                    android:text="mit Datenbank synchroisieren" />
+                
+                <Button
+                    android:id="@+id/connectionConfigBT"
+		            style="@style/ButtonWithMargins"
+		            android:layout_width="fill_parent"
+		            android:layout_height="45dp"
+		            android:layout_margin="2dp"
+		            android:layout_marginTop="0dp"
+                    android:text="Verbindungseinstellungen" />
+
+                <Button
+                    android:id="@+id/loadBaseDataBT"
+		            style="@style/ButtonWithMargins"
+		            android:layout_width="fill_parent"
+		            android:layout_height="45dp"
+		            android:layout_margin="2dp"
+		            android:layout_marginTop="0dp"
+                    android:text="Basisdaten laden"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/loadLastSessionBT"
+		            style="@style/ButtonWithMargins"
+		            android:layout_width="fill_parent"
+		            android:layout_height="45dp"
+		            android:layout_margin="2dp"
+		            android:layout_marginTop="0dp"
+                    android:text="letzte Sitzung laden" 
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/saveBT"
+		            style="@style/ButtonWithMargins"
+		            android:layout_width="fill_parent"
+		            android:layout_height="45dp"
+		            android:layout_margin="2dp"
+		            android:layout_marginTop="0dp"
+                    android:text="Sitzung speichern"
+                    android:visibility="gone"  />
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/showAllStationsLL"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+        </LinearLayout>
+        
+                <ScrollView
+                    android:id="@+id/defineRouteSV"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            </LinearLayout>
+        </ScrollView>
+        
+        <ScrollView
+            android:id="@+id/switchMeterSV"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            </LinearLayout>
+        </ScrollView>
+
+    </ViewFlipper>
+
+</LinearLayout>

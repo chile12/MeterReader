@@ -89,6 +89,11 @@ public class Session  implements IGenericMember
 		this.newReadings.getReadingList().add(read);
 	}
 	
+	public void AddNewDevice(GaugeDevice device)
+	{
+		this.newDevices.getGaugeDeviceList().add(device);
+	}
+	
 	public boolean hasNewDate()
 	{
 		if(this.newDevices.size() >0)

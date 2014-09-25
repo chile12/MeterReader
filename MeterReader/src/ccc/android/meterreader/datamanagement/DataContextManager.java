@@ -14,6 +14,7 @@ import ccc.android.meterdata.listtypes.ReadingList;
 import ccc.android.meterdata.listtypes.RouteList;
 import ccc.android.meterdata.listtypes.StationList;
 import ccc.android.meterdata.types.Gauge;
+import ccc.android.meterdata.types.GaugeDevice;
 import ccc.android.meterdata.types.Reading;
 import ccc.android.meterdata.types.Session;
 import ccc.android.meterdata.types.User;
@@ -242,6 +243,14 @@ public class DataContextManager implements ICallBack
 				return false;
 			}
 			return true;
+	}
+	
+	public void AddNewDevice(GaugeDevice device)
+	{
+		//TODO new Action!!!
+		data.getDevices().getGaugeDeviceList().add(device);
+		data.getSession().AddNewDevice(device);
+		this.data.DataContextUpdated();
 	}
 	
     public void InsertNewRead (Reading read) 

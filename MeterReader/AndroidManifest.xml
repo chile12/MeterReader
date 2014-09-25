@@ -30,6 +30,7 @@
         android:hardwareAccelerated="true" >
         <activity
             android:name="ccc.android.meterreader.MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/app_name" 
             android:launchMode= "singleTop" >
             <intent-filter>

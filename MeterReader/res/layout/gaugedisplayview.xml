@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pixlui="http://schemas.android.com/apk/com.neopixl.pixlui"
     android:id="@+id/gaugeDisplayLL"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -18,26 +19,26 @@
             android:layout_gravity="right"
             android:orientation="horizontal" >
 
-            <ccc.android.meterreader.gaugedisplaydialog.VerticalButton
+            <ccc.android.meterreader.viewelements.VerticalButton
                 android:id="@+id/scanBarcodeBT"
                 style="@style/ButtonBaseStyle"
                 android:layout_width="33dp"
                 android:layout_height="fill_parent"
-                android:layout_margin="2dp"
-                android:layout_gravity="center_vertical|center_horizontal"
+                android:gravity="center"
                 android:text="@string/gauge_display_barcode_scan"
                 android:textAlignment="center"
+                android:textDirection="ltr"
                 android:textStyle="bold" />
 
-            <ccc.android.meterreader.gaugedisplaydialog.VerticalButton
+            <ccc.android.meterreader.viewelements.VerticalButton
                 android:id="@+id/showDisplayBT"
                 style="@style/ButtonBaseStyle"
                 android:layout_width="33dp"
                 android:layout_height="fill_parent"
-                android:layout_margin="2dp"
-                android:layout_gravity="center_vertical|center_horizontal"
+                android:gravity="center"
                 android:text="@string/gauge_display_show_display"
                 android:textAlignment="center"
+                android:textDirection="ltr"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -46,6 +47,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="0.48" >
+                <!-- android:background="#CED6DB"-->
 
  
                 <LinearLayout
@@ -59,11 +61,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/infoDisplayTitleLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="3dp"
+                            android:layout_marginLeft="2dp"
                             android:text="infoDisplayTitleLA"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/EPVI"
@@ -74,17 +77,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
 	                    <ImageView
-	                            android:id="@+id/imageView1"
+	                            android:id="@+id/newDeviceStep5darkIV"
 	                            android:scaleType="fitStart"
 	                            android:layout_width="100dp"
 	                            android:layout_height="100dp"
 	                            android:src="@drawable/standard_meter_image"
                             	android:visibility="gone" />
                     </LinearLayout>
-                    <TextView
+                    <com.neopixl.pixlui.components.textview.TextView
                         android:id="@+id/infoDisplayDescriptionLA"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
                         android:layout_marginRight="5dp"
                         android:text="infoDisplayDescriptionLA"
                         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -94,15 +98,16 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/infoLocationLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_gauge_location"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="#000000"
                             android:visibility="invisible" />
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/infoLocationLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -118,16 +123,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/infoLastReadLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_last_read"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="#000000"
                             android:visibility="invisible" />
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/infoLastReadLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -138,11 +144,10 @@
                             android:textColor="#000000"
                             android:visibility="invisible" />
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/infoLastReadUnitLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:text="infoLastReadUnitLA"
                             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -155,16 +160,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/infoLastReadDateLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_gauge_date"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="#000000"
                             android:visibility="invisible" />
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/infoLastReadDateLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -218,11 +224,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/gaugeDisplayTitleLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="3dp"
+                        android:layout_marginLeft="2dp"
                             android:maxLines="1"
                             android:text="gaugeDisplayTitleLA"
                             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -232,11 +239,12 @@
 
                     </LinearLayout>
 
-                    <TextView
+                    <com.neopixl.pixlui.components.textview.TextView
                         android:id="@+id/gaugeDisplayDescriptionLA"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
+                        android:layout_marginLeft="2dp"
                         android:maxLines="1"
                         android:text="gaugeDisplayDescriptionLA"
                         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -247,16 +255,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
 
-                        <TextView
-                            android:id="@+id/TextView01"
+                        <com.neopixl.pixlui.components.textview.TextView
+                            android:id="@+id/newDeviceStep4DecimalLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_gauge_location"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#000000"
                             android:visibility="invisible" />
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/gaugeDisplayLocationLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -273,16 +282,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/gaugeDisplayLastRead"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_last_read"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#000000"
                             android:visibility="invisible" />
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/lastReadLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -294,11 +304,10 @@
                             android:textColor="#000000"
                             android:visibility="invisible" />
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/lastReadUnitLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:maxLines="1"
                             android:text="lastReadUnitLA"
@@ -306,7 +315,7 @@
                             android:textColor="#000000"
                             android:visibility="invisible" />
 
-                        <TextView
+                        <com.neopixl.pixlui.components.textview.TextView
                             android:id="@+id/lastReadDateLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -319,8 +328,10 @@
                             android:visibility="invisible" />
                     </LinearLayout>
                     <LinearLayout
+	                     android:id="@+id/numPickerBackgroundLL"
 	                     android:layout_width="wrap_content"
 	                     android:layout_height="wrap_content"
+	                     android:layout_gravity="center_horizontal"
 	                     android:gravity="center"
 	                     android:orientation="vertical" >
 	                    <LinearLayout
@@ -328,13 +339,13 @@
 	                        android:layout_width="wrap_content"
 	                        android:layout_height="wrap_content"
 	                        android:layout_gravity="center_horizontal"
+	                     	android:background="@drawable/rectbackgreen"
 	                        android:layout_marginTop="10dp"
-	                        android:background="@drawable/rectbackgreen"
 	                        android:gravity="center"
 	                        android:orientation="horizontal"
 	                        android:visibility="invisible" >
 	
-	                        <TextView
+	                        <com.neopixl.pixlui.components.textview.TextView
 	                            android:id="@+id/point1"
 	                            android:layout_width="wrap_content"
 	                            android:layout_height="wrap_content"
@@ -343,7 +354,7 @@
 	                            android:textSize="32sp"
 	                            android:visibility="invisible" />
 	
-	                        <!-- <TextView
+	                        <!-- <com.neopixl.pixlui.components.textview.TextView
 	                            android:id="@+id/displayUnitLA"
 	                            android:layout_width="wrap_content"
 	                            android:layout_height="wrap_content"
@@ -354,7 +365,7 @@
 	                            android:textSize="22sp"
 	                            android:visibility="invisible" />-->
 	                    </LinearLayout>
-	                    <TextView
+	                    <com.neopixl.pixlui.components.textview.TextView
 	                           android:id="@+id/unitDisplayLA"
 	                           android:layout_width="wrap_content"
 	                           android:layout_height="wrap_content"
@@ -365,16 +376,13 @@
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="top|bottom|right|start"
-                        android:gravity="right"
+                        android:gravity="top|left|right"
                         android:orientation="vertical" >
 
-                        <LinearLayout
+                        <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|right"
-                            android:layout_marginTop="10dp"
-                            android:gravity="center_horizontal"
+                            android:layout_gravity="bottom"
                             android:orientation="horizontal" >
 
                             <Button
@@ -382,23 +390,21 @@
                                 style="@style/ButtonBaseStyle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="left|center_vertical"
-                                android:layout_margin="5dp"
-                                android:padding="@dimen/activity_horizontal_margin"
                                 android:text="@string/common_cancel"
+			                    android:layout_alignParentLeft="true"
+                            	android:layout_marginLeft="5dp"
                                 android:visibility="invisible" />
 
                             <Button
                                 android:id="@+id/saveReadingBT"
-                                style="@style/ButtonWithMargins"
+                                style="@style/ButtonBaseStyle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="right|center_vertical"
-                                android:layout_margin="5dp"
-                                android:padding="@dimen/activity_horizontal_margin"
                                 android:text="@string/common_confirm"
+			                    android:layout_alignParentRight="true"
+                            	android:layout_marginRight="5dp"
                                 android:visibility="invisible" />
-                        </LinearLayout>
+                        </RelativeLayout>
                     </LinearLayout>
 
                     <EditText
@@ -482,7 +488,7 @@
 			                        android:layout_height="0dp"
 			                        android:orientation="vertical"
 			                        android:background="#00000000"
-			                        android:layout_weight="3" />
+			                        android:layout_weight="2" />
 	                            <LinearLayout
 		                            android:id="@+id/displayPreviewOuttakeLL"
 		                            android:layout_width="match_parent"
@@ -498,10 +504,12 @@
 			                        android:orientation="vertical"
 			                        android:background="#00000000"
 			                        android:gravity="center"
-			                        android:layout_weight="7">
+			                        android:layout_weight="8">
 			                        <LinearLayout
+					                    android:id="@+id/readerNumPickeBackgroundLL"
 				                        android:layout_width="wrap_content"
 				                        android:layout_height="wrap_content"
+					                    android:background="@drawable/meter9patch"
 	                     				android:gravity="center"
 					                    android:orientation="vertical" >
 								        <LinearLayout
@@ -509,13 +517,12 @@
 					                        android:layout_width="wrap_content"
 					                        android:layout_height="wrap_content"
 					                        android:layout_gravity="center_horizontal"
-					                        android:layout_marginTop="10dp"
-					                        android:background="@drawable/rectbackgreen"
+					                    	android:background="@drawable/rectbackblack"
 					                        android:gravity="center"
 					                        android:orientation="horizontal"
 					                        android:visibility="visible" >
 					
-					                        <TextView
+					                        <com.neopixl.pixlui.components.textview.TextView
 					                            android:id="@+id/point2"
 					                            android:layout_width="wrap_content"
 					                            android:layout_height="wrap_content"
@@ -524,13 +531,19 @@
 					                            android:textSize="32sp"
 					                            android:visibility="visible" />
 					                    </LinearLayout>
-					                    <TextView
+					                    <com.neopixl.pixlui.components.textview.TextView
 					                            android:id="@+id/unitReaderLA"
 					                            android:layout_width="wrap_content"
 					                            android:layout_height="wrap_content"
 	                           					android:textAlignment="center"
 					                            android:textAppearance="?android:attr/textAppearanceMedium"
 					                            android:visibility="visible" />
+					                    <ImageView
+			                                    android:id="@+id/anchorReaderImg"
+			                                    android:layout_width="wrap_content"
+			                                    android:layout_height="wrap_content"
+			                                    android:src="@drawable/meteranchor"
+			                                    android:layout_gravity="bottom|center_horizontal" />"
 				                    </LinearLayout>
 				                    <RelativeLayout
 				                        android:layout_width="wrap_content"
@@ -543,6 +556,7 @@
 			                                android:layout_height="wrap_content"
 			                                android:layout_gravity="left"
 			                                android:layout_alignParentLeft="true"
+			                                android:layout_marginLeft="5dp"
 			                                android:text="@string/abort_scan" />
 				                        <Button
 			                                android:id="@+id/confirmReaderBT"
@@ -550,6 +564,7 @@
 			                                android:layout_width="wrap_content"
 			                                android:layout_height="wrap_content"
 			                                android:layout_gravity="right"
+			                                android:layout_marginRight="5dp"
 			                                android:layout_alignParentRight="true"
 			                                android:text="@string/common_confirm" />
 			                        </RelativeLayout>
@@ -557,7 +572,7 @@
                             </LinearLayout>
                         </FrameLayout>
 <!-- change visibility and weight for debug! and weightsum -->
-                            <TextView
+                            <com.neopixl.pixlui.components.textview.TextView
                                 android:id="@+id/debugDigitLA"
                                 android:layout_width="fill_parent"
                                 android:layout_height="0dp"
@@ -589,15 +604,15 @@
                 
             </ViewFlipper>
 
-            <ccc.android.meterreader.gaugedisplaydialog.VerticalButton
+            <ccc.android.meterreader.viewelements.VerticalButton
                 android:id="@+id/scanMeterBT"
                 style="@style/ButtonBaseStyle"
                 android:layout_width="33dp"
                 android:layout_height="fill_parent"
-                android:layout_margin="2dp"
-                android:layout_gravity="center_vertical|center_horizontal"
+                android:gravity="center"
                 android:text="@string/gauge_display_meter_scan"
                 android:textAlignment="center"
+                android:textDirection="ltr"
                 android:textStyle="bold" />
         </LinearLayout>
 

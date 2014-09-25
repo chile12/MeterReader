@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
@@ -15,6 +16,31 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
 
+    </style>
+    
+    <style name="BaseTextStyle" parent="AppTheme">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="SubTitleStyle" parent="BaseTextStyle">
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+    
+    <style name="TextStyle" parent="BaseTextStyle">
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:textColor">@color/Gray</item>
+    </style>
+    
+    <style name="TitleStyle" parent="BaseTextStyle">
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/EPVI</item>
+        <item name="android:textStyle">bold</item>
     </style>
     
     <style name="ButtonBaseStyle" parent="AppTheme">

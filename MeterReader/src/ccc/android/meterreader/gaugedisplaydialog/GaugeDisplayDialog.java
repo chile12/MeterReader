@@ -1,7 +1,6 @@
 package ccc.android.meterreader.gaugedisplaydialog;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -16,12 +15,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Point;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.*;
@@ -40,14 +34,15 @@ import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.ViewFlipper;
 
-import ccc.android.meterdata.*;
 import ccc.android.meterreader.MainActivity;
 import ccc.android.meterreader.R;
+import ccc.android.meterreader.camerafragments.BarcodeFragment;
+import ccc.android.meterreader.camerafragments.DigitReaderFragment;
 import ccc.android.meterreader.helpfuls.FinishReceiver;
 import ccc.android.meterreader.internaldata.InternalDialogDisplayData;
-import ccc.android.meterreader.qrreading.BarcodeFragment;
-import ccc.android.meterreader.qrreading.DigitReaderFragment;
 import ccc.android.meterreader.statics.Statics;
+import ccc.android.meterreader.viewelements.CccNumberPicker;
+import ccc.android.meterreader.viewelements.VerticalButton;
 
 public class GaugeDisplayDialog extends Activity implements android.view.View.OnClickListener 
 {
@@ -150,7 +145,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		this.findViewById(R.id.closeDiaBT).setOnClickListener(closeDisplayView);	
     	this.registerReceiver(finishRec, finishFilter);
 		numPickerLL = (LinearLayout)this.findViewById(R.id.numPickerLL);	
-		numPickerReaderLL = (LinearLayout)this.findViewById(R.id.readerNumPickerLL);	
+		numPickerReaderLL = (LinearLayout)this.findViewById(R.id.readerNumPickerLL);
 		gaugeDisplayLL = (RelativeLayout)this.findViewById(R.id.gaugeDisplayLL);	
 		infoDisplayLL = (LinearLayout)this.findViewById(R.id.infoDisplayLL);	
 
@@ -259,7 +254,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	    	{
 	    		this.findViewById(R.id.closeInfoBT).setOnClickListener(closeInfoToMain);	
 	    	}
-	    	else if(intent.getAction() == Statics.ANDROID_INTENT_ACTION_GID)
+	    	else if(intent.getAction() == Statics.ANDROID_INTENT_ACTION_BAR)
 	    	{
 	    		this.findViewById(R.id.closeInfoBT).setOnClickListener(closeInfoToQr);	
 	    	}
@@ -522,7 +517,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			}
 			else
 			{
-				digitReaderFragment = new ccc.android.meterreader.qrreading.DigitReaderFragment();
+				digitReaderFragment = new ccc.android.meterreader.camerafragments.DigitReaderFragment();
 				digitReaderFragment.setReaderPickers(readerPickers);
 				fragmentTransaction.add(R.id.digitPreviewLL, digitReaderFragment, "digitReader");
 			}
@@ -543,7 +538,8 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			}
 			else
 			{
-				barcodePreviewFragment = new ccc.android.meterreader.qrreading.BarcodeFragment();
+				barcodePreviewFragment = new ccc.android.meterreader.camerafragments.BarcodeFragment();
+				barcodePreviewFragment.setTargetIntent(Statics.ANDROID_INTENT_ACTION_BAR);
 				fragmentTransaction.add(R.id.qrCodePreviewLL, barcodePreviewFragment, "cameraPreview");
 			}
 			fragmentTransaction.commit();
@@ -651,7 +647,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
     	NumPickerTextWatcher.SetActivateTimer(500);
 	}
 
-	private LayoutParams configureNumberPicker(CccNumberPicker npN, int pos) 
+	private LayoutParams configureNumberPicker(CccNumberPicker npN, final int pos) 
 	{
 		npN.setMaxValue(9);
 		npN.setMinValue(0);
@@ -680,6 +676,11 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			public void onFocusChange(View arg0, boolean hasFocus) {
 				if(hasFocus)
 					hiddenEditText.requestFocusFromTouch();
+				else
+					if(pos >= gaugeData.getDigitCount() - gaugeData.getDecimalPlaces())
+						((EditText)arg0).setTextColor(Color.RED);
+					else
+						((EditText)arg0).setTextColor(Color.BLACK);
 			}
 		});
 		int npWidth = Statics.DISPLAY_WIDTH / 15;

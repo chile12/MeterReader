@@ -2,6 +2,8 @@
 <resources>
     <string name="common_cancel">Abbrechen</string>
     <string name="common_confirm">Übernehmen</string>
+    <string name="common_next">Weiter</string>
+    <string name="common_back">Zurück</string>
     
     <string name="qr_not_recognized">Zähler-ID konnte nicht identifiziert werden, bitte vesuchen Sie es erneut.</string>
      <string name="main_display_size_warning">Die Auflösung Ihres Bildschirms muss mindestens 540x960 betragen.</string>
@@ -21,6 +23,7 @@
     <string name="main_button_panel_configurations">Einstellungen</string>
     <string name="main_button_panel_qr_scanner">Zähler direkt erfassen</string>
     <string name="main_button_panel_close">Beenden</string>
+    <string name="main_button_panel_new_device">Zähler registrieren/wechseln</string>
     
     <string name="app_name">EPVI</string>
     <string name="action_settings">Settings</string>
@@ -47,6 +50,28 @@
     <string name="connection_dia_no_endpoint">bitte geben Sie eine Adresse ein</string>
     <string name="connection_dia_malformed_url">Falsches Format! Die uri sollte mit \'http://\' beginnen und mit: \'/MobileGaugeReading\' enden.</string>
     
+    <string name="new_device_title">Zählerwechsel</string>
+    <string name="new_device_step1_subtitle">Schritt 1: Abbildung</string>
+    <string name="new_device_step2_subtitle">Schritt 2: Name</string>
+    <string name="new_device_step3_subtitle">Schritt 3: Hersteller</string>
+    <string name="new_device_step4_subtitle">Schritt 4: Ziffern</string>
+    <string name="new_device_step5_subtitle">Schritt 5: Kontrast</string>
+    <string name="new_device_step6_subtitle">Schritt 6: Standort</string>
+    <string name="new_device_step7_subtitle">Schritt 7: Beschreibung</string>
+    <string name="new_device_step8_subtitle">Zusammenfassung</string>
+    <string name="new_device_step1_info">Fotografieren Sie den neuen Zähler</string>
+    <string name="new_device_step2_info">Tragen SIe einen Namen ein</string>
+    <string name="new_device_step3_info">Geben Sie Hersteller und Seriennummer an</string>
+    <string name="new_device_step3_manuf">Hersteller:</string>
+    <string name="new_device_step3_serial">Seriennummer:</string>
+    <string name="new_device_step4_info">Geben Sie die Anzahl der sichtbaren Ziffern an</string>
+    <string name="new_device_step4_digit">Wählen sie die Anzahl aller angezeigten Ziffern (inkl. Nachkommastellen)</string>
+    <string name="new_device_step4_decimal">Wählen sie die Anzahl der sichtbaren Nachkommastellen</string>
+    <string name="new_device_step5_info">In welchem Kontrast stehen Ziffern und Hintergrund</string>
+    <string name="new_device_step6_info">Tragen Sie eine Standortbeschreibung ein (optional)</string>
+    <string name="new_device_step6_location">Lagebeschreibung:</string>
+    <string name="new_device_step7_info">Geben Sie eine allgemeine Beschreibung an (optional)</string>
+    <string name="new_device_step7_description">Beschreibung:</string>
     
     <string name="action_new_reading" formatted="false">Ein neuer Zählerstand von %s wurde am %s aufgenommen.</string>
     

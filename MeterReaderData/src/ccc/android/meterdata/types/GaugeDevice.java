@@ -1,8 +1,6 @@
 package ccc.android.meterdata.types;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.codehaus.jackson.annotate.*;
 
@@ -12,6 +10,8 @@ import ccc.android.meterdata.listtypes.GaugeDeviceDigitList;
 public class GaugeDevice implements IGenericMember
 {
 	private int gaugeDeviceId;
+	private String deviceName;
+	private int gaugeId;
 	private Date utcInstallation;
 	private String manufacturer;
 	private float valueOffset;
@@ -111,5 +111,21 @@ public class GaugeDevice implements IGenericMember
 	@JsonProperty("Background")
 	public void setBackGround(int backGroundShade) {
 		this.backGroundShade = backGroundShade;
+	}
+	public int getGaugeId()
+	{
+		return gaugeId;
+	}
+	public void setGaugeId(int gaugeId)
+	{
+		this.gaugeId = gaugeId;
+	}
+	public String getDeviceName()
+	{
+		return deviceName;
+	}
+	public void setDeviceName(String deviceName)
+	{
+		this.deviceName = deviceName;
 	}
 }

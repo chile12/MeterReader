@@ -10,17 +10,19 @@ import ccc.android.meterdata.enums.GaugeMedium;
 import ccc.android.meterdata.types.Gauge;
 import ccc.android.meterdata.types.Reading;
 import ccc.android.meterdata.types.Session;
+import ccc.android.meterreader.camerafragments.DigitReaderFragment;
 import ccc.android.meterreader.datamanagement.DataContext;
 import ccc.android.meterreader.datamanagement.DataContextManager;
 import ccc.android.meterreader.datamanagement.IDataContextEventListener;
+import ccc.android.meterreader.deviceregistration.DeviceRegistrationFragment;
 import ccc.android.meterreader.exceptions.UserNotInitializedException;
 import ccc.android.meterreader.gaugedisplaydialog.GaugeDisplayDialog;
-import ccc.android.meterreader.gaugedisplaydialog.VerticalButton;
 import ccc.android.meterreader.internaldata.InternalDialogDisplayData;
 import ccc.android.meterreader.statics.Statics;
 import ccc.android.meterreader.statics.Statics.SyncState;
 import ccc.android.meterreader.viewelements.ConnectionConfigDialog;
 import ccc.android.meterreader.viewelements.GaugeListViewFragment;
+import ccc.android.meterreader.viewelements.VerticalButton;
 import android.os.Bundle;
 import android.app.*;
 import android.content.BroadcastReceiver;
@@ -51,10 +53,12 @@ public class MainActivity extends Activity implements IDataContextEventListener
     private DataContextManager manager;
     private GestureDetector gestureDetector;
     private OnTouchListener gestureListener ;
-    private List<AlertDialog> syncDias = new ArrayList<AlertDialog>();;
+    private List<AlertDialog> syncDias = new ArrayList<AlertDialog>();
+    private DeviceRegistrationFragment newDeviceFragment;
     
-	private IntentFilter intentFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_GID);
-	private IntentFilter newReadFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_NEW);
+	private IntentFilter barcodeIntentFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_BAR);
+	private IntentFilter barcodeForRegFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_BFR);
+	private IntentFilter newReadIntentFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_NEW);
     
 	static
 	  {
@@ -87,6 +91,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
         findViewById(R.id.connectionConfigBT).setOnClickListener(openConnectionConfigListener);
         findViewById(R.id.ScanGaugeBT).setOnClickListener(qrPreviewListener);
         findViewById(R.id.closeMainBT).setOnClickListener(finishListener);
+        findViewById(R.id.newDeviceBT).setOnClickListener(newDeviceListener);
         OptionBT.setOnClickListener(optionBT_listener);
         OptionsLL.setVisibility(View.GONE);
         setOnTouchListeners(VF);
@@ -119,8 +124,9 @@ public class MainActivity extends Activity implements IDataContextEventListener
     {
     	Statics.startPing();
     	super.onResume();
-    	this.registerReceiver(BarcodeReceiver, intentFilter);
-    	this.registerReceiver(newReadReceiver, newReadFilter);
+    	this.registerReceiver(BarcodeReceiver, barcodeIntentFilter);
+    	this.registerReceiver(BarcodeReceiver, barcodeForRegFilter);
+    	this.registerReceiver(newReadReceiver, newReadIntentFilter);
     	if(manager.getUnDoStack().size() > 0)
     		((TextView) findViewById(R.id.mainTickerLA)).setText(manager.getUnDoStack().peek().GetActionText());
     	else
@@ -281,7 +287,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
     	}
 	}
     
-    private void setSessionButtonView ()
+    private void setSessionButtonView()
     {
         findViewById(R.id.newSessionBT).setVisibility(View.GONE);
         findViewById(R.id.loadSessionBT).setVisibility(View.GONE);
@@ -321,12 +327,16 @@ public class MainActivity extends Activity implements IDataContextEventListener
             //extract our message from intent
             String barcode = intent.getStringExtra("barcode");
             
-        	if(barcode != null && Pattern.matches(Statics.BARCODE_PATTERN, barcode))
+            if(barcode != null && intent.getAction() == Statics.ANDROID_INTENT_ACTION_BFR)
+            {
+            	
+            }
+        	if(barcode != null && intent.getAction() == Statics.ANDROID_INTENT_ACTION_BAR)
         	{
         		Pattern gaugeIdPattern = Pattern.compile(Statics.BARCODE_GAUGEID);
         		Matcher m = gaugeIdPattern.matcher(barcode);
         		m.find();
-        		int gaugeId = Integer.parseInt(m.group());//resultString.subSequence(5, 10).toString());
+        		int gaugeId = Integer.parseInt(m.group());
         		Gauge ga = manager.getData().getGauges().getById(gaugeId);
         		Reading lastRead = manager.getData().getReadings().getLastReadingById(gaugeId);
         		if(ga != null)
@@ -397,6 +407,15 @@ public class MainActivity extends Activity implements IDataContextEventListener
         	return;
         }
     };
+    
+    private OnClickListener newDeviceListener = new OnClickListener() {
+        public void onClick(View v) {
+        	getNewDeviceFragment();
+        	VF.setDisplayedChild(getChildIndexById(v.getId()));
+    		closeOptionsPanelLayout();
+        }
+    };
+    
     private OnTouchListener mainFlipper_listener = new OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -405,7 +424,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
         }
     };
     
-	private void openOptionsPanelLayout() 
+	public void openOptionsPanelLayout() 
 	{
 		if(OptionBT.getVisibility() == View.VISIBLE)
     	{
@@ -577,6 +596,36 @@ public class MainActivity extends Activity implements IDataContextEventListener
 			syncDias.get(0).dismiss();
 			syncDias.remove(0);
 		}
+	}
+	
+	private void getNewDeviceFragment() {
+			FragmentManager fragmentManager = this.getFragmentManager();
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			this.newDeviceFragment = (DeviceRegistrationFragment) fragmentManager.findFragmentByTag("newDeviceFragment");
+			
+			if(newDeviceFragment != null)
+			{
+				fragmentTransaction.show(newDeviceFragment);
+			}
+			else
+			{
+				newDeviceFragment = new DeviceRegistrationFragment();
+				newDeviceFragment.setContainerView((LinearLayout) findViewById(R.id.deviceRegistrationFragmentLL));
+				fragmentTransaction.add(R.id.deviceRegistrationFragmentLL, newDeviceFragment, "newDeviceFragment");
+			}
+			fragmentTransaction.commit();
+	}
+	
+	public void hideNewDeviceFragment() 
+	{
+			FragmentManager fragmentManager = getFragmentManager();
+	        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+	        newDeviceFragment = (DeviceRegistrationFragment) fragmentManager.findFragmentByTag("newDeviceFragment");
+	        if (newDeviceFragment != null) {
+				fragmentTransaction.remove(newDeviceFragment);
+				fragmentTransaction.commit();
+				newDeviceFragment = null;
+			}
 	}
 	
     private BroadcastReceiver newReadReceiver = new BroadcastReceiver() {

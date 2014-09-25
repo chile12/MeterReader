@@ -13,10 +13,10 @@ import ccc.android.meterdata.types.ServerError;
 public class InternalGaugeDeviceList extends ccc.android.meterdata.internaltypes.InternalGaugeDeviceList implements ICallbackList
 {
 	private IMeterDataContainer parentManager = null;
-	public InternalGaugeDeviceList()
-	{
-		super();
-		}
+//	public InternalGaugeDeviceList()
+//	{
+//		super();
+//		}
 	public InternalGaugeDeviceList(IMeterDataContainer manager)
 	{
 		super();

@@ -2,6 +2,8 @@
 <resources>
     <string name="common_cancel">Cancel</string>
     <string name="common_confirm">Confirm</string>
+    <string name="common_next">Next</string>
+    <string name="common_back">Back</string>
     
     <string name="qr_not_recognized">Gauge-Id was not recognized. Please check the provided QR-code and try again.</string>
     <string name="main_display_size_warning">The display-size of your device is too small. Please use at least a 540x960 display.</string>
@@ -21,6 +23,7 @@
     <string name="main_button_panel_configurations">configurations</string>
     <string name="main_button_panel_qr_scanner">collect new reading</string>
     <string name="main_button_panel_close">close</string>
+    <string name="main_button_panel_new_device">register new device</string>
         
     <string name="app_name">EPVI</string>
     <string name="action_settings">Settings</string>
@@ -52,6 +55,31 @@
     <string name="connection_dia_confirm">confirm</string>
     <string name="connection_dia_no_endpoint">please enter a valid endpoint address</string>
     <string name="connection_dia_malformed_url">Wrong uri format! Please start with \'http://\' and end with \'/MobileGaugeReading\'</string>
+    
+    <string name="new_device_title">Device Registration</string>
+    <string name="new_device_step1_subtitle">Step 1: Picture</string>
+    <string name="new_device_step2_subtitle">Step 2: Name</string>
+    <string name="new_device_step3_subtitle">Step 3: Manufacturer</string>
+    <string name="new_device_step4_subtitle">Step 4: Digits</string>
+    <string name="new_device_step5_subtitle">Step 5: Contrast</string>
+    <string name="new_device_step6_subtitle">Step 6: Location</string>
+    <string name="new_device_step7_subtitle">Step 7: Description</string>
+    <string name="new_device_step8_subtitle">Summary</string>
+    <string name="new_device_step1_info">Take a picture</string>
+    <string name="new_device_step2_info">Enter a name for the new device</string>
+    <string name="new_device_step3_info">Enter manufacturer and serial no.</string>
+    <string name="new_device_step3_manuf">Manufacturer:</string>
+    <string name="new_device_step3_serial">Serial No.:</string>
+    <string name="new_device_step4_info">Provide number of displayed digits</string>
+    <string name="new_device_step4_digit">select the number of all digits displayed (including decimal places)</string>
+    <string name="new_device_step4_decimal">select the number of decimal places displayed</string>
+    <string name="new_device_step5_info">Select digit-background contrast</string>
+    <string name="new_device_step5_dark">bright digits on a dark background</string>
+    <string name="new_device_step5_bright">dark digits on a bright background</string>
+    <string name="new_device_step6_info">Enter a location-description (optional)</string>
+    <string name="new_device_step6_location">Location:</string>
+    <string name="new_device_step7_info">Enter a general description (optional)</string>
+    <string name="new_device_step7_description">Description:</string>
 
     <string name="epvi_options_show_options">groups and filter</string>
     <string name="epvi_options_show_list">update list</string>

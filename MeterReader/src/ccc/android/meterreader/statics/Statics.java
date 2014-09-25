@@ -76,7 +76,8 @@ public class Statics
 	public static final String EPVI_LIST_ITEM = "epviListItem";
 	public static final String ANDROID_INTENT_ACTION_GDR = "android.intent.action.GaugeDisplayRequest";
 	public static final String ANDROID_INTENT_ACTION_NEW = "android.intent.action.NewReading";
-	public static final String ANDROID_INTENT_ACTION_GID = "android.intent.action.GaugeId";
+	public static final String ANDROID_INTENT_ACTION_BAR = "android.intent.action.Barcode";
+	public static final String ANDROID_INTENT_ACTION_BFR = "android.intent.action.BarcodeForReg";
 	public static final String ANDROID_INTENT_ACTION_FIN = "android.intent.action.Finish";
 	public static final String BARCODE_GAUGEID = "[0-9]+(?=D)";
 	public static final String BARCODE_PATTERN = "ID[A-Z]{3}[0-9]{5}D[0-9]{6}";

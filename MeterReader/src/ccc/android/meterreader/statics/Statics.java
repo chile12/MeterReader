@@ -3,6 +3,7 @@ package ccc.android.meterreader.statics;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -450,6 +451,22 @@ public class Statics
 	            	v.setVisibility(toState);
 	        }
     	}
+    }
+    
+    public static <T extends View> List<T> GetSubElementsOfType(View layout, Class<T> t) 
+    {
+    	List<T> list = new ArrayList<T>();
+    	if(layout instanceof ViewGroup)
+    	{
+	        for (int i = 0; i < ((ViewGroup)layout).getChildCount(); i++) {
+	            View v = ((ViewGroup)layout).getChildAt(i);
+	        	if(v instanceof ViewGroup)
+	        		list.addAll(GetSubElementsOfType(v, t));
+	        	else if(t.isAssignableFrom(v.getClass()))
+	        		list.add((T) v);
+	        }
+    	}
+    	return list;
     }
     
     public static Date getUtcTime()

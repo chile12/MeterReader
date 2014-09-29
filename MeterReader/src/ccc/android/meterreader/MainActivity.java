@@ -3,6 +3,7 @@ package ccc.android.meterreader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -206,13 +207,12 @@ public class MainActivity extends Activity implements IDataContextEventListener
     }
 
     
-	public void openGaugeDisplayDialog() 
+	public void openGaugeDisplayDialog(String androidIntentAction) 
 	{
 	    Intent startGaugeDisplay = new Intent(MainActivity.this, GaugeDisplayDialog.class);
 	    startGaugeDisplay.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-	    startGaugeDisplay.putExtra("requestCode", Statics.GAUGE_DISPLAY_REQUEST_CODE); 
+	    startGaugeDisplay.putExtra("requestCode", androidIntentAction); 
 	    startActivity(startGaugeDisplay);
-	    
 	}
     
 	public void openGaugeDisplayDialog(Gauge st, Reading rd) 
@@ -221,10 +221,8 @@ public class MainActivity extends Activity implements IDataContextEventListener
 	    InternalDialogDisplayData data = new InternalDialogDisplayData(st, rd);
 	    startGaugeDisplay.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 	    startGaugeDisplay.putExtra("data", data);
-	    startGaugeDisplay.putExtra("requestCode", Statics.GAUGE_DISPLAY_REQUEST_CODE); 
+	    startGaugeDisplay.putExtra("requestCode", Statics.ANDROID_INTENT_ACTION_GDR); 
 	    startActivity(startGaugeDisplay);
-		Intent sendDataIntent = new Intent(Statics.ANDROID_INTENT_ACTION_GDR).putExtra("data", data);
-		this.sendBroadcast(sendDataIntent);
 	}
     
     private void setOnTouchListeners(ViewGroup init)
@@ -248,7 +246,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
         	
         	//TODO rückgängig
         	if(manager.getData().isCompletelyLoaded())
-        		openGaugeDisplayDialog();
+        		openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_BAR);
         	else
         		Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_sync_not_done));
         }
@@ -326,19 +324,46 @@ public class MainActivity extends Activity implements IDataContextEventListener
         public void onReceive(Context context, Intent intent) {
             //extract our message from intent
             String barcode = intent.getStringExtra("barcode");
-            
+
+        	//TODO remove pattern
+    		Pattern gaugeIdPattern = Pattern.compile(Statics.BARCODE_GAUGEID);
+    		Matcher m = gaugeIdPattern.matcher(barcode);
+    		m.find();
+    		int gaugeId = Integer.parseInt(m.group());
+    		Gauge ga = manager.getData().getGauges().getById(gaugeId);
+    		Reading lastRead = manager.getData().getReadings().getLastReadingById(gaugeId);
+    		
             if(barcode != null && intent.getAction() == Statics.ANDROID_INTENT_ACTION_BFR)
             {
-            	
+        		if(ga == null)
+        		{
+        			if(newDeviceFragment != null) //registration in progress
+        			{
+        				newDeviceFragment.setBarcode(barcode, gaugeId);
+        			}
+        			else
+        				return;
+        			
+        		}
+        		else
+        		{
+        			if(lastRead != null && Statics.getDateDiff(lastRead.getUtcTo(), new Date(), TimeUnit.MINUTES) < 16)
+        			{
+        				newDeviceFragment.setLastRead(lastRead);
+        				return;
+        			}
+        			else
+        			{
+        				if(ga.getGaugeDevice() != null)
+        				{
+	        				Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_step0_barcode_take_last_read));
+	        				openGaugeDisplayDialog(ga, lastRead);
+        				}
+        			}
+        		}
             }
-        	if(barcode != null && intent.getAction() == Statics.ANDROID_INTENT_ACTION_BAR)
+            else if(barcode != null && intent.getAction() == Statics.ANDROID_INTENT_ACTION_BAR)
         	{
-        		Pattern gaugeIdPattern = Pattern.compile(Statics.BARCODE_GAUGEID);
-        		Matcher m = gaugeIdPattern.matcher(barcode);
-        		m.find();
-        		int gaugeId = Integer.parseInt(m.group());
-        		Gauge ga = manager.getData().getGauges().getById(gaugeId);
-        		Reading lastRead = manager.getData().getReadings().getLastReadingById(gaugeId);
         		if(ga != null)
         			openGaugeDisplayDialog(ga, lastRead);
         	}
@@ -599,21 +624,21 @@ public class MainActivity extends Activity implements IDataContextEventListener
 	}
 	
 	private void getNewDeviceFragment() {
-			FragmentManager fragmentManager = this.getFragmentManager();
-			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			this.newDeviceFragment = (DeviceRegistrationFragment) fragmentManager.findFragmentByTag("newDeviceFragment");
-			
-			if(newDeviceFragment != null)
-			{
-				fragmentTransaction.show(newDeviceFragment);
-			}
-			else
-			{
-				newDeviceFragment = new DeviceRegistrationFragment();
-				newDeviceFragment.setContainerView((LinearLayout) findViewById(R.id.deviceRegistrationFragmentLL));
-				fragmentTransaction.add(R.id.deviceRegistrationFragmentLL, newDeviceFragment, "newDeviceFragment");
-			}
-			fragmentTransaction.commit();
+		FragmentManager fragmentManager = this.getFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		this.newDeviceFragment = (DeviceRegistrationFragment) fragmentManager.findFragmentByTag("newDeviceFragment");
+		
+		if(newDeviceFragment != null)
+		{
+			fragmentTransaction.show(newDeviceFragment);
+		}
+		else
+		{
+			newDeviceFragment = new DeviceRegistrationFragment();
+			newDeviceFragment.setContainerView((LinearLayout) findViewById(R.id.deviceRegistrationFragmentLL));
+			fragmentTransaction.add(R.id.deviceRegistrationFragmentLL, newDeviceFragment, "newDeviceFragment");
+		}
+		fragmentTransaction.commit();
 	}
 	
 	public void hideNewDeviceFragment() 
@@ -641,6 +666,11 @@ public class MainActivity extends Activity implements IDataContextEventListener
         	read.setUtcFrom(newReadData.getUtcTo());
         	read.setValType(1);
         	manager.InsertNewRead(read);
+        	
+        	if(newDeviceFragment != null) //registration in progress
+        	{
+        		newDeviceFragment.setLastRead(read);
+        	}
         }
     };
 

@@ -57,6 +57,7 @@
     <string name="connection_dia_malformed_url">Wrong uri format! Please start with \'http://\' and end with \'/MobileGaugeReading\'</string>
     
     <string name="new_device_title">Device Registration</string>
+    <string name="new_device_step0_subtitle">Select a gauge</string>
     <string name="new_device_step1_subtitle">Step 1: Picture</string>
     <string name="new_device_step2_subtitle">Step 2: Name</string>
     <string name="new_device_step3_subtitle">Step 3: Manufacturer</string>
@@ -65,7 +66,13 @@
     <string name="new_device_step6_subtitle">Step 6: Location</string>
     <string name="new_device_step7_subtitle">Step 7: Description</string>
     <string name="new_device_step8_subtitle">Summary</string>
-    <string name="new_device_step1_info">Take a picture</string>
+    <string name="new_device_step0_info">please note: In case of a whole new gauge, create a new gauge in the EPVI web application first. Than register the gauge-device with this application. Otherwise a device exchange is carried out.</string>
+    <string name="new_device_step0_spinner_prompt">choose a gauge:</string>
+    <string name="new_device_step0_barcode_info">alternatively: scan the qr- or barcode:</string>
+    <string name="new_device_step0_barcode_take_last_read">please take a last reading before exchanging the gauge devices</string>
+    <string name="new_device_step0_barcode_select_gauge">please select a gauge first</string>
+    <string name="new_device_step0_gauge_not_found">This gauge has not been registered yet! Please register a gauge via the EPVI web application before registering a gauge device.</string>
+    <string name="new_device_step1_info">Take a picture of the device</string>
     <string name="new_device_step2_info">Enter a name for the new device</string>
     <string name="new_device_step3_info">Enter manufacturer and serial no.</string>
     <string name="new_device_step3_manuf">Manufacturer:</string>
@@ -80,6 +87,8 @@
     <string name="new_device_step6_location">Location:</string>
     <string name="new_device_step7_info">Enter a general description (optional)</string>
     <string name="new_device_step7_description">Description:</string>
+    <string name="new_device_next_step_warning">Please enter or choose something before continuing.</string>
+    <string name="new_device_decimal_warning">You have to enter a greater digit number first.</string>
 
     <string name="epvi_options_show_options">groups and filter</string>
     <string name="epvi_options_show_list">update list</string>

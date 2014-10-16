@@ -14,7 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-public class UserAuthentificationDialog  extends Dialog implements android.view.View.OnClickListener, ICallBack
+public class UserAuthentificationDialog  extends Dialog implements android.view.View.OnClickListener
 {
 	private TextView logInTB;
 	private TextView passwordTB;
@@ -102,11 +102,5 @@ public class UserAuthentificationDialog  extends Dialog implements android.view.
 	}
 	public DialogCallbackListener getCallbackListener() {
 		return callbackListener;
-	}
-
-	@Override
-	public void callback(Object context) 
-	{
-		callbackListener.ResultCallback(context);
 	}
 }

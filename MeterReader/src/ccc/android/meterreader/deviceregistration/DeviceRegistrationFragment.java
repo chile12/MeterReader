@@ -41,6 +41,9 @@ public class DeviceRegistrationFragment extends DialogFragment
     private GaugeDevice device;
     private Gauge gauge;
     private Reading lastRead;
+    private Reading firstRead;
+    private boolean expectFirstRead = false;
+    private boolean isExchange = false;
     private String barcode;
 	private Map<Integer, Boolean> registrationSteps = new HashMap<Integer, Boolean>();
 	private LinearLayout mainLL;
@@ -69,6 +72,11 @@ public class DeviceRegistrationFragment extends DialogFragment
     }
     
     @Override
+	public void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+    }
+    
+    @Override
     public void onStart() {
     	super.onStart();
     }
@@ -76,13 +84,16 @@ public class DeviceRegistrationFragment extends DialogFragment
 	private void initializeDevice()
 	{
 		this.device = new GaugeDevice();
+		device.setGaugeId(gauge.getGaugeId());
+		device.setUtcInstallation(Statics.getUtcTime());
         registrationSteps.put(0, false);
         registrationSteps.put(1, true);
-        registrationSteps.put(2, false);
+        registrationSteps.put(2, true);
         registrationSteps.put(3, true);
         registrationSteps.put(4, false);
         registrationSteps.put(5, false);
         registrationSteps.put(6, true);
+        registrationSteps.put(7, true);
 	}
     
     @Override
@@ -172,19 +183,19 @@ public class DeviceRegistrationFragment extends DialogFragment
 			if(position == 0)
 				return;
 			gauge = ((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getGauges().getGaugeList().get(position-1);
-
-			
+	        initializeDevice();
+	        
 			//TODO
 			//new gauge
 			if(gauge.getGaugeDevice() == null)
 			{
-		        initializeDevice();
 		        initializeNumPickers(mainLL);
 			}
 			//divice exchange
 			else
 			{
-		        initializeDevice();
+				isExchange = true;
+				lastRead = ((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getReadings().getLastReadingById(gauge.getGaugeId());
 		        initializeNumPickers(mainLL);
 			}
 		}
@@ -210,12 +221,14 @@ public class DeviceRegistrationFragment extends DialogFragment
 					registrationSteps.put(flipper.getDisplayedChild(), true);
 					if(darkShadeRB == buttonView)
 					{
+						device.setBackGround(2);
 						isNotActive = false;
 						brightShadeRB.setChecked(false);
 						isNotActive = true;
 					}
 					else if (brightShadeRB == buttonView)
 					{
+						device.setBackGround(1);
 						isNotActive = false;
 						darkShadeRB.setChecked(false);
 						isNotActive = true;
@@ -242,12 +255,12 @@ public class DeviceRegistrationFragment extends DialogFragment
 		@Override
 		public void onValueChange(NumberPicker arg0, int oldVal, int newVal)
 		{
-			if(device.getDigitCount() > newVal+1)
-				device.setDecimalPlaces(newVal+1);
+			if(device.getDigitCount() > newVal)
+				device.setDecimalPlaces(newVal);
 			else
 			{
 				//TODO
-				Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_decimal_warning));
+				Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_decimal_warning), Statics.SHORT_DIALOG_DURATION);
 				arg0.setValue(0);
 			}
 		}
@@ -261,54 +274,53 @@ public class DeviceRegistrationFragment extends DialogFragment
         	for(int i =0; i < edits.size(); i++)
         	{
         			EditText et = edits.get(i);
-        			if(et.getText().length() == 0)
-        				continue;
-        			if(et.getId() == R.id.newDeviceStep2NameTB)
-        			{
-        				device.setDeviceName(et.getText().toString());
-        				registrationSteps.put(flipper.getDisplayedChild(), true);
-        			}
-        			else if(et.getId() == R.id.newDeviceStep3ManufTB)
-        			{
-        				device.setManufacturer(et.getText().toString());
-        			}
-        			else if(et.getId() == R.id.newDeviceStep3SerialTB)
-        			{
-        				device.setSerialNumber(et.getText().toString());
-        			}
-        			else if(et.getId() == R.id.newDeviceStep7DescriptionTB)
-        			{
-        				device.setComment(et.getText().toString());
-        			}
-        		
+        			fillNewDevice(et);
         	}
         	if(flipper.getDisplayedChild() == 0)
         	{
         		if(gauge == null)
         		{
-        			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_step0_barcode_select_gauge));
+        			Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_step0_barcode_select_gauge), Statics.SHORT_DIALOG_DURATION);
         			return;
         		}
-        		if(lastRead == null || Statics.getDateDiff(lastRead.getUtcTo(), new Date(), TimeUnit.MINUTES) < 16)
+        		if(isExchange)
         		{
-        			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_step0_barcode_take_last_read));
-        			((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(gauge, lastRead);
-        			return;
+        			if(lastRead == null || Statics.getDateDiff(lastRead.getUtcTo(), Statics.getUtcTime(), TimeUnit.MINUTES) > 15)
+        			{
+	        			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_take_last_read));
+	        			((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(gauge, lastRead);
+	        			return;
+        			}
+        		}
+        		else
+        		{
+        			expectFirstRead = true;
+        			if(barcode == null || barcode.trim() == "")
+        			{
+	        			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_take_last_read));
+	        			((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_BFR);
+	        			return;
+        			}
         		}
         		registrationSteps.put(flipper.getDisplayedChild(), true);
         	}
         	if(!registrationSteps.get(flipper.getDisplayedChild())) //not!
         	{
-        		Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_next_step_warning));
+        		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_next_step_warning));
         		return;
         	}
         	
         	if(flipper.getDisplayedChild() == 1)
         	{
-        		flipper.setDisplayedChild(flipper.getDisplayedChild()+1);
         		nameTB.requestFocus();
+        		//TODO workaround to step over DeviceName mask
+        		flipper.setDisplayedChild(flipper.getDisplayedChild()+1);
         	}
-        	else if(flipper.getDisplayedChild() < flipper.getChildCount()-2)
+        	if(flipper.getDisplayedChild() == 5)
+        	{
+        		((EditText) mainLL.findViewById(R.id.newDeviceStep7DescriptionTB)).requestFocus();
+        	}
+        	if(flipper.getDisplayedChild() < flipper.getChildCount()-2)
         	{
         		next.setVisibility(View.VISIBLE);
         		confirm.setVisibility(View.INVISIBLE);
@@ -323,14 +335,40 @@ public class DeviceRegistrationFragment extends DialogFragment
         }
     };
     
+	private void fillNewDevice(EditText et)
+	{
+		if(et.getText().length() == 0)
+			return;
+		if(et.getId() == R.id.newDeviceStep2NameTB)
+		{
+			device.setDeviceName(et.getText().toString());
+			registrationSteps.put(flipper.getDisplayedChild(), true);
+		}
+		else if(et.getId() == R.id.newDeviceStep3ManufTB)
+		{
+			device.setManufacturer(et.getText().toString());
+		}
+		else if(et.getId() == R.id.newDeviceStep3SerialTB)
+		{
+			device.setSerialNumber(et.getText().toString());
+		}
+		else if(et.getId() == R.id.newDeviceStep7DescriptionTB)
+		{
+			device.setComment(et.getText().toString());
+		}
+	}
+    
     private OnClickListener confirmListener = new OnClickListener() {
         public void onClick(View v) 
         {
         	int regStep = getUnfinishedRegistrationStep();
         	if(regStep == flipper.getDisplayedChild())
         	{
-        		((ccc.android.meterreader.MainActivity) getActivity()).getManager().AddNewDevice(device);
-        		resetRegistration();
+        		if(barcode != null && barcode.trim().length() > 0)
+        			device.setBarcode(barcode);
+    			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_take_first_read));
+    			gauge.setGaugeDevice(device);
+        		((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(gauge, null);
         	}
         	else
         	{
@@ -387,10 +425,10 @@ public class DeviceRegistrationFragment extends DialogFragment
 	
 	private int getUnfinishedRegistrationStep()
 	{
-		for(int i =1; i <= registrationSteps.size(); i++)
+		for(int i =0; i < registrationSteps.size(); i++)
 		{
 			if(!registrationSteps.get(i))
-				return i-1;
+				return i;
 		}
 		return registrationSteps.size()-1;
 	}
@@ -410,7 +448,7 @@ public class DeviceRegistrationFragment extends DialogFragment
 					gaugeDD.setSelection(i);
 		}
 		else
-			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_step0_gauge_not_found));
+			Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_step0_gauge_not_found));
 	}
 
 	public Reading getLastRead()
@@ -418,9 +456,23 @@ public class DeviceRegistrationFragment extends DialogFragment
 		return lastRead;
 	}
 
-	public void setLastRead(Reading lastRead)
+	public void setNewRead(Reading read)
 	{
-		this.lastRead = lastRead;
+		if(expectFirstRead)  //complete registration
+		{
+			this.firstRead = read;
+			if(lastRead != null)
+				device.setValueOffset(device.getValueOffset() + lastRead.getRead() - firstRead.getRead());
+			else
+				device.setValueOffset(device.getValueOffset() + firstRead.getRead());
+    		((ccc.android.meterreader.MainActivity) getActivity()).getManager().AddNewDevice(device);
+    		resetRegistration();
+		}
+		else
+		{
+			this.lastRead = read;
+			expectFirstRead = true;
+		}
 	}
 
 	public String getBarcode()
@@ -428,9 +480,18 @@ public class DeviceRegistrationFragment extends DialogFragment
 		return barcode;
 	}
 
-	public void setBarcode(String barcode, int gaugeId)
+	public void setBarcode(String barcode, Gauge ga)
 	{
 		this.barcode = barcode;
-		setGauge(((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getGauges().getById(gaugeId));
+		if(ga != null)
+		{
+			ga.setBarcode(barcode);
+			setGauge(ga);
+		}
+	}
+
+	public Reading getFirstRead()
+	{
+		return firstRead;
 	}
 }

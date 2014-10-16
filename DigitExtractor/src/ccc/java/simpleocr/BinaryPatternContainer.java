@@ -62,4 +62,14 @@ public class BinaryPatternContainer
 	{
 		container.clear();
 	}
+
+	public Map<Character, List<BinaryPattern>> getContainer()
+	{
+		return container;
+	}
+
+	public void setContainer(Map<Character, List<BinaryPattern>> container)
+	{
+		this.container = container;
+	}
 }

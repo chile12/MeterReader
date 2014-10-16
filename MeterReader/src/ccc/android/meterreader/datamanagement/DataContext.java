@@ -3,9 +3,11 @@ package ccc.android.meterreader.datamanagement;
 import java.util.*;
 import java.lang.reflect.*;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import ccc.android.meterdata.interfaces.ICallbackList;
+import ccc.android.meterreader.internaldata.ICallbackList;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterreader.internaldata.InternalGaugeDeviceDigitList;
 import ccc.android.meterreader.internaldata.InternalGaugeDeviceList;
@@ -13,62 +15,54 @@ import ccc.android.meterreader.internaldata.InternalGaugeList;
 import ccc.android.meterreader.internaldata.InternalReadingList;
 import ccc.android.meterreader.internaldata.InternalRouteList;
 import ccc.android.meterreader.internaldata.InternalStationList;
-import ccc.android.meterdata.listtypes.GaugeDeviceList;
-import ccc.android.meterdata.listtypes.GaugeList;
-import ccc.android.meterdata.listtypes.ReadingList;
-import ccc.android.meterdata.listtypes.RouteList;
-import ccc.android.meterdata.listtypes.StationList;
+import ccc.android.meterreader.internaldata.Session;
 import ccc.android.meterdata.types.GaugeDevice;
 import ccc.android.meterdata.types.GaugeDeviceDigit;
 import ccc.android.meterdata.types.Route;
 import ccc.android.meterdata.types.ServerError;
-import ccc.android.meterdata.types.Session;
 import ccc.android.meterdata.types.User;
 import ccc.android.meterreader.exceptions.UserNotInitializedException;
 import ccc.android.meterreader.internaldata.*;
 import ccc.android.meterreader.statics.StaticGaugeLibrary;
 import ccc.android.meterreader.statics.Statics;
-import ccc.android.meterreader.statics.Statics.SyncState;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DataContext implements IMeterDataContainer
 {
+	  
 	private InternalGaugeDeviceList gaugedevicelist = new InternalGaugeDeviceList(this);
 	private InternalStationList stationlist = new InternalStationList(this);
 	private InternalReadingList readinglist = new InternalReadingList(this);
 	private InternalRouteList routelist = new InternalRouteList(this);
 	private InternalGaugeList gaugelist = new InternalGaugeList(this);
+	private InternalImageList imagelist = new InternalImageList(this);
 	//TODO remove InternalGaugeDeviceDigitList
+	private List<ICallbackList> containers = new ArrayList<ICallbackList>();
 	private InternalGaugeDeviceDigitList digitlist = new InternalGaugeDeviceDigitList(this);
-	private List<GaugeDeviceDigit> digitList = Collections.synchronizedList(new ArrayList<GaugeDeviceDigit>());
+	private List<GaugeDeviceDigit> digits = Collections.synchronizedList(new ArrayList<GaugeDeviceDigit>());
 
 	private Session session;
 	private User currentUser;
 
 	private int waitForPatterns = Statics.NUM_OF_SETS_OF_PATTERNS;
-	private static int syncState = 2;
 	private boolean isCompletelyLoaded = false;
-	private Map<ICallbackList, Boolean> loadedMetadata = new HashMap<ICallbackList, Boolean>();
+	protected boolean isFullUpdate = false;
+	//private Map<ICallbackList, Boolean> loadedMetadata = new HashMap<ICallbackList, Boolean>();
 	protected List<IDataContextEventListener> listenerList = new ArrayList<IDataContextEventListener>();
 	
 	public DataContext ()
 	{
 		//TODO user stuff
 		currentUser = new User(1);
+		containers.add(gaugedevicelist.setDataContainer(this));
+		containers.add(digitlist.setDataContainer(this));
+		containers.add(gaugelist.setDataContainer(this));
+		containers.add(routelist.setDataContainer(this));
+		containers.add(readinglist.setDataContainer(this));
+		containers.add(stationlist.setDataContainer(this));
+		containers.add(imagelist.setDataContainer(this));
+		
 	}	
-	
-	public DataContext (GaugeDeviceList gdl, GaugeList gl, ReadingList rl, RouteList rol, StationList sl)
-	{
-		setListDynamically(gdl);
-		setListDynamically(gl);
-		setListDynamically(rl);
-		setListDynamically(sl);
-		setListDynamically(rol);
-		session = new Session();
-	}
-
-	public Session getSession() {
-		return session;
-	}
 	
 	public void NewSession(Route route)  throws UserNotInitializedException
 	{
@@ -89,6 +83,7 @@ public class DataContext implements IMeterDataContainer
 		this.NewSessionInitialized();
 	}
 	
+	@JsonIgnore
 	private void setListDynamically(IGenericMemberList list)
 	{
 		Class<?> c = this.getClass();
@@ -107,9 +102,8 @@ public class DataContext implements IMeterDataContainer
 
 	void invalidateData() 
 	{
-		loadedMetadata.clear();
+		//loadedMetadata.clear();
 		this.setCompletelyLoaded(false);
-		this.DataContextInvalidated();
 	}
 
 	@Override
@@ -121,80 +115,91 @@ public class DataContext implements IMeterDataContainer
 	public void RegisterLoadedDataObject(ccc.android.meterreader.internaldata.ICallbackList data) 
 	{
 		if(this.isCompletelyLoaded)
-		{
-			//loadedMetadata.clear();		
+		{	
 			this.invalidateData();
+			digits.clear();
 		}
 		
 		if(data.getClass() == InternalGaugeDeviceList.class)
 		{
 			this.gaugedevicelist = (InternalGaugeDeviceList)data;
-			loadedMetadata.put(this.getDevices(), true);
+			//loadedMetadata.put(this.getDevices(), true);
 			fillGaugeLibrary();
 		}
 		if(data.getClass() == InternalStationList.class)
 		{
 			this.stationlist = (InternalStationList)data;
-			loadedMetadata.put(this.getStations(), true);
+			//loadedMetadata.put(this.getStations(), true);
 		}
 		if(data.getClass() == InternalReadingList.class)
 		{
 			this.readinglist = (InternalReadingList)data;
-			loadedMetadata.put(this.getReadings(), true);
+			//loadedMetadata.put(this.getReadings(), true);
 		}
 		if(data.getClass() == InternalRouteList.class)
 		{
 			this.routelist = (InternalRouteList)data;
-			loadedMetadata.put(this.getRoutes(), true);
+			//loadedMetadata.put(this.getRoutes(), true);
 		}
 		if(data.getClass() == InternalGaugeList.class)
 		{
 			this.gaugelist = (InternalGaugeList)data;
-			loadedMetadata.put(this.getGauges(), true);
+			//loadedMetadata.put(this.getGauges(), true);
+		}
+		if(data.getClass() == InternalImageList.class)
+		{
+			this.imagelist = (InternalImageList)data;
+			//loadedMetadata.put(this.getImagelist(), true);
 		}
 		if(data.getClass() == InternalGaugeDeviceDigitList.class)
 		{
-			synchronized(digitList)
+			synchronized(digits)
 			{
-				//TODO remove InternalGaugeDeviceDigitList
-				digitList.addAll(((InternalGaugeDeviceDigitList)data).getDigitList());
+				//TODO add expected list count! InternalGaugeDeviceDigitList 
+				digits.addAll(((InternalGaugeDeviceDigitList)data).getDigitList());
 				if(--waitForPatterns == 0)  //received all sets
 				{
-					this.getDigitlist().getDigitList().addAll(digitList);
-					loadedMetadata.put(this.getDigitlist(), true);
+					this.getDigitlist().getDigitList().addAll(digits);
+					this.getDigitlist().setIsLoaded(true);
+					//loadedMetadata.put(this.getDigitlist(), true);
+					
+					//TODO save other patterns!!!
 					//save standard digit patterns
 	
 					GaugeDevice de = new GaugeDevice();
 					de.setGaugeDeviceId(0);
 					de.setDigitPatterns(this.digitlist);
 					insertPatterns(de);
+					if(this.isFullUpdate)
+						Statics.getPreferences().EditPreferences(Statics.LAST_FULL_DOWN_KEY, new Date().getTime());
 				}
 			}
 		}
 		
-		if(this.loadedMetadata.size() == 6)
-			for(ICallbackList l : this.loadedMetadata.keySet())
-			{
-				if(!loadedMetadata.get(l)) //!not
-					return;
-			}
-		else
-			return;
+		for(ICallbackList l : this.containers)
+		{
+			if(!l.isLoaded()) //!not
+				return;
+		}
 
 		this.setCompletelyLoaded(true);
-		SessionSynchronized();
+		SessionSynchronized(this.session);
 	}
 
 	private void insertPatterns(GaugeDevice gaugeDevice) {
 		if(gaugeDevice.getGaugeDeviceId() < 1)
-			this.getDevices().getGaugeDeviceList().add(gaugeDevice);
+			this.getDevices().getInternalGaugeDeviceList().add(new InternalGaugeDevice(gaugeDevice));
 		StaticGaugeLibrary.getGauges().put(gaugeDevice.getGaugeDeviceId(), new InternalGaugeDevice(gaugeDevice));
+		//TODO get this right!
 		waitForPatterns = Statics.NUM_OF_SETS_OF_PATTERNS;
 	}
 
 	void fillGaugeLibrary() {
 		StaticGaugeLibrary.getGauges().clear();
-		for(GaugeDevice device : this.getDevices())
+		
+		
+		//hdsfhediasfojksafbeafd
+		for(GaugeDevice device : this.getDevices().getGaugeDeviceList().size() == 0 ? this.getDevices().getInternalGaugeDeviceList() : this.getDevices().getGaugeDeviceList())
 		{
 			InternalGaugeDevice de = new InternalGaugeDevice(device);
 			StaticGaugeLibrary.getGauges().put(device.getGaugeDeviceId(), de);
@@ -212,56 +217,39 @@ public class DataContext implements IMeterDataContainer
 	}
 	
 	//Context Events
-	void DataContextUpdated()
+	void SessionUnsynchronized()
 	{
-		if(this.getSyncState() == SyncState.Synchron)
-			setSyncStateDown();
 		for(IDataContextEventListener listener : listenerList)
-			listener.OnDataContextUpdated(this);
-	}
-	void DataContextInvalidated()
-	{
-		setSyncStateDown();
-		for(IDataContextEventListener listener : listenerList)
-			listener.OnDataContextInvalidated();
+			listener.OnSessionUnsynchronized();
 	}
 	void NewSessionInitialized()
 	{
 		for(IDataContextEventListener listener : listenerList)
-			listener.OnNewSessionInitialized();
+			listener.OnSessionInitialized();
 	}
-	void SessionUploaded(Session session)
+	void SessionSynchronized(Session session)
 	{
 		Statics.getWl().release();
 		this.setSession(session);
 		for(IDataContextEventListener listener : listenerList)
-			listener.OnSessionUpLoaded(this.getSession());
-		setSyncStateUp();
+			listener.OnSessionSynchronized(this.getSession());
 	}
-	void SessionLoaded(Session session)
+	void SessionFileSynchronized(Session session)
 	{
 		Statics.getWl().release();
 		this.setSession(session);
 		for(IDataContextEventListener listener : listenerList)
-			listener.OnSessionLoaded(this.getSession());
-		setSyncStateUp();
+			listener.OnFileSynchronization(this.getSession());
 	}
-	void OnSessionIsSynchronizing()
+	void SessionIsSynchronizing()
 	{
 		Statics.getWl().acquire();
 		for(IDataContextEventListener listener : listenerList)
 			listener.OnSessionIsSynchronizing(this.getSession());
 	}
-	void SessionSynchronized()
-	{
-		Statics.getWl().release();
-		setSyncStateUp();
-		for(IDataContextEventListener listener : listenerList)
-			listener.OnSessionSynchronized(this.getSession());
-	}
 	void SessionFailedSynchronization(String msg)
 	{
-		Statics.getWl().release();
+		//Statics.getWl().release();
 		for(IDataContextEventListener listener : listenerList)
 			listener.OnFailedSessionSynchronization(msg);
 	}
@@ -326,41 +314,51 @@ public class DataContext implements IMeterDataContainer
 		this.session = session;
 	}
 
-	@JsonProperty("DigitList")
+	public Session getSession() {
+		return session;
+	}
+
+	@JsonIgnore
 	public InternalGaugeDeviceDigitList getDigitlist() {
 		return digitlist;
 	}
 
-	@JsonProperty("DigitList")
+	@JsonIgnore
 	public void setDigitlist(InternalGaugeDeviceDigitList digitlist) {
 		this.digitlist = digitlist;
 	}
-	
+//
+//	@JsonIgnore
+//	public int getExpectedReturnObject()
+//	{
+//		return expectedReturnObject;
+//	}
+//
+//	@JsonIgnore
+//	public void setExpectedReturnObject(int expectedReturnObject)
+//	{
+//		this.expectedReturnObject = expectedReturnObject;
+//	}
 
-	public SyncState getSyncState() {
-		if(syncState ==2)
-			return SyncState.Synchron;
-		else if(syncState == 1)
-			return SyncState.Desynchron;
-		else
-			return SyncState.Asynchron;
+	@JsonIgnore
+	public int getWaitForPatterns()
+	{
+		return waitForPatterns;
 	}
-	
-	public void setSyncStateUp() {
-		if(syncState < 2)
-		{
-			syncState++;
-			for(IDataContextEventListener listener : listenerList)
-				listener.OnSynchronizationStateChanged();
-		}
+
+	@JsonIgnore
+	public void setWaitForPatterns(int waitForPatterns)
+	{
+		this.waitForPatterns = waitForPatterns;
 	}
-	
-	public void setSyncStateDown() {
-		if(syncState > 0)
-		{
-			syncState--;
-			for(IDataContextEventListener listener : listenerList)
-				listener.OnSynchronizationStateChanged();
-		}
+
+	public InternalImageList getImagelist()
+	{
+		return imagelist;
+	}
+
+	public void setImagelist(InternalImageList imagelist)
+	{
+		this.imagelist = imagelist;
 	}
 }

@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 import ccc.android.meterdata.enums.GaugeMedium;
 import ccc.android.meterdata.types.Gauge;
 import ccc.android.meterdata.types.Reading;
-import ccc.android.meterdata.types.Session;
 import ccc.android.meterreader.camerafragments.DigitReaderFragment;
 import ccc.android.meterreader.datamanagement.DataContext;
 import ccc.android.meterreader.datamanagement.DataContextManager;
@@ -18,7 +17,9 @@ import ccc.android.meterreader.datamanagement.IDataContextEventListener;
 import ccc.android.meterreader.deviceregistration.DeviceRegistrationFragment;
 import ccc.android.meterreader.exceptions.UserNotInitializedException;
 import ccc.android.meterreader.gaugedisplaydialog.GaugeDisplayDialog;
+import ccc.android.meterreader.helpfuls.PreferencesHelper;
 import ccc.android.meterreader.internaldata.InternalDialogDisplayData;
+import ccc.android.meterreader.internaldata.Session;
 import ccc.android.meterreader.statics.Statics;
 import ccc.android.meterreader.statics.Statics.SyncState;
 import ccc.android.meterreader.viewelements.ConnectionConfigDialog;
@@ -38,6 +39,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.*;
 import android.widget.*;
 import android.os.CountDownTimer;
+import android.preference.PreferenceActivity;
 
 public class MainActivity extends Activity implements IDataContextEventListener
 {
@@ -56,6 +58,8 @@ public class MainActivity extends Activity implements IDataContextEventListener
     private OnTouchListener gestureListener ;
     private List<AlertDialog> syncDias = new ArrayList<AlertDialog>();
     private DeviceRegistrationFragment newDeviceFragment;
+    private SyncState syncState = SyncState.Asynchron;
+    
     
 	private IntentFilter barcodeIntentFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_BAR);
 	private IntentFilter barcodeForRegFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_BFR);
@@ -72,7 +76,13 @@ public class MainActivity extends Activity implements IDataContextEventListener
     {
         super.onCreate(savedInstanceState);          
         setContentView(R.layout.activity_main);
-        //DEBUG: language parameter only of interest while debugging!
+//        FragmentManager mFragmentManager = getFragmentManager();
+//        FragmentTransaction mFragmentTransaction = mFragmentManager
+//                                .beginTransaction();
+//        PreferencesHelper mPrefsFragment = new PreferencesHelper();
+//        mFragmentTransaction.replace(android.R.id.content, mPrefsFragment);
+//        mFragmentTransaction.commit();
+        
         Statics.initializeStatics(this, Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro.ttf"), "de");
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         manager  = new DataContextManager(this);
@@ -81,6 +91,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
         ButtonLL = (LinearLayout) findViewById(R.id.menuButtonsLL);
         OptionBT = (VerticalButton) findViewById(R.id.OptionBT);
         VF = (ViewFlipper) findViewById(R.id.MainFlipperVF);
+        ((Button) findViewById(R.id.clearStacksBT)).setOnClickListener(clearSessionListener);
         ((Button) findViewById(R.id.saveBT)).setOnClickListener(saveBT_listener);
         ((Button) findViewById(R.id.loadLastSessionBT)).setOnClickListener(loadFromLastSession);
         ((Button) findViewById(R.id.loadBaseDataBT)).setOnClickListener(this.loadFromMainSession);
@@ -106,9 +117,15 @@ public class MainActivity extends Activity implements IDataContextEventListener
         };
         ButtonLL.setOnTouchListener(gestureListener);
         VF.setOnTouchListener(gestureListener);
-
-    	this.manager.getData().setSyncStateUp();
     	checkSystemConfigurations();
+
+    }
+    
+    @Override
+    protected void onStart()
+    {
+    	super.onStart();
+
     }
 	
     @Override
@@ -128,24 +145,29 @@ public class MainActivity extends Activity implements IDataContextEventListener
     	this.registerReceiver(BarcodeReceiver, barcodeIntentFilter);
     	this.registerReceiver(BarcodeReceiver, barcodeForRegFilter);
     	this.registerReceiver(newReadReceiver, newReadIntentFilter);
-    	if(manager.getUnDoStack().size() > 0)
-    		((TextView) findViewById(R.id.mainTickerLA)).setText(manager.getUnDoStack().peek().GetActionText());
-    	else
-    		((TextView) findViewById(R.id.mainTickerLA)).setText("");
+    	updateRedoStackView();
 //    	if(! this.initial)
 //    		Statics.resumeTimer();
     	setSessionButtonView ();
     }
+
+	private void updateRedoStackView()
+	{
+		if(manager.unDoStackSize() > 0)
+    		((TextView) findViewById(R.id.mainTickerLA)).setText(manager.unDoStackPeek().getActionText(getManager().getData()));
+    	else
+    		((TextView) findViewById(R.id.mainTickerLA)).setText("");
+	}
     
     @Override
     protected void onStop()
     {
     	this.unregisterReceiver(this.BarcodeReceiver);
     	this.unregisterReceiver(this.newReadReceiver);
-    	if(manager.getData().getSession() != null && manager.getData().getSession().hasNewDate())
-    		manager.SaveContextToFile(Statics.LAST_SESSION, false);
-    	else
-    		manager.SaveEmptySession(Statics.LAST_SESSION);
+//    	if(manager.getData().getSession() != null && manager.getData().getSession().hasNewDate())
+//    		manager.SaveContextToFile(Statics.LAST_SESSION, false);
+//    	else
+//    		manager.WriteEmptyFile(Statics.LAST_SESSION);
    	   	super.onStop();
     }
     
@@ -157,19 +179,6 @@ public class MainActivity extends Activity implements IDataContextEventListener
     	super.onDestroy();
     }
     
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {	  
-//	    if (initial) {
-//		    MenuInflater inflater = getMenuInflater();
-//		    inflater.inflate(R.menu.main, menu);
-//			menu.add(0, 99, 0, "nicht verbunden").setIcon(getResources().getDrawable(R.drawable.wifi_icon_red)).setShowAsAction(2);
-//			menu.add(0, 100, 1, "nicht synchroniziert").setIcon(getResources().getDrawable(R.drawable.synchro_icon_red)).setShowAsAction(2);
-//			initial = false;
-//		}
-//	    return true;
-//      
-//    }
-    
    @Override
     public boolean onPrepareOptionsMenu(Menu menu) { 
     	    MenuInflater inflater = getMenuInflater();
@@ -177,17 +186,17 @@ public class MainActivity extends Activity implements IDataContextEventListener
 			menu.clear();
 				if (Statics.isOnline() == true) {
 					findViewById(R.id.newSessionBT).setBackgroundResource((R.drawable.buttonback));
-					menu.add(0,  99, 0, "verbunden").setIcon(getResources().getDrawable(R.drawable.wifi_icon_green)).setShowAsAction(2);
+					menu.add(0,  99, 0, Statics.getDefaultResources().getString(R.string.main_connected)).setIcon(getResources().getDrawable(R.drawable.wifi_icon_green)).setShowAsAction(2);
 				} else {
 					findViewById(R.id.newSessionBT).setBackgroundResource((R.drawable.buttonbackinactive));
-					menu.add(0,  99, 0, "nicht verbunden").setIcon(getResources().getDrawable(R.drawable.wifi_icon_red)).setShowAsAction(2);
+					menu.add(0,  99, 0, Statics.getDefaultResources().getString(R.string.main_not_connected)).setIcon(getResources().getDrawable(R.drawable.wifi_icon_red)).setShowAsAction(2);
 				}
-				if(manager.getData().getSyncState() == SyncState.Asynchron)
-					menu.add(0, 100, 1, "nicht synchroniziert").setIcon(getResources().getDrawable(R.drawable.synchro_icon_red)).setShowAsAction(2);
-				else if(manager.getData().getSyncState() == SyncState.Desynchron)
-					menu.add(0, 100, 1, "Neue Werte noch nicht gespeichert").setIcon(getResources().getDrawable(R.drawable.synchro_icon_yellow)).setShowAsAction(2);
+				if(this.syncState == SyncState.Asynchron)
+					menu.add(0, 100, 1, Statics.getDefaultResources().getString(R.string.main_data_asynchron)).setIcon(getResources().getDrawable(R.drawable.synchro_icon_red)).setShowAsAction(2);
+				else if(this.syncState == SyncState.Desynchron)
+					menu.add(0, 100, 1, Statics.getDefaultResources().getString(R.string.main_data_desynchron)).setIcon(getResources().getDrawable(R.drawable.synchro_icon_yellow)).setShowAsAction(2);
 				else
-					menu.add(0, 100, 1, "Daten sind synchroniziert").setIcon(getResources().getDrawable(R.drawable.synchro_icon_green)).setShowAsAction(2);
+					menu.add(0, 100, 1, Statics.getDefaultResources().getString(R.string.main_data_synchron)).setIcon(getResources().getDrawable(R.drawable.synchro_icon_green)).setShowAsAction(2);
 					
     	return true;
     }
@@ -217,6 +226,11 @@ public class MainActivity extends Activity implements IDataContextEventListener
     
 	public void openGaugeDisplayDialog(Gauge st, Reading rd) 
 	{
+		if(st.getGaugeDevice() == null)
+		{
+			Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_device_not_found));
+			return;
+		}
 	    Intent startGaugeDisplay = new Intent(MainActivity.this, GaugeDisplayDialog.class);
 	    InternalDialogDisplayData data = new InternalDialogDisplayData(st, rd);
 	    startGaugeDisplay.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -248,7 +262,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
         	if(manager.getData().isCompletelyLoaded())
         		openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_BAR);
         	else
-        		Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_sync_not_done));
+        		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_done), Statics.SHORT_DIALOG_DURATION);
         }
     };
     
@@ -256,7 +270,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
         public void onClick(View v) 
         {    
 
-	        	manager.LoadContextFromFile(Statics.LAST_SESSION, false);
+	        	manager.LoadContextFromFile(Statics.LAST_SESSION, true);
 	        	setSessionButtonView ();
         	
         }
@@ -269,7 +283,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
 				manager.getData().NewSession();
 	        	setSessionButtonView ();
 			} catch (UserNotInitializedException e) {
-				Statics.ShowToast("no user!");
+				Statics.ShowAlertDiaMsgWithBt("no user!", Statics.INFINIT_DIALOG_DURATION);
 			}
         }
     };
@@ -277,11 +291,11 @@ public class MainActivity extends Activity implements IDataContextEventListener
 	public void loadContextFromDb() {
 		if(Statics.isOnline())
     	{
-        	manager.LoadContextFromDb();
+        	manager.LoadContextFromDb(true);
     	}
     	else
     	{
-    		Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_sync_not_successful));
+    		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_successful), Statics.INFINIT_DIALOG_DURATION);
     	}
 	}
     
@@ -310,7 +324,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
 				}
     			else
     			{
-    				Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_sync_not_done));
+    				Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_done), Statics.SHORT_DIALOG_DURATION);
     				return;
     			}
         	}
@@ -324,32 +338,27 @@ public class MainActivity extends Activity implements IDataContextEventListener
         public void onReceive(Context context, Intent intent) {
             //extract our message from intent
             String barcode = intent.getStringExtra("barcode");
-
-        	//TODO remove pattern
-    		Pattern gaugeIdPattern = Pattern.compile(Statics.BARCODE_GAUGEID);
-    		Matcher m = gaugeIdPattern.matcher(barcode);
-    		m.find();
-    		int gaugeId = Integer.parseInt(m.group());
-    		Gauge ga = manager.getData().getGauges().getById(gaugeId);
-    		Reading lastRead = manager.getData().getReadings().getLastReadingById(gaugeId);
+    		Gauge ga = manager.getData().getGauges().getByBarcode(barcode);
+    		Reading lastRead = null;
+    		if(ga != null)
+    			lastRead = manager.getData().getReadings().getLastReadingById(ga.getGaugeId());
     		
-            if(barcode != null && intent.getAction() == Statics.ANDROID_INTENT_ACTION_BFR)
+            if(intent.getAction() == Statics.ANDROID_INTENT_ACTION_BFR)
             {
         		if(ga == null)
         		{
         			if(newDeviceFragment != null) //registration in progress
         			{
-        				newDeviceFragment.setBarcode(barcode, gaugeId);
+        				newDeviceFragment.setBarcode(barcode, ga);
         			}
         			else
         				return;
-        			
         		}
         		else
         		{
         			if(lastRead != null && Statics.getDateDiff(lastRead.getUtcTo(), new Date(), TimeUnit.MINUTES) < 16)
         			{
-        				newDeviceFragment.setLastRead(lastRead);
+        				newDeviceFragment.setNewRead(lastRead);
         				return;
         			}
         			else
@@ -369,11 +378,12 @@ public class MainActivity extends Activity implements IDataContextEventListener
         	}
         	else
         	{
-        		Statics.ShowToast(Statics.getDefaultResources().getString(R.string.qr_not_recognized));
+        		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.qr_not_recognized));
         	}
         }
     };
     
+	
     private int getChildIndexById(int id)
     {
     	for(int i = 0;i< ButtonLL.getChildCount();i++)
@@ -396,6 +406,12 @@ public class MainActivity extends Activity implements IDataContextEventListener
     private OnClickListener saveBT_listener = new OnClickListener() {
         public void onClick(View v) {
         	manager.SaveContextToFile(Statics.DEBUG_SESSION, true);
+        }
+    };
+    
+    private OnClickListener clearSessionListener = new OnClickListener() {
+        public void onClick(View v) {
+        	manager.clearStacks();
         }
     };
     
@@ -497,16 +513,20 @@ public class MainActivity extends Activity implements IDataContextEventListener
     };
 
 	@Override
-	public void OnDataContextUpdated(DataContext newContext) {
+	public void OnSessionUnsynchronized() {
+		this.syncState = SyncState.Desynchron;
+		invalidateOptionsMenu();
         findViewById(R.id.showAllStationsBT).setBackgroundResource(R.drawable.buttonback);
         findViewById(R.id.ScanGaugeBT).setBackgroundResource(R.drawable.buttonback);
         if(listViewFragment != null)
         	listViewFragment.RedoMappings();
+        updateRedoStackView();
 	}
 
 	@Override
-	public void OnNewSessionInitialized() {
-		
+	public void OnSessionInitialized() {
+		this.syncState = SyncState.Asynchron;
+		invalidateOptionsMenu();
 	}
 	
 	@Override
@@ -532,66 +552,54 @@ public class MainActivity extends Activity implements IDataContextEventListener
         if(initial)
         {
 	    	initial = false;
-	        manager.LoadContext();
+	        manager.SaveContext();
         }
         showSyncStatusToast();
-	}
-	
-	@Override
-	public void OnSessionLoaded(Session session) {
-        findViewById(R.id.showAllStationsBT).setBackgroundResource(R.drawable.buttonback);
-        findViewById(R.id.ScanGaugeBT).setBackgroundResource(R.drawable.buttonback);
-        if(listViewFragment != null)
-        	listViewFragment.RedoMappings();
-        if(session == null)
-			try {
-				manager.getData().NewSession();
-			} catch (UserNotInitializedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        else
-        {
-            manager.getData().setSyncStateDown();
-        }
-        showSyncStatusToast();
+		if(syncDias.size() == 0)
+		{
+			this.syncState = SyncState.Synchron;
+			invalidateOptionsMenu();
+		}
+		updateRedoStackView();
 	}
 
 	@Override
-	public void OnSessionUpLoaded(Session session) 
+	public void OnFileSynchronization(Session session)
 	{
         findViewById(R.id.showAllStationsBT).setBackgroundResource(R.drawable.buttonback);
         findViewById(R.id.ScanGaugeBT).setBackgroundResource(R.drawable.buttonback);
         if(listViewFragment != null)
         	listViewFragment.RedoMappings();
-
-        showSyncStatusToast();
-	}
-	
-	@Override
-	public void OnDataContextInvalidated() {
-        findViewById(R.id.showAllStationsBT).setBackgroundResource(R.drawable.buttonbackinactive);
-        findViewById(R.id.ScanGaugeBT).setBackgroundResource(R.drawable.buttonbackinactive);
+        
+        showSyncStatusToast(Statics.getDefaultResources().getString(R.string.main_sync_file), Statics.NORMAL_DIALOG_DURATION);
+		if(syncDias.size() == 0)
+		{
+			this.syncState = SyncState.Desynchron;
+			invalidateOptionsMenu();
+		}
+		updateRedoStackView();
 	}
 	
 	@Override
 	public void OnFailedSessionSynchronization(String msg) {
-		closeSyncDialog();
-		closeSyncDialog();
-		closeSyncDialog();
-		Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_sync_not_successful) + "\n" + msg);
-	}
-
-	@Override
-	public void OnSynchronizationStateChanged() 
-	{
+		this.syncState = SyncState.Asynchron;
 		invalidateOptionsMenu();
+		closeSyncDialog();
+		closeSyncDialog();
+		closeSyncDialog();
+		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_successful) + "\n" + msg, Statics.INFINIT_DIALOG_DURATION);
 	}
 	
 	private void showSyncStatusToast()
 	{
+		showSyncStatusToast(Statics.getDefaultResources().getString(R.string.main_sync_done), Statics.SHORT_DIALOG_DURATION);
+	}
+	
+	private void showSyncStatusToast(String msg, int duration)
+	{
 			closeSyncDialog();
-			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_sync_done));
+			if(syncDias.size() == 0)
+				Statics.ShowAlertDiaMsg(msg, duration);
 	}
 		
 	public void showSyncDialog()
@@ -607,7 +615,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
 					MainActivity.this.closeSyncDialog();
 					MainActivity.this.closeSyncDialog();
 					
-					Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_sync_aborted));
+					Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_aborted), Statics.INFINIT_DIALOG_DURATION);
 				}});
 		AlertDialog d = builder.create();
 		d.show();
@@ -648,7 +656,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
 	        newDeviceFragment = (DeviceRegistrationFragment) fragmentManager.findFragmentByTag("newDeviceFragment");
 	        if (newDeviceFragment != null) {
 				fragmentTransaction.remove(newDeviceFragment);
-				fragmentTransaction.commit();
+				fragmentTransaction.commitAllowingStateLoss();
 				newDeviceFragment = null;
 			}
 	}
@@ -665,11 +673,11 @@ public class MainActivity extends Activity implements IDataContextEventListener
         	read.setUtcTo(Statics.getUtcTime());
         	read.setUtcFrom(newReadData.getUtcTo());
         	read.setValType(1);
-        	manager.InsertNewRead(read);
+        	manager.AddNewRead(read);
         	
         	if(newDeviceFragment != null) //registration in progress
         	{
-        		newDeviceFragment.setLastRead(read);
+        		newDeviceFragment.setNewRead(read);
         	}
         }
     };
@@ -679,8 +687,8 @@ public class MainActivity extends Activity implements IDataContextEventListener
     	//TODO some more checks...
     	if(Math.min(Statics.DISPLAY_HEIGHT,  Statics.DISPLAY_WIDTH) < 540)
     	{
-    		Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_display_size_warning));
-            new CountDownTimer(Toast.LENGTH_LONG, 1000) {
+    		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_display_size_warning));
+            new CountDownTimer(Toast.LENGTH_LONG, Statics.NORMAL_DIALOG_DURATION*1000) {
 
                 public void onTick(long millisUntilFinished) {
 
@@ -692,4 +700,14 @@ public class MainActivity extends Activity implements IDataContextEventListener
             }.start();
     	}
     }
+
+	public boolean isInitial()
+	{
+		return initial;
+	}
+
+	public void setInitial(boolean initial)
+	{
+		this.initial = initial;
+	}
 } 

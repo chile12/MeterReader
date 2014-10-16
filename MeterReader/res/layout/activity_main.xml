@@ -221,7 +221,7 @@
 		            android:layout_height="45dp"
 		            android:layout_margin="2dp"
 		            android:layout_marginTop="0dp"
-                    android:text="mit Datenbank synchroisieren" />
+                    android:text="@string/main_options_panel_sync_db" />
                 
                 <Button
                     android:id="@+id/connectionConfigBT"
@@ -230,7 +230,7 @@
 		            android:layout_height="45dp"
 		            android:layout_margin="2dp"
 		            android:layout_marginTop="0dp"
-                    android:text="Verbindungseinstellungen" />
+                    android:text="@string/main_options_panel_connection" />
 
                 <Button
                     android:id="@+id/loadBaseDataBT"
@@ -239,7 +239,7 @@
 		            android:layout_height="45dp"
 		            android:layout_margin="2dp"
 		            android:layout_marginTop="0dp"
-                    android:text="Basisdaten laden"
+                    android:text="@string/main_options_panel_load_dbg_ses"
                     android:visibility="visible" />
 
                 <Button
@@ -249,8 +249,8 @@
 		            android:layout_height="45dp"
 		            android:layout_margin="2dp"
 		            android:layout_marginTop="0dp"
-                    android:text="letzte Sitzung laden" 
-                    android:visibility="gone" />
+                    android:text="@string/main_options_panel_load_last_ses"
+                    android:visibility="visible" />
 
                 <Button
                     android:id="@+id/saveBT"
@@ -259,8 +259,18 @@
 		            android:layout_height="45dp"
 		            android:layout_margin="2dp"
 		            android:layout_marginTop="0dp"
-                    android:text="Sitzung speichern"
-                    android:visibility="gone"  />
+                    android:text="@string/main_options_panel_save_session"
+                    android:visibility="visible"  />
+                
+               <Button
+                    android:id="@+id/clearStacksBT"
+		            style="@style/ButtonWithMargins"
+		            android:layout_width="fill_parent"
+		            android:layout_height="45dp"
+		            android:layout_margin="2dp"
+		            android:layout_marginTop="0dp"
+                    android:text="@string/main_options_panel_clear_session"
+                    android:visibility="visible"  />
             </LinearLayout>
         </ScrollView>
 

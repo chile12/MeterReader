@@ -27,12 +27,6 @@ public class DataContextAsyncFileLoader   extends AsyncTask<Object, Void, DataCo
 	}
 	
     protected void onPostExecute(DataContext result) {
-    	if(result != null)
-    	{
-    		manager.callback(result);
-    		Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_sync_done));
-    	}
-    	else
-    		Statics.ShowToast(Statics.getDefaultResources().getString(R.string.main_sync_not_successful));
+    		manager.DataContextLoadedCallback(result);
     }
 }

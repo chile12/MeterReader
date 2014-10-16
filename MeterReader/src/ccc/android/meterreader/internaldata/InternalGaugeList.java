@@ -3,6 +3,7 @@ package ccc.android.meterreader.internaldata;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeName;
 
 import ccc.android.meterdata.*;
@@ -11,15 +12,27 @@ import ccc.android.meterdata.listtypes.GaugeList;
 import ccc.android.meterdata.types.Gauge;
 import ccc.android.meterdata.types.ServerError;
 @JsonTypeName("InternalGaugeList")
-public class InternalGaugeList extends ccc.android.meterdata.internaltypes.InternalGaugeList implements ICallbackList
+public class InternalGaugeList extends ccc.android.meterdata.listtypes.GaugeList implements ICallbackList
 {
-	private IMeterDataContainer parentManager = null;
+	private IMeterDataContainer container = null;
+	private boolean isLoaded = false;
+
+	@JsonIgnore
+	public boolean isLoaded()
+	{
+		return isLoaded;
+	}
+	public void setIsLoaded(boolean loaded)
+	{
+		isLoaded = loaded;
+	}
+	
 	public InternalGaugeList()
 	{super();}
 	public InternalGaugeList(IMeterDataContainer manager)
 	{
 		super();
-		parentManager = manager;
+		container = manager;
 	}
 	
 	public List<String> GetGaugeNames()
@@ -48,13 +61,28 @@ public class InternalGaugeList extends ccc.android.meterdata.internaltypes.Inter
 		if(list != null)
 		{
 			this.setGaugeList(((GaugeList) list).getGaugeList());
-			parentManager.RegisterLoadedDataObject(this);
+			this.setIsLoaded(true);
+			container.RegisterLoadedDataObject(this);
 		}
 	}
 	
 	@Override
 	public void ErrorCallback(ServerError error) {
-		parentManager.ReceiveErrorObject(error);
+		container.ReceiveErrorObject(error);
 		
+	}
+	
+	@JsonIgnore
+	@Override
+	public IMeterDataContainer getDataContainer()
+	{
+		return container;
+	}
+	@JsonIgnore
+	@Override
+	public ICallbackList setDataContainer(IMeterDataContainer container)
+	{
+		this.container = container;
+		return this;
 	}
 }

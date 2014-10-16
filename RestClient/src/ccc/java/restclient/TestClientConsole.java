@@ -16,7 +16,6 @@ import ccc.android.meterdata.*;
 import ccc.android.meterdata.listtypes.ReadingList;
 import ccc.android.meterdata.types.Reading;
 import ccc.android.meterdata.types.Route;
-import ccc.android.meterdata.types.Session;
 import ccc.android.meterdata.types.Station;
 
 public class TestClientConsole {
@@ -70,15 +69,8 @@ public class TestClientConsole {
     	   rt.setName("testRoute2");
     	   rt.setUserIdCreated(1);
     	   
-    	   Session se = new Session();
-    	   se.setEndDate(new Date());
-    	   se.setStartDate(new Date());
-    	   se.getStartDate().setMonth(1);
-    	   se.setRoute(rt);
-    	   se.setUserId(1);
     	   ReadingList list = new ReadingList();
     	   list.getReadingList().add(read);
-    	   se.setReadings(list);
 
     	   //boolean res = client.PostSingleObjectToServer(se, null);
 //		       

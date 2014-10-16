@@ -16,6 +16,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.*;
@@ -160,8 +161,8 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	{
 		if(gaugeData == null || gaugeData.getDigitCount() == null || gaugeData.getDigitCount() < 1)
 		{
-			Statics.ShowToast(this, GaugeDisplayDialog.this.getResources().getString(ccc.android.meterreader.R.string.gauge_display_no_data_warning));
-			this.moveTaskToBack (true);
+			Statics.ShowAlertDiaMsgWithBt(GaugeDisplayDialog.this.getResources().getString(ccc.android.meterreader.R.string.gauge_display_no_data_warning), Statics.LONG_DIALOG_DURATION);
+			this.backToMainActivity();
 			return;
 		}
 		//InfoDisplay
@@ -461,7 +462,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		params.height = LayoutParams.FILL_PARENT;
 		this.findViewById(R.id.gaugeDisplayInternalLL).setLayoutParams(params);
     	displayViewFlipper.setDisplayedChild(Statics.GAUGE_INFO_VIEW);
-		keyboard.getmKeyboardView().setVisibility(View.GONE);	
+		keyboard.hideCustomKeyboard();	
 		Statics.ChangeLayoutElementsVisibility(infoDisplayLL, View.INVISIBLE, View.VISIBLE);
 		showDisplayBT.setVisibility(View.VISIBLE);
 		showScannerBT.setVisibility(View.GONE);
@@ -471,7 +472,9 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	private void setDisplayView()
 	{
 		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) this.findViewById(R.id.gaugeDisplayInternalLL).getLayoutParams();
-		params.height = gaugeDisplayLL.getHeight() - this.keyboard.getmKeyboardView().getHeight();
+		Rect rectangle= new Rect();
+		getWindow().getDecorView().getWindowVisibleDisplayFrame(rectangle);
+		params.height = rectangle.height() - this.keyboard.getKeyboardHeight();
 		this.findViewById(R.id.gaugeDisplayInternalLL).setLayoutParams(params);
 		displayViewFlipper.setDisplayedChild(Statics.GAUGE_DISPLAY_VIEW);		
 		hiddenEditText = ((EditText) this.findViewById(R.id.hiddenValueTB));
@@ -481,7 +484,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		showDisplayBT.setVisibility(View.GONE);
 		showScannerBT.setVisibility(View.VISIBLE);
 		showDigitReaderBT.setVisibility(View.VISIBLE);
-		keyboard.getmKeyboardView().setVisibility(View.VISIBLE);
+		keyboard.showCustomKeyboard(null);
 		openNumberPickerEditText();
 		prepareValueArray();
 		NumPickerTextWatcher.SetActivateTimer(300);
@@ -495,7 +498,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		showDisplayBT.setVisibility(View.GONE);
 		showScannerBT.setVisibility(View.GONE);
 		showDigitReaderBT.setVisibility(View.GONE);
-		keyboard.getmKeyboardView().setVisibility(View.GONE);
+		keyboard.hideCustomKeyboard();
 		displayViewFlipper.setDisplayedChild(Statics.QR_PREVIEW_VIEW);
 		getCameraPreviewFragment();
 	}
@@ -508,7 +511,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		showDisplayBT.setVisibility(View.VISIBLE);
 		showScannerBT.setVisibility(View.GONE);
 		showDigitReaderBT.setVisibility(View.GONE);
-		keyboard.getmKeyboardView().setVisibility(View.GONE);
+		keyboard.hideCustomKeyboard();
 		displayViewFlipper.setDisplayedChild(Statics.DIGIT_READER_VIEW);
 		prepareValueArray(); 
 		getDigitReaderFragment();
@@ -695,7 +698,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			}
 		});
 		int npWidth = Statics.DISPLAY_WIDTH / 15;
-		LayoutParams lp = new LayoutParams(npWidth,250);
+		LayoutParams lp = new LayoutParams(npWidth,220);
 		char val = value[pos];
 		for(int i=0;i<10;i++)
 			if(npN.getDisplayedValues()[i].charAt(0) == val)
@@ -944,7 +947,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	{
 		if(gaugeData == null)
 		{
-			Statics.ShowToast(GaugeDisplayDialog.this , GaugeDisplayDialog.this.getResources().getString(ccc.android.meterreader.R.string.gauge_display_read_warning_less));
+			Statics.ShowAlertDiaMsgWithBt(GaugeDisplayDialog.this , GaugeDisplayDialog.this.getResources().getString(ccc.android.meterreader.R.string.gauge_display_read_warning_less));
 			this.dismissDialog(0);
 		}
 		if(simplePlausibilityCheck())
@@ -956,7 +959,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			backToMainActivity();
 		}
 		else
-			Statics.ShowToast(GaugeDisplayDialog.this , GaugeDisplayDialog.this.getResources().getString(ccc.android.meterreader.R.string.gauge_display_read_warning_less));
+			Statics.ShowAlertDiaMsgWithBt(GaugeDisplayDialog.this , GaugeDisplayDialog.this.getResources().getString(ccc.android.meterreader.R.string.gauge_display_read_warning_less));
 		
 	}
     

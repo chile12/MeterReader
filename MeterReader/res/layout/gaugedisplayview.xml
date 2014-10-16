@@ -102,7 +102,7 @@
                             android:id="@+id/infoLocationLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
+                        	android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_gauge_location"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="#000000"
@@ -111,6 +111,7 @@
                             android:id="@+id/infoLocationLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:maxLines="2"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:text="infoLocationLA"
@@ -164,7 +165,7 @@
                             android:id="@+id/infoLastReadDateLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
+                        	android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_gauge_date"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="#000000"
@@ -256,10 +257,10 @@
                         android:layout_height="wrap_content" >
 
                         <com.neopixl.pixlui.components.textview.TextView
-                            android:id="@+id/newDeviceStep4DecimalLA"
+                            android:id="@+id/gaugeDisplayLocationLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
+                        	android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_gauge_location"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#000000"
@@ -269,9 +270,9 @@
                             android:id="@+id/gaugeDisplayLocationLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:maxLines="2"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
-                            android:maxLines="2"
                             android:text="gaugeDisplayLocationLA"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#000000"
@@ -286,7 +287,7 @@
                             android:id="@+id/gaugeDisplayLastRead"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
+                        	android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_last_read"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="#000000"
@@ -336,6 +337,8 @@
 	                     android:orientation="vertical" >
 	                    <LinearLayout
 	                        android:id="@+id/numPickerLL"
+	                        android:paddingLeft="5dp"
+	                        android:paddingRight="5dp"
 	                        android:layout_width="wrap_content"
 	                        android:layout_height="wrap_content"
 	                        android:layout_gravity="center_horizontal"
@@ -373,39 +376,36 @@
 	                           android:textAppearance="?android:attr/textAppearanceMedium"
 	                           android:visibility="visible" />
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="fill_parent"
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="top|left|right"
-                        android:orientation="vertical" >
+                        android:layout_gravity="bottom"
+                        android:gravity="bottom"
+                        android:orientation="horizontal" >
 
-                        <RelativeLayout
-                            android:layout_width="match_parent"
+                        <Button
+                            android:id="@+id/closeDiaBT"
+                            style="@style/ButtonBaseStyle"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:orientation="horizontal" >
+                            android:text="@string/common_cancel"
+                   			android:layout_alignParentLeft="true"
+                   			android:layout_alignParentBottom="true"
+                        	android:layout_marginLeft="5dp"
+                            android:visibility="invisible" />
 
-                            <Button
-                                android:id="@+id/closeDiaBT"
-                                style="@style/ButtonBaseStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/common_cancel"
-			                    android:layout_alignParentLeft="true"
-                            	android:layout_marginLeft="5dp"
-                                android:visibility="invisible" />
-
-                            <Button
-                                android:id="@+id/saveReadingBT"
-                                style="@style/ButtonBaseStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/common_confirm"
-			                    android:layout_alignParentRight="true"
-                            	android:layout_marginRight="5dp"
-                                android:visibility="invisible" />
-                        </RelativeLayout>
-                    </LinearLayout>
+                        <Button
+                            android:id="@+id/saveReadingBT"
+                            style="@style/ButtonBaseStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/common_confirm"
+                   			android:layout_alignParentRight="true"
+                   			android:layout_alignParentBottom="true"
+                        	android:layout_marginRight="5dp"
+                            android:visibility="invisible" />
+                    </RelativeLayout>
 
                     <EditText
                         android:id="@+id/hiddenValueTB"
@@ -514,6 +514,8 @@
 					                    android:orientation="vertical" >
 								        <LinearLayout
 					                        android:id="@+id/readerNumPickerLL"
+					                        android:paddingLeft="5dp"
+					                        android:paddingRight="5dp"
 					                        android:layout_width="wrap_content"
 					                        android:layout_height="wrap_content"
 					                        android:layout_gravity="center_horizontal"
@@ -554,18 +556,18 @@
 			                                style="@style/ButtonBaseStyle"
 			                                android:layout_width="wrap_content"
 			                                android:layout_height="wrap_content"
-			                                android:layout_gravity="left"
-			                                android:layout_alignParentLeft="true"
 			                                android:layout_marginLeft="5dp"
+				                   			android:layout_alignParentRight="true"
+				                   			android:layout_alignParentBottom="true"
 			                                android:text="@string/abort_scan" />
 				                        <Button
 			                                android:id="@+id/confirmReaderBT"
 			                                style="@style/ButtonBaseStyle"
 			                                android:layout_width="wrap_content"
 			                                android:layout_height="wrap_content"
-			                                android:layout_gravity="right"
 			                                android:layout_marginRight="5dp"
-			                                android:layout_alignParentRight="true"
+				                   			android:layout_alignParentRight="true"
+				                   			android:layout_alignParentBottom="true"
 			                                android:text="@string/common_confirm" />
 			                        </RelativeLayout>
 			                     </LinearLayout>

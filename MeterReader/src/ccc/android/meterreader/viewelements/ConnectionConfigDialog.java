@@ -66,20 +66,20 @@ public class ConnectionConfigDialog  extends Dialog //implements android.view.Vi
 		{
 			EditText tb = (EditText) (ConnectionConfigDialog.this.findViewById(R.id.connectionDiaAddressTB));
 			String test = tb.getText().toString();
-			if((test.startsWith("http://") && (test.toLowerCase().endsWith("mobilegaugereading") || test.toLowerCase().endsWith("mobilegaugereading/"))))
+			if((test.startsWith("http://") && (test.toLowerCase().trim().endsWith("mobilegaugereading") || test.toLowerCase().trim().endsWith("mobilegaugereading/"))))
 			{
 				try {
 					//check if string is a URL
 					URL testUrl = new URL(test);
 				} catch (MalformedURLException e) {
-					Statics.ShowToast(Statics.getDefaultResources().getString(R.string.connection_dia_malformed_url));
+					Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.connection_dia_malformed_url));
 				}
 				Statics.setBASE_WS_URL(tb.getText().toString().replace(" ", ""));
 				Statics.downSyncNow();
 				ConnectionConfigDialog.this.dismiss();
 				return;
 			}
-			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.connection_dia_malformed_url));
+			Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.connection_dia_malformed_url));
 		}
     };
     

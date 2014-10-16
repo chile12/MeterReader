@@ -2,6 +2,7 @@
 <resources>
     <string name="common_cancel">Abbrechen</string>
     <string name="common_confirm">Übernehmen</string>
+    <string name="common_ok">Ok</string>
     <string name="common_next">Weiter</string>
     <string name="common_back">Zurück</string>
     
@@ -9,8 +10,14 @@
      <string name="main_display_size_warning">Die Auflösung Ihres Bildschirms muss mindestens 540x960 betragen.</string>
     
     <string name="main_menu">Menü</string>
+    <string name="main_connected">Verbunden mit der EPVI Datenbank</string>
+    <string name="main_not_connected">Zur Zeit keine Verbindung zur EPVI Datenbank</string>
+    <string name="main_data_synchron">Alle Daten wurden mit der EPVI Datenbank synchronisiert.</string>
+    <string name="main_data_desynchron">Neue Einträge sind noch nicht synchronisiert worden.</string>
+    <string name="main_data_asynchron">!Die Synchronisation ist fehlgeschlagen!</string>
     <string name="main_sync_not_done">Die Synchronisation ist noch nicht abgeschlossen.</string>
     <string name="main_sync_done">Synchronisation erfolgreich beendet.</string>
+    <string name="main_sync_file">Eine Verbindung mit der EPVI Datenbank konnte nicht hergestellt werden. Der letzte Vorgang wurde geladen.</string>
     <string name="main_sync_inprog">Synchronisation läuft.</string>
     <string name="main_sync_not_successful">Die Synchronisation war nicht erfolgreich!</string>
     <string name="main_sync_abort">Synchronisation abbrechen</string>
@@ -24,6 +31,13 @@
     <string name="main_button_panel_qr_scanner">Zähler direkt erfassen</string>
     <string name="main_button_panel_close">Beenden</string>
     <string name="main_button_panel_new_device">Zähler registrieren/wechseln</string>
+        
+    <string name="main_options_panel_sync_db">Mit Datenbank synchroisieren</string>
+    <string name="main_options_panel_connection">Verbindungseinstellungen</string>
+    <string name="main_options_panel_load_dbg_ses">Debugsession laden</string>
+    <string name="main_options_panel_load_last_ses">Letzte Sitzung laden</string>
+    <string name="main_options_panel_save_session">Sitzung speichern</string>
+    <string name="main_options_panel_clear_session">aktuellen Vorgang löschen</string>
     
     <string name="app_name">EPVI</string>
     <string name="action_settings">Settings</string>
@@ -40,7 +54,7 @@
     
     <string name="gauge_display_read_warning_less">Der eingegebene Zählerstand ist kleiner als der letzte Stand!</string>
     <string name="gauge_display_data_warning">Die Ablesedaten wurden beeinträchtigt. Bitte starten Sie diesen Dialog erneut.</string>
-    <string name="gauge_display_no_data_warning">Es existieren keine Daten zu diesem Zähler.</string>
+    <string name="gauge_display_no_data_warning">Keine Zählerdaten verfügbar. Bitte registrieren Sie diesen Zähler zuerst mit der EPVI Webanwendung.</string>
     
     <string name="connection_dia_title">Verbindungseinstellungen</string>
     <string name="connection_dia_subtitle">bestimmen Sie die Adresse des EPVI-Service</string>
@@ -60,10 +74,9 @@
     <string name="new_device_step6_subtitle">Schritt 6: Standort</string>
     <string name="new_device_step7_subtitle">Schritt 7: Beschreibung</string>
     <string name="new_device_step8_subtitle">Zusammenfassung</string>
-    <string name="new_device_step0_info">Bitte beachten: Im Fall eines neuen Zähler (neuer Zählerstandort), legen Sie diesen in der EPVI Webanwendung zuerst an. Danach registrieren Sie das neue Gerät mit dieser Application. Andernfalls wird ein Zählerwechsel vorgenommen.</string>
+    <string name="new_device_step0_info">Bitte beachten: Im Fall eines neuen Zähler (neuer Zählerstandort), legen Sie diesen in der EPVI Webanwendung zuerst an. Danach registrieren Sie das neue Gerät mit dieser Maske. Andernfalls wird ein Zählerwechsel vorgenommen.</string>
     <string name="new_device_step0_spinner_prompt">Wählen Sie einen Zähler aus:</string>
     <string name="new_device_step0_barcode_info">oder scannen Sie den Qr- oder Barcode:</string>
-    <string name="new_device_step0_barcode_take_last_read">Bitte führen Sie eine letzte Ablesung des alten Zählerst durch.</string>
     <string name="new_device_step0_barcode_select_gauge">Bitte wählen Sie zuerst einen Zähler aus.</string>
     <string name="new_device_step0_gauge_not_found">Dieser Zähler (Zählerstandort) wurde noch nicht mittels der EPVI Webanwendung registriert!</string>
     <string name="new_device_step1_info">Fotografieren Sie den neuen Zähler</string>
@@ -83,8 +96,12 @@
     <string name="new_device_step7_description">Beschreibung:</string>
     <string name="new_device_next_step_warning">Sie müssen zuerst diese Maske ausfüllen um mit dem nächsten Schritt fortzufahren.</string>
     <string name="new_device_decimal_warning">Sie müssen zuerst eine größere Ziffernanzahl angeben.</string>
+    <string name="new_device_take_last_read">Bitte führen Sie eine letzte Ablesung des alten Zählers durch.</string>
+    <string name="new_device_take_first_read">Bitte führen Sie die erste Ablesung des neuen Zählers durch.</string>
+    <string name="new_device_device_not_found">Für diesen Zähler (Zählerstandort) ist noch kein Zähler (Gerät) registriert. Nutzen Sie dazu die Option \'Zähler registrieren/wechseln\'.</string>
     
     <string name="action_new_reading" formatted="false">Ein neuer Zählerstand von %s wurde am %s aufgenommen.</string>
+    <string name="action_new_device" formatted="false">Ein Zähler für Zählerstandort %s wurde ausgetauscht.</string>
     
     <string name="abort_scan">Abbrechen</string>
     <string name="list_item_last_read">letzte: </string>

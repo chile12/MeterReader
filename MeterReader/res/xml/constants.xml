@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory>
+        <Preference
+            android:key="UNDOSTACK"
+            android:defaultValue="undo.txt" />
+        <Preference
+            android:key="REDOSTACK"
+            android:defaultValue="redo.txt" />
+        <Preference
+            android:key="MAIN_SESSION"
+            android:defaultValue="MainSession.txt" />
+        <Preference
+            android:key="LAST_SESSION"
+            android:defaultValue="LastSession.txt" />
+        <Preference
+            android:key="DEBUG_SESSION"
+            android:defaultValue="DebugSession.txt" />
+        <Preference
+            android:key="NUM_OF_SETS_OF_PATTERNS"
+            android:defaultValue="10" />
+        <Preference
+            android:key="PINGS_TIL_CONTEXT_LOAD"
+            android:defaultValue="5" />
+        <Preference
+            android:key="SHORT_DIALOG_DURATION"
+            android:defaultValue="3" />
+        <Preference
+            android:key="NORMAL_DIALOG_DURATION"
+            android:defaultValue="8" />
+        <Preference
+            android:key="LONG_DIALOG_DURATION"
+            android:defaultValue="16" />
+        <Preference
+            android:key="INFINIT_DIALOG_DURATION"
+            android:defaultValue="300" />
+        <Preference
+            android:key="DAYS_FOR_WARNING_COLOR_RED"
+            android:defaultValue="7" />
+        <Preference
+            android:key="DAYS_FOR_WARNING_COLOR_YEL"
+            android:defaultValue="3" />
+        <Preference
+            android:key="IS_ONLINE_TIMER_DELAY"
+            android:defaultValue="1000" />
+        <Preference
+            android:key="OFFLINE_TIMER_DELAY"
+            android:defaultValue="10000" />
+        <Preference
+            android:key="UPLOAD_SYNC_TIMER_DELAY"
+            android:defaultValue="600000" />
+        <Preference
+            android:key="DOWNLOAD_SYNC_TIMER_DELAY"
+            android:defaultValue="3600000" />
+        <Preference
+            android:key="USER_INACTIVITY_THRESHOLD_IN_MIN"
+            android:defaultValue="3" />
+	</PreferenceCategory>
+</PreferenceScreen>

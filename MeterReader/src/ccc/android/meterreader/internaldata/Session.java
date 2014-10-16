@@ -1,4 +1,4 @@
-package ccc.android.meterdata.types;
+package ccc.android.meterreader.internaldata;
 
 import java.util.Date;
 
@@ -8,6 +8,9 @@ import ccc.android.meterdata.listtypes.GaugeList;
 import ccc.android.meterdata.listtypes.ReadingList;
 import ccc.android.meterdata.listtypes.RouteList;
 import ccc.android.meterdata.listtypes.StationList;
+import ccc.android.meterdata.types.GaugeDevice;
+import ccc.android.meterdata.types.Reading;
+import ccc.android.meterdata.types.Route;
 
 public class Session  implements IGenericMember
 {

@@ -55,4 +55,24 @@ public class BinaryPattern
 	{
 		return character;
 	}
+
+	public void setPattern(Mat pattern)
+	{
+		this.pattern = pattern;
+	}
+
+	public void setWidth(int width)
+	{
+		this.width = width;
+	}
+
+	public void setHeight(int height)
+	{
+		this.height = height;
+	}
+
+	public void setCharacter(Character character)
+	{
+		this.character = character;
+	}
 }

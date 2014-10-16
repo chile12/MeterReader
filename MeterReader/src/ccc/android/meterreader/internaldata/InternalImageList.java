@@ -3,12 +3,11 @@ package ccc.android.meterreader.internaldata;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeName;
 
-import ccc.android.meterdata.*;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
-import ccc.android.meterdata.listtypes.StationList;
+import ccc.android.meterdata.listtypes.ImageList;
 import ccc.android.meterdata.types.ServerError;
 @JsonTypeName("InternalStationList")
-public class InternalStationList  extends ccc.android.meterdata.listtypes.StationList implements ICallbackList
+public class InternalImageList  extends ccc.android.meterdata.listtypes.ImageList implements ICallbackList
 {
 	private IMeterDataContainer container = null;
 	private boolean isLoaded = false;
@@ -23,9 +22,9 @@ public class InternalStationList  extends ccc.android.meterdata.listtypes.Statio
 		isLoaded = loaded;
 	}
 	
-	public InternalStationList()
+	public InternalImageList()
 	{super();}
-	public InternalStationList(IMeterDataContainer manager)
+	public InternalImageList(IMeterDataContainer manager)
 	{
 		super();
 		container = manager;
@@ -36,7 +35,7 @@ public class InternalStationList  extends ccc.android.meterdata.listtypes.Statio
 	{
 		if(list != null)
 		{
-			this.setStationList(((StationList) list).getStationList());
+			this.setImageList(((ImageList) list).getImageList());
 			this.setIsLoaded(true);
 			container.RegisterLoadedDataObject(this);
 		}

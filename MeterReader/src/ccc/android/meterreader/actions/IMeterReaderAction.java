@@ -3,17 +3,20 @@ package ccc.android.meterreader.actions;
 import java.util.Date;
 
 import ccc.android.meterdata.interfaces.IGenericMember;
+import ccc.android.meterreader.datamanagement.DataContext;
 
 public interface IMeterReaderAction 
 {
-	String GetActionText();
+	String getActionText(DataContext context);
 	
-	IGenericMember GetReferenceObject();
+	IGenericMember getReferenceObject();
 	
-	Date GetDate();
+	Date getDate();
+	
+	Class<? extends IMeterReaderAction> getType();
 	
 	//future stuff
-	void Undo();
+	void Undo(DataContext context);
 	
-	void Redo();
+	void Redo(DataContext context);
 }

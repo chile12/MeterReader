@@ -70,12 +70,12 @@ public class RestClient
         return type.cast(returnObj);
     }
     
-    public <T extends IGenericMemberList> T GetMultipleObjects(Class <T> type) throws Exception
+    public <T extends IGenericMember> IGenericMember GetMultipleObjects(Class <T> type) throws Exception
     {
     	return GetMultipleObjects(type, new ParameterMap(null));
     }
     
-    public <T extends IGenericMember> T GetMultipleObjects(Class <T> type, ParameterMap restriction) throws Exception
+    public <T extends IGenericMember> IGenericMember GetMultipleObjects(Class <T> type, ParameterMap restriction) throws Exception
     {
     	//TODO Exception!
     	if(connectionUrl==null)
@@ -85,9 +85,9 @@ public class RestClient
     	String jsonList = HandleHttpResponse(path); 
 
         try {
-			return (T) GetMultipleObjects(type, jsonList);
+			return GetMultipleObjects(type, jsonList);
 		} catch (Exception e) {
-			return null;
+			return new ServerError(e.getMessage());
 		}
     }
     

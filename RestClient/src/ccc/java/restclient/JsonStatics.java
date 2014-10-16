@@ -38,6 +38,7 @@ public class JsonStatics
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setPropertyNamingStrategy(new UpperNamingStrategy());
+		JsonMappingException  exc = new JsonMappingException("");
 		try {
 			return mapper.writeValueAsString(obj);
 		} catch (JsonGenerationException e) {
@@ -49,6 +50,9 @@ public class JsonStatics
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e) {
+			if(e.getMessage() == null || !e.getMessage().contains("java.awt")) //not!!
+				e.printStackTrace();
 		}
 		return "";
 	}

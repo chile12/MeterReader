@@ -35,7 +35,7 @@ public class GenericMemberListAsyncDbLoader extends AsyncTask<Object, Void, IGen
 			where = new ParameterMap(map);
 		IGenericMemberList list =null;
 		try {
-			list = client.GetMultipleObjects((Class<IGenericMemberList>)params[1], where);
+			list = (IGenericMemberList) client.GetMultipleObjects((Class<IGenericMemberList>)params[1], where);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -57,6 +57,6 @@ public class GenericMemberListAsyncDbLoader extends AsyncTask<Object, Void, IGen
     			callableList.ErrorCallback((ServerError) result);
     	}
     	else
-    		callableList.ErrorCallback(new ServerError("An unknown server error occurred."));
+    		callableList.ErrorCallback(new ServerError());
     }
 }

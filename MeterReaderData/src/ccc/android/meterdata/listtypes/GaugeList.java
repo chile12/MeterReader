@@ -61,6 +61,18 @@ public class GaugeList implements IGenericMemberList,  Iterable<Gauge>
 		return null;
 	}
 	
+	public Gauge getByBarcode(String barcode)
+	{
+		if(barcode == null)
+			return null;
+		for(Gauge ga : this.getGaugeList())
+		{
+			if(ga.getBarcode() != null && ga.getBarcode().trim().equals(barcode.trim()))
+				return ga;
+		}
+		return null;
+	}
+	
 
 	@Override
 	public void clear() 

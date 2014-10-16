@@ -130,7 +130,7 @@ public class EpviExpandeableListViewAdapter  extends BaseExpandableListAdapter
 		
 		
 		//set background by number of days since last reading
-		if(lastRead == null || lastRead.getUtcTo() == null || Statics.daysSince(lastRead.getUtcTo()) >= Statics.DAYSTORED)
+		if(lastRead == null || lastRead.getUtcTo() == null || Statics.daysSince(lastRead.getUtcTo()) >= Statics.DAYS_FOR_WARNING_COLOR_RED)
 			((LinearLayout) convertView).getChildAt(0).setBackgroundColor(Statics.getDefaultResources().getColor(R.color.OrangeBack));
 //		else if(Statics.daysSince(lastRead.getUtcTo()) >= Statics.DAYSTOYEL)
 //			((LinearLayout) convertView).getChildAt(0).setBackgroundColor(Statics.getDefaultResources().getColor(R.color.YellowBack));

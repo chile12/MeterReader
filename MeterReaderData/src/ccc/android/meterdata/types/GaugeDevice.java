@@ -20,7 +20,9 @@ public class GaugeDevice implements IGenericMember
 	private int digitCount;
 	private int decimalPlaces;
 	private int backGroundShade;
+	private String barcode;
 	private GaugeDeviceDigitList digitPatterns;
+	private Integer imageId;
 
 	@JsonProperty("SerialNumber")
 	public String getSerialNumber() {
@@ -112,20 +114,44 @@ public class GaugeDevice implements IGenericMember
 	public void setBackGround(int backGroundShade) {
 		this.backGroundShade = backGroundShade;
 	}
+	@JsonProperty("GaugeId")
 	public int getGaugeId()
 	{
 		return gaugeId;
 	}
+	@JsonProperty("GaugeId")
 	public void setGaugeId(int gaugeId)
 	{
 		this.gaugeId = gaugeId;
 	}
+	@JsonProperty("DeviceName")
 	public String getDeviceName()
 	{
 		return deviceName;
 	}
+	@JsonProperty("DeviceName")
 	public void setDeviceName(String deviceName)
 	{
 		this.deviceName = deviceName;
+	}
+	@JsonProperty("Barcode")
+	public String getBarcode()
+	{
+		return barcode;
+	}
+	@JsonProperty("Barcode")
+	public void setBarcode(String barcode)
+	{
+		this.barcode = barcode;
+	}
+	@JsonProperty("ImageId")
+	public Integer getImageId()
+	{
+		return imageId;
+	}
+	@JsonProperty("ImageId")
+	public void setImageId(Integer imageId)
+	{
+		this.imageId = imageId;
 	}
 }

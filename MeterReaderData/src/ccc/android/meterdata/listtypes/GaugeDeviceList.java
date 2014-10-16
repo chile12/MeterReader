@@ -25,7 +25,7 @@ public class GaugeDeviceList implements IGenericMemberList,  Iterable<GaugeDevic
 
 	@JsonProperty("GaugeDeviceList")
 	public void setGaugeDeviceList(List<GaugeDevice> gaugeDevices) {
-		this.gaugeDeviceList = gaugeDevices;
+		this.gaugeDeviceList = (List<GaugeDevice>) gaugeDevices;
 	}
 
 	@Override
@@ -50,6 +50,7 @@ public class GaugeDeviceList implements IGenericMemberList,  Iterable<GaugeDevic
 		return gaugeDeviceList.size();
 	}
 
+	@JsonIgnore
 	@Override
 	public GaugeDevice getById(Object id) 
 	{

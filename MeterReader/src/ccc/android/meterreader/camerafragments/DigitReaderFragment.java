@@ -108,7 +108,6 @@ public class DigitReaderFragment extends DialogFragment
 			if(e.getMessage() == null || !e.getMessage().contains("java.awt")) //not!!
 				e.getMessage();
 		}
-        Statics.ShowToast("Beachten Sie: Dies ist nur eine Vorschau! Funktionalität und Aussehen werden sich deutlich verbessern." );
     }
     
     @Override

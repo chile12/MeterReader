@@ -9,8 +9,14 @@
     <string name="main_display_size_warning">The display-size of your device is too small. Please use at least a 540x960 display.</string>
     
     <string name="main_menu">Menu</string>
+    <string name="main_connected">this device is connected to the EPVI database</string>
+    <string name="main_not_connected">this device is not connected to the EPVI database</string>
+    <string name="main_data_synchron">all data synchronized with the EPVI database</string>
+    <string name="main_data_desynchron">new recorded data not synchronized yet</string>
+    <string name="main_data_asynchron">!failed to synchronize with the EPVI database!</string>
     <string name="main_sync_not_done">synchronization not yet completed</string>
     <string name="main_sync_done">synchronization was successful</string>
+    <string name="main_sync_file">No connection with the EPVI database could be established. Last session was loaded instead.</string>
     <string name="main_sync_inprog">Synchronization in progress. Please wait.</string>
     <string name="main_sync_not_successful">Youre device could not be synchronized with a local database!</string>
     <string name="main_sync_abort">abort synchronization</string>
@@ -25,6 +31,13 @@
     <string name="main_button_panel_close">close</string>
     <string name="main_button_panel_new_device">register new device</string>
         
+    <string name="main_options_panel_sync_db">synchronize with EPVI database</string>
+    <string name="main_options_panel_connection">connection settings</string>
+    <string name="main_options_panel_load_dbg_ses">load debug-session</string>
+    <string name="main_options_panel_load_last_ses">load last session</string>
+    <string name="main_options_panel_save_session">save current session</string>
+    <string name="main_options_panel_clear_session">reset current session</string>
+    
     <string name="app_name">EPVI</string>
     <string name="action_settings">Settings</string>
     <string name="generic_exception_warning">an exception occurred: </string>
@@ -40,13 +53,14 @@
         
     <string name="gauge_display_read_warning_less">The entered value is less than the value of the last reading!</string>
     <string name="gauge_display_data_warning">The current reading has been corrupted, please start this dialog again.</string>
-    <string name="gauge_display_no_data_warning">There is no data for this gauge.</string>
+    <string name="gauge_display_no_data_warning">No data for this gauge found. Please register this gauge with the EPVI web application first.</string>
     
     <string name="abort_scan">abort scan</string>
     <string name="list_item_last_read">last reading: </string>
     <string name="list_item_medium">medium: </string>
     
     <string name="action_new_reading" formatted="false">A new reading was added for gauge %s at %s</string>
+    <string name="action_new_device" formatted="false">A new gauge device was added for gauge %s</string>
     
     <string name="connection_dia_title">connection settings</string>
     <string name="connection_dia_subtitle">specify the epvi-service endpoint</string>
@@ -69,7 +83,7 @@
     <string name="new_device_step0_info">please note: In case of a whole new gauge, create a new gauge in the EPVI web application first. Than register the gauge-device with this application. Otherwise a device exchange is carried out.</string>
     <string name="new_device_step0_spinner_prompt">choose a gauge:</string>
     <string name="new_device_step0_barcode_info">alternatively: scan the qr- or barcode:</string>
-    <string name="new_device_step0_barcode_take_last_read">please take a last reading before exchanging the gauge devices</string>
+	<string name="new_device_step0_barcode_take_last_read">please take a last reading before exchanging the gauge devices</string>
     <string name="new_device_step0_barcode_select_gauge">please select a gauge first</string>
     <string name="new_device_step0_gauge_not_found">This gauge has not been registered yet! Please register a gauge via the EPVI web application before registering a gauge device.</string>
     <string name="new_device_step1_info">Take a picture of the device</string>
@@ -89,6 +103,9 @@
     <string name="new_device_step7_description">Description:</string>
     <string name="new_device_next_step_warning">Please enter or choose something before continuing.</string>
     <string name="new_device_decimal_warning">You have to enter a greater digit number first.</string>
+    <string name="new_device_take_last_read">please take a last reading before exchanging the gauge devices</string>
+    <string name="new_device_take_first_read">please take the first reading of the new gauge device</string>
+    <string name="new_device_device_not_found">No gauge device is registered for this gauge yet. Do this by using the oiption \'register new device\'.</string>
 
     <string name="epvi_options_show_options">groups and filter</string>
     <string name="epvi_options_show_list">update list</string>

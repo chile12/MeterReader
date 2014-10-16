@@ -2,6 +2,8 @@ package ccc.android.meterreader.internaldata;
 
 import java.util.ArrayList;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import ccc.android.meterdata.listtypes.GaugeDeviceDigitList;
 import ccc.android.meterdata.types.GaugeDevice;
 import ccc.android.meterdata.types.GaugeDeviceDigit;
@@ -13,6 +15,10 @@ import ccc.java.simpleocr.BinaryPatternContainer;
 public class InternalGaugeDevice extends GaugeDevice
 {
 	private BinaryPatternContainer binaryPatterns = new BinaryPatternContainer();
+	public InternalGaugeDevice()
+	{
+		
+	}
 	public InternalGaugeDevice(GaugeDevice device)
 	{
 		this.setBackGround(device.getBackGround());
@@ -20,6 +26,8 @@ public class InternalGaugeDevice extends GaugeDevice
 		this.setDecimalPlaces(device.getDecimalPlaces());
 		this.setDigitCount(device.getDigitCount());
 		this.setGaugeDeviceId(device.getGaugeDeviceId());
+		this.setGaugeId(device.getGaugeId());
+		this.setBarcode(device.getBarcode());
 		this.setManufacturer(device.getManufacturer());
 		this.setSerialNumber(device.getSerialNumber());
 		this.setUtcInstallation(device.getUtcInstallation());
@@ -27,15 +35,12 @@ public class InternalGaugeDevice extends GaugeDevice
 		this.setDigitPatterns(device.getDigitPatterns());
 	}
 
-	
-	@Override
-	public GaugeDeviceDigitList getDigitPatterns() {
-		return null;
-	}
+	@JsonIgnore
 	@Override
 	public void setDigitPatterns(GaugeDeviceDigitList digitPatterns) {
 		if(digitPatterns == null)
 			return;
+		super.setDigitPatterns(digitPatterns);
 		for(GaugeDeviceDigit digit : digitPatterns.getDigitList())
 		{
 			Character chr = String.valueOf(digit.getDigit()).charAt(0);
@@ -53,10 +58,8 @@ public class InternalGaugeDevice extends GaugeDevice
 		}
 	}
 	
+	@JsonIgnore
 	public BinaryPatternContainer getBinaryPatterns() {
 		return binaryPatterns;
-	}
-	public void setBinaryPatterns(BinaryPatternContainer binaryPatterns) {
-		this.binaryPatterns = binaryPatterns;
 	}
 }

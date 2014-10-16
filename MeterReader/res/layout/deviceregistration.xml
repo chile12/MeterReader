@@ -535,7 +535,6 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 pixlui:typeface="SourceSansPro.ttf" />
         </LinearLayout>
-
     </ViewFlipper>
 
     <RelativeLayout

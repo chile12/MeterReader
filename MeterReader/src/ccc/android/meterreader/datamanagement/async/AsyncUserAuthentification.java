@@ -7,6 +7,7 @@ import java.util.Map;
 
 import android.os.AsyncTask;
 import ccc.android.meterdata.types.User;
+import ccc.android.meterreader.internaldata.ICallBack;
 import ccc.android.meterreader.statics.Statics;
 import ccc.android.meterreader.viewelements.UserAuthentificationDialog;
 import ccc.java.restclient.ParameterMap;
@@ -14,12 +15,12 @@ import ccc.java.restclient.RestClient;
 
 public class AsyncUserAuthentification  extends AsyncTask<Object, Void, User>
 {
-	UserAuthentificationDialog dia = null;
+	ICallBack dia = null;
 	@Override
 	protected User doInBackground(Object... login) 
 	{
 		RestClient client = null;
-		dia = (UserAuthentificationDialog)login[0];
+		dia = (ICallBack)login[0];
 		try {
 			client = new RestClient (new URL(Statics.BASE_WS_URL));
 		} catch (MalformedURLException e1) {
@@ -41,7 +42,7 @@ public class AsyncUserAuthentification  extends AsyncTask<Object, Void, User>
 	protected void onPostExecute(User result) {
 		if(dia != null)
 		{
-			dia.callback(result);
+			dia.UserLoggedInCallback(result);
 		}
 	}
 }

@@ -202,7 +202,12 @@ public class MeterReaderKeyboard
         edittext.setInputType( edittext.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS );
     }
 
-	public KeyboardView getmKeyboardView() {
-		return mKeyboardView;
+//	public KeyboardView getmKeyboardView() {
+//		return mKeyboardView;
+//	}
+	
+	public int getKeyboardHeight()
+	{
+		return mKeyboard.getHeight();
 	}
 }

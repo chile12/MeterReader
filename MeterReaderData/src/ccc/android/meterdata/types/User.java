@@ -9,6 +9,8 @@ private int userId;
 private String name;
 private String firstName;
 
+public User()
+{}
 public User(int id)
 {
 	//TODO check this

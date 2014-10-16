@@ -12,9 +12,9 @@
 	<classpathentry kind="lib" path="libs/jackson-mapper-asl-1.9.12.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/DigitExtractor"/>
 	<classpathentry exported="true" kind="lib" path="C:/Program Files/adt-bundle-windows-x86_64-20131030/jars/apache/commons-io-2.4/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="libs/ffmpeg.jar"/>
-	<classpathentry kind="lib" path="libs/javacpp.jar" sourcepath="C:/Users/Chile/.m2/repository/org/bytedeco/javacpp/0.9/javacpp-0.9-sources.jar"/>
-	<classpathentry kind="lib" path="libs/javacv.jar"/>
-	<classpathentry kind="lib" path="libs/opencv.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/ffmpeg.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javacpp.jar" sourcepath="C:/Users/Chile/.m2/repository/org/bytedeco/javacpp/0.9/javacpp-0.9-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javacv.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/opencv.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

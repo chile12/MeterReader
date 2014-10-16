@@ -1,8 +1,6 @@
 package ccc.android.meterreader.statics;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -19,16 +17,18 @@ import ccc.android.meterdata.types.PingCallback;
 import ccc.android.meterreader.BuildConfig;
 import ccc.android.meterreader.MainActivity;
 import ccc.android.meterreader.R;
-import ccc.android.meterreader.R.string;
-import ccc.android.meterreader.datamanagement.PreferencesHelper;
 import ccc.android.meterreader.datamanagement.async.AsyncPingBack;
-import ccc.java.restclient.RestClient;
+import ccc.android.meterreader.helpfuls.PreferencesHelper;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.hardware.Camera.Size;
+import android.os.Environment;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
@@ -36,43 +36,37 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class Statics 
 {
-	//DEBUG
-	public static boolean debugMode = true;
-	//ENDDEBUG
-	private static PowerManager.WakeLock wl;
-	private static Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-	private static Date lastUtcTime;
-	private static long utcDiff;
-	private static boolean isOnline = false;
-	private static Timer pingTimer;
-	private static Timer upSyncTimer;
-	private static Timer downSyncTimer;
-	private static int isOnlineTimerDelay = 1000;
-	private static int offLineTimerDelay = 10000;
-	private static int uploadSyncTimerDelay = 300000; 	//5 min
-	private static int downloadSyncTimerDelay = 3600000;//1 h
-	private static int userInactivityInMinutes = 1;
-	private static MainActivity activity;
-    private static boolean wasOnline = false;
-    private static Typeface sansPro; 
-    private static Resources LocaleResources;
-    private static java.text.DateFormat localeDateFormat;
-    //used for constants editable by user
-    private static PreferencesHelper Preferences;
-    
-    private static Date lastInteraction;
-
+	public static final String WS_URL_KEY = "WS_URL_KEY";
+	public static final String LAST_FULL_DOWN_KEY = "LAST_FULL_DOWN_KEY";
 	public static String BASE_WS_URL = null;
-	public static final String WS_URL_KEY = "wsBaseUrl";
+	public static final String UNDOSTACK = "undo.txt";
+	public static final String REDOSTACK = "redo.txt";
 	public static final String MAIN_SESSION = "MainSession.txt";
 	public static final String LAST_SESSION = "LastSession.txt";
 	public static final String DEBUG_SESSION = "DebugSession.txt";
+	public static final String DIGIT_FILE = "digits.txt";
+	public static final int NUM_OF_SETS_OF_PATTERNS = 10;
+	public static final int PINGS_TIL_CONTEXT_LOAD = 5;
+	public static final int SHORT_DIALOG_DURATION = 3;
+	public static final int NORMAL_DIALOG_DURATION = 8;
+	public static final int LONG_DIALOG_DURATION = 16;
+	public static final int INFINIT_DIALOG_DURATION = 300;
+
+	//TODO replace with gauge specific threshold values
+	public static final int DAYS_FOR_WARNING_COLOR_RED = 7;
+	public static final int DAYS_FOR_WARNING_COLOR_YEL = 3;
+	
+	public static final int IS_ONLINE_TIMER_DELAY = 1000;
+	public static final int OFFLINE_TIMER_DELAY = 10000;
+	public static final int UPLOAD_SYNC_TIMER_DELAY = 600000; 	//10 min
+	public static final int DOWNLOAD_SYNC_TIMER_DELAY = 3600000;//1 h
+	public static final int USER_INACTIVITY_THRESHOLD_IN_MIN = 3;
+	
 	public static final String EPVI_LIST_ITEM_EXPANDED = "epviListItemExpanded";
 	public static final String EPVI_LIST_ITEM = "epviListItem";
 	public static final String ANDROID_INTENT_ACTION_GDR = "android.intent.action.GaugeDisplayRequest";
@@ -87,14 +81,34 @@ public class Statics
 	public static final int GAUGE_DISPLAY_VIEW = 1;
 	public static final int QR_PREVIEW_VIEW = 2;
 	public static final int DIGIT_READER_VIEW = 3;
-	public static final int NUM_OF_SETS_OF_PATTERNS = 10;
-	
+
 	public static int DISPLAY_HEIGHT;
 	public static int DISPLAY_WIDTH;
 	
-	//TODO replace with gauge specific threshold values
-	public static final int DAYSTORED = 3;
-	public static final int DAYSTOYEL = 1;
+	
+	//DEBUG
+	public static boolean debugMode = true;
+	//ENDDEBUG
+	
+	//private statics
+	private static PowerManager.WakeLock wl;
+	private static Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+	private static Date lastUtcTime;
+	private static long utcDiff;
+	private static boolean isOnline = false;
+	private static Timer pingTimer;
+	private static Timer upSyncTimer;
+	private static Timer downSyncTimer;
+	private static int pingsTilContextLoad = PINGS_TIL_CONTEXT_LOAD;  //ergo  pingsTilContextLoad*isOnlineTimerDelay = time before context gets loaded from file and not database!
+	private static MainActivity activity;
+    private static boolean wasOnline = false;
+    private static Typeface sansPro; 
+    private static Resources LocaleResources;
+    private static java.text.DateFormat localeDateFormat;
+    //used for constants editable by user
+    private static PreferencesHelper Preferences;
+    
+    private static Date lastInteraction;
 	
 	public enum SyncState
 	{
@@ -109,7 +123,7 @@ public class Statics
 		upSyncTimer = new Timer();
 		downSyncTimer = new Timer();
 
-		upSyncTimer.schedule(new UpSyncTask(), uploadSyncTimerDelay);
+		upSyncTimer.schedule(new UpSyncTask(), UPLOAD_SYNC_TIMER_DELAY);
 		
 		//TODO read settings file
 		activity = activ;
@@ -122,7 +136,7 @@ public class Statics
 	    localeDateFormat = DateFormat.getDateFormat(activ);
 		BASE_WS_URL = (String) Preferences.GetPreferences(WS_URL_KEY, String.class);
 		if(BASE_WS_URL == null)
-			Statics.ShowToast(LocaleResources.getString(R.string.no_base_ws_url_warning));
+			Statics.ShowAlertDiaMsgWithBt(LocaleResources.getString(R.string.no_base_ws_url_warning), INFINIT_DIALOG_DURATION);
 		
     	DisplayMetrics displayMetrics = new DisplayMetrics();
     	WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
@@ -144,8 +158,8 @@ public class Statics
 			upSyncTimer = new Timer();
 			if(isOnline)
 			{
-				if(activity.getManager().getUnDoStack().size() > 0 
-						&& (lastInteraction == null || Statics.getDateDiff(lastInteraction, new Date(), TimeUnit.MINUTES) > userInactivityInMinutes))
+				if(activity.getManager().unDoStackSize() > 0 
+						&& (lastInteraction == null || Statics.getDateDiff(lastInteraction, new Date(), TimeUnit.MINUTES) > USER_INACTIVITY_THRESHOLD_IN_MIN))
 				{
 					activity.runOnUiThread(new Runnable() {
 			            @Override
@@ -154,10 +168,10 @@ public class Statics
 			            }
 			        });
 				}
-				upSyncTimer.schedule(new UpSyncTask(), uploadSyncTimerDelay);
+				upSyncTimer.schedule(new UpSyncTask(), UPLOAD_SYNC_TIMER_DELAY);
 			}
 			else
-				upSyncTimer.schedule(new UpSyncTask(), offLineTimerDelay);
+				upSyncTimer.schedule(new UpSyncTask(), OFFLINE_TIMER_DELAY);
 	    }
 	}
 	
@@ -168,19 +182,40 @@ public class Statics
 			downSyncTimer = new Timer();
 			if(isOnline)
 			{
-				if(lastInteraction == null || Statics.getDateDiff(lastInteraction, new Date(), TimeUnit.MINUTES) > userInactivityInMinutes)
+				if(lastInteraction == null || Statics.getDateDiff(lastInteraction, new Date(), TimeUnit.MINUTES) > USER_INACTIVITY_THRESHOLD_IN_MIN)
 				{
 					activity.runOnUiThread(new Runnable() {
 			            @Override
 			            public void run() {
-					        activity.getManager().LoadContextFromDb();
+			            	Date last = new Date(Preferences.GetPreferences(LAST_FULL_DOWN_KEY, long.class));
+			            	if(last == null || Statics.getDateDiff(last, new Date(), TimeUnit.DAYS) > 6)
+			            		activity.getManager().LoadContextFromDb(true);
+			            	else
+			            		activity.getManager().LoadContextFromDb(true);
 			            }
 			        });
 				}
-				downSyncTimer.schedule(new DownSyncTask(), downloadSyncTimerDelay);
+				downSyncTimer.schedule(new DownSyncTask(), DOWNLOAD_SYNC_TIMER_DELAY);
 			}
 			else
-				downSyncTimer.schedule(new DownSyncTask(), offLineTimerDelay);
+				downSyncTimer.schedule(new DownSyncTask(), OFFLINE_TIMER_DELAY);
+	    }
+	}
+	
+	private static class FileSyncTask extends TimerTask
+	{
+		@Override
+		public void run() 
+		{
+			downSyncTimer = new Timer();
+			activity.runOnUiThread(new Runnable() {
+	            @Override
+	            public void run() {
+			        activity.getManager().LoadContextFromFile();
+	            }
+	        });
+			
+			downSyncTimer.schedule(new DownSyncTask(), DOWNLOAD_SYNC_TIMER_DELAY);
 	    }
 	}
 	
@@ -193,9 +228,9 @@ public class Statics
 	public static void resumeTimer()
 	{
 		upSyncTimer = new Timer();
-		upSyncTimer.schedule(new UpSyncTask(), offLineTimerDelay);
+		upSyncTimer.schedule(new UpSyncTask(), OFFLINE_TIMER_DELAY);
 		downSyncTimer = new Timer();
-		downSyncTimer.schedule(new DownSyncTask(), offLineTimerDelay);
+		downSyncTimer.schedule(new DownSyncTask(), OFFLINE_TIMER_DELAY);
 	}
 	
 	public static void downSyncNow()
@@ -249,7 +284,7 @@ public class Statics
 		        });
 			}
 		};
-		pingTimer.schedule(pingInTime, isOnlineTimerDelay, isOnlineTimerDelay);
+		pingTimer.schedule(pingInTime, IS_ONLINE_TIMER_DELAY, IS_ONLINE_TIMER_DELAY);
 	}
 	
 	private static void initializePing()
@@ -265,16 +300,24 @@ public class Statics
 	public static void receivePingback(PingCallback res)
 	{
 		if(res.getPingResult()==1)
+		{
 			isOnline =  true;
+		}
 		else
 		{
 			isOnline = false;
+			pingsTilContextLoad--;
 			if(res.getError() != null)
 			{
 				stopPing();
-				ShowToast(res.getError());
+				ShowAlertDiaMsgWithBt(res.getError(), INFINIT_DIALOG_DURATION);
+			}
+			if(pingsTilContextLoad == 1)			//load from file
+			{
+				downSyncTimer.schedule(new FileSyncTask(), 10);
 			}
 		}
+		
 		if(res.getUtc() != null)
 		{
 			int timezoneOffset = res.getUtc().getTimezoneOffset() * 60 * 1000;
@@ -285,15 +328,20 @@ public class Statics
 		if(wasOnline != isOnline && activity != null)
 		{
 			activity.invalidateOptionsMenu();
-			if(isOnline)
+			if(isOnline)											//load from db
 				downSyncTimer.schedule(new DownSyncTask(), 10);
 		}
 		wasOnline = isOnline;
 	}
 	
-	public static void WriteRawFile(String fileName, List<String> records) throws IOException {
+	public static void WriteRawFile(String fileName, boolean append, String... records) throws IOException {
 
-	    FileOutputStream fos = activity.openFileOutput(fileName, Context.MODE_PRIVATE);
+	    FileOutputStream fos;
+	    if(append)
+	    	fos = activity.openFileOutput(fileName, Context.MODE_PRIVATE|Context.MODE_APPEND);
+	    else
+	    	fos = activity.openFileOutput(fileName, Context.MODE_PRIVATE);
+	    
 	    String separator = System.getProperty("line.separator");
 	    OutputStreamWriter osw = new OutputStreamWriter(fos);
 
@@ -305,6 +353,34 @@ public class Statics
 	    osw.flush();
 	    osw.close();
 	    fos.close();
+	}
+	
+	public static void RemoveLastLineOfFile(String fileName)
+	{
+		RandomAccessFile f;
+		try
+		{
+			f = new RandomAccessFile(fileName, "rw");
+
+			long length = f.length() - 1;
+			byte b = ' ';
+			do {                     
+			  length -= 1;
+			  f.seek(length);
+			  b = f.readByte();
+			} while(b != 10 && length > 0);
+			f.setLength(length+1);
+		}
+		catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static BufferedReader ReadFile(String path) throws FileNotFoundException
@@ -331,6 +407,55 @@ public class Statics
 		}
 		return null;
 	}
+	
+	public void WriteToExternal(BufferedReader br, String subPath) throws IOException {
+		if(!subPath.startsWith("/"))  //not!
+			subPath = "/" + subPath;
+		  File directory = Environment.getExternalStorageDirectory();
+		  File file = new File(directory + subPath);
+	    BufferedWriter bw = null;
+	    try {
+	        bw = new BufferedWriter(new FileWriter(file));
+
+	        int in;
+	        while ((in = br.read()) != -1) {
+	            bw.write(in);
+	        }
+	    } finally {
+	        if (bw != null) {
+	            bw.close();
+	        }
+	        br.close();
+	    }
+	}
+	
+	public BufferedReader ReadFileFromExternal(String subPath) 
+	{
+		if(!subPath.startsWith("/"))  //not!
+			subPath = "/" + subPath;
+		  File directory = Environment.getExternalStorageDirectory();
+		  File file = new File(directory + subPath);
+		  if (!file.exists()) {
+		    throw new RuntimeException("File not found");
+		  }
+		  BufferedReader reader = null;
+		  try {
+		    reader = new BufferedReader(new FileReader(file));
+		    return reader;
+		  } catch (Exception e) {
+		    e.printStackTrace();
+		  } finally {
+		    if (reader != null) {
+		      try {
+		        reader.close();
+		      } catch (IOException e) {
+		        e.printStackTrace();
+		      }
+		   }
+		    
+		}
+		  return null;
+	} 
 	
 	private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 	/**
@@ -366,8 +491,81 @@ public class Statics
 		if(message == null)
 			return;
 		Toast notPlausible = Toast.makeText(context, message , Toast.LENGTH_LONG);
-		notPlausible.setGravity(Gravity.TOP, 0, 300);
+		notPlausible.setGravity(Gravity.BOTTOM, 0, 300);
 		notPlausible.show();
+	}
+	
+	
+	public static void ShowAlertDiaMsgWithBt(Context context, String message)
+	{
+		ShowAlertDiaMsg(context, message, NORMAL_DIALOG_DURATION, true);
+	}
+	
+	public static void ShowAlertDiaMsgWithBt(String message)
+	{
+		ShowAlertDiaMsg(activity, message, NORMAL_DIALOG_DURATION, true);
+	}
+	
+	public static void ShowAlertDiaMsgWithBt(String message, int seconds)
+	{
+		ShowAlertDiaMsg(activity, message, seconds, true);
+	}
+	
+	public static void ShowAlertDiaMsg(Context context, String message, int seconds)
+	{
+		ShowAlertDiaMsg(context, message, seconds, false);
+	}
+	
+	public static void ShowAlertDiaMsg(Context context, String message)
+	{
+		ShowAlertDiaMsg(context, message, NORMAL_DIALOG_DURATION, false);
+	}
+	
+	public static void ShowAlertDiaMsg(String message)
+	{
+		ShowAlertDiaMsg(activity, message, NORMAL_DIALOG_DURATION, false);
+	}
+	
+	public static void ShowAlertDiaMsg(String message, int seconds)
+	{
+		ShowAlertDiaMsg(activity, message, seconds, false);
+	}
+	
+	private static void ShowAlertDiaMsg(Context context, String message, int seconds, boolean withButton)
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setMessage(message);
+		
+		if(withButton)
+			builder.setPositiveButton(Statics.getDefaultResources().getString(R.string.common_ok), new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) 
+				{
+					arg0.dismiss();
+				}});
+		
+		final AlertDialog d = builder.create();
+		d.show();
+		
+		// Hide after some seconds
+		final Handler handler  = new Handler();
+		final Runnable runnable = new Runnable() {
+		    @Override
+		    public void run() {
+		        if (d.isShowing()) {
+		            d.dismiss();
+		        }
+		    }
+		};
+
+		d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+		    @Override
+		    public void onDismiss(DialogInterface dialog) {
+		        handler.removeCallbacks(runnable);
+		    }
+		});
+
+		handler.postDelayed(runnable, seconds*1000);
 	}
 	
 	public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
@@ -406,7 +604,7 @@ public class Statics
 			Preferences.EditPreferences(WS_URL_KEY, bASE_WS_URL);
 			startPing();
 		} catch (Exception e) {
-			Statics.ShowToast(LocaleResources.getString(R.string.generic_exception_warning) + e.getMessage());
+			Statics.ShowAlertDiaMsgWithBt(LocaleResources.getString(R.string.generic_exception_warning) + e.getMessage(), INFINIT_DIALOG_DURATION);
 			e.printStackTrace();
 		}
 	}

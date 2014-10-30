@@ -6,11 +6,10 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeName;
 
-import ccc.android.meterdata.*;
+import ccc.android.meterdata.errors.RestError;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.listtypes.GaugeList;
 import ccc.android.meterdata.types.Gauge;
-import ccc.android.meterdata.types.ServerError;
 @JsonTypeName("InternalGaugeList")
 public class InternalGaugeList extends ccc.android.meterdata.listtypes.GaugeList implements ICallbackList
 {
@@ -67,7 +66,7 @@ public class InternalGaugeList extends ccc.android.meterdata.listtypes.GaugeList
 	}
 	
 	@Override
-	public void ErrorCallback(ServerError error) {
+	public void ErrorCallback(RestError error) {
 		container.ReceiveErrorObject(error);
 		
 	}

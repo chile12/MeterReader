@@ -1,7 +1,6 @@
 package ccc.java.digitextractor;
 
 import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
-import static org.bytedeco.javacpp.opencv_highgui.imdecode;
 import static org.bytedeco.javacpp.opencv_highgui.imread;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_BGR2HSV;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
@@ -160,9 +159,9 @@ public class DigitReadingProcessor
 		Mat bgra = null;
 
 		if (this.imageFormat == 17)
-			bgra = createMatFromNv21(data, width, height);
+			bgra = ImageStatics.CreateMatFromNv21(data, width, height);
 		else if (this.imageFormat == 256)
-			bgra = createMatFromJpeg(data, width, height);
+			bgra = ImageStatics.CreateMatFromJpeg(data, width, height);
 
 		return addReadingImage(bgra, frame);
 	}
@@ -181,23 +180,6 @@ public class DigitReadingProcessor
 		readings.add(0, img);
 
 		return true;
-	}
-
-	private Mat createMatFromNv21(byte[] data, int width, int height)
-	{
-		Mat bgra = new Mat(height, width, org.bytedeco.javacpp.opencv_core.CV_8UC3);
-		Mat nv21 = new Mat(height + (height / 2), width, org.bytedeco.javacpp.opencv_core.CV_8UC1);
-		nv21.getByteBuffer().put(data);
-		org.bytedeco.javacpp.opencv_imgproc.cvtColor(nv21, bgra, org.bytedeco.javacpp.opencv_imgproc.CV_YUV2BGR_NV21);
-		return bgra;
-	}
-
-	private Mat createMatFromJpeg(byte[] data, int width, int height)
-	{
-		Mat zw = new Mat(width, height, 1);
-		zw.getByteBuffer().put(data);
-		Mat jpeg = imdecode(zw, 1);
-		return jpeg;
 	}
 
 	private Mat rotateRight(Mat bgra)

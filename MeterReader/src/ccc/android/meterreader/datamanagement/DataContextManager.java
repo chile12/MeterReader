@@ -1,13 +1,21 @@
 package ccc.android.meterreader.datamanagement;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Stack;
+import java.util.Timer;
 
 import ccc.android.meterdata.listtypes.GaugeDeviceDigitList;
 import ccc.android.meterdata.listtypes.GaugeDeviceList;
 import ccc.android.meterdata.listtypes.GaugeList;
 import ccc.android.meterdata.listtypes.ImageList;
+import ccc.android.meterdata.listtypes.PreferenceList;
 import ccc.android.meterdata.listtypes.ReadingList;
 import ccc.android.meterdata.listtypes.RouteList;
 import ccc.android.meterdata.listtypes.StationList;
@@ -23,12 +31,19 @@ import ccc.android.meterreader.datamanagement.async.AsyncSessionSynchronizer;
 import ccc.android.meterreader.datamanagement.async.DataContextAsyncFileLoader;
 import ccc.android.meterreader.datamanagement.async.GenericMemberListAsyncDbLoader;
 import ccc.android.meterreader.datamanagement.async.GenericMemberListAsyncFileLoader;
+import ccc.android.meterreader.datamanagement.async.GenericPartialListAsyncDbLoader;
 import ccc.android.meterreader.exceptions.UserNotInitializedException;
 import ccc.android.meterreader.internaldata.ICallBack;
 import ccc.android.meterreader.internaldata.InternalGaugeDevice;
 import ccc.android.meterreader.internaldata.InternalGaugeDeviceDigitList;
+import ccc.android.meterreader.internaldata.InternalImageList;
 import ccc.android.meterreader.internaldata.Session;
+import ccc.android.meterreader.statics.StaticGaugeLibrary;
+import ccc.android.meterreader.statics.StaticIconLibrary;
+import ccc.android.meterreader.statics.StaticImageLibrary;
+import ccc.android.meterreader.statics.StaticPreferences;
 import ccc.android.meterreader.statics.Statics;
+import ccc.android.meterreader.statics.Statics.SyncMode;
 import ccc.java.restclient.JsonStatics;
 import ccc.java.restclient.RestClient;
 
@@ -64,13 +79,15 @@ public class DataContextManager implements ICallBack
 
 		data.SessionIsSynchronizing();
 		AsyncSessionSynchronizer readingSync = new AsyncSessionSynchronizer();
+		//get current Preferences
+		data.getSession().setPreferences(StaticPreferences.getPreferences());
 		readingSync.execute(new Object[]{data.getSession(), this});
-		Statics.downSyncNow();
+		Statics.syncNow();
 	}
 
 	private URL getWsUrl() {
 		URL wsURL = null;
-		String url = Statics.getPreferences().GetPreferences(Statics.WS_URL_KEY, String.class);		
+		String url = StaticPreferences.getPreference(Statics.WS_URL, null);		
 		try 
 		{
 			wsURL = new URL(url);
@@ -82,27 +99,54 @@ public class DataContextManager implements ICallBack
 	
 	public void LoadContextFromFile()
 	{
-    	LoadContextFromFile(Statics.LAST_SESSION, true);
-		this.actionStackLoad(Statics.UNDOSTACK);
-		applyUnDoStackToSession();
+    	LoadContextFromFile(StaticPreferences.getPreference(Statics.LAST_SESSION, Statics.LAST_SESSION_DEFAULT), true);
 	}
 	
-	public void LoadContextFromDb(boolean withImageData)
+	public void LoadContextFromFile(String file, boolean context) 
 	{
-		if(!withImageData)  //not!!
-		{
+		data.SessionIsSynchronizing();
+//		this.actionStackLoad(StaticPreferences.getPreference(Statics.UNDO_STACK_FILE, Statics.UNDO_STACK_FILE_DEFAULT));
+//		applyUnDoStackToSession();
+ 		if(file == null)
+			file = StaticPreferences.getPreference(Statics.MAIN_SESSION, Statics.MAIN_SESSION_DEFAULT);
+		loadContextFromFile(file, context);
+		data.setWaitForPatterns(1);
+		loadListFromFile(StaticPreferences.getPreference(Statics.DIGIT_FILE, Statics.DIGIT_FILE_DEFAULT));
+		loadListFromFile(StaticPreferences.getPreference(Statics.IMAGE_FILE, Statics.IMAGE_FILE_DEFAULT));
+		loadListFromFile(StaticPreferences.getPreference(Statics.ICON_FILE, Statics.ICON_FILE_DEFAULT));
+	}
+	
+	public void LoadFullContextFromDb()
+	{
+//		if(Statics.getSyncMode() == SyncMode.Partial)
+//		{
+//			LoadContextFromDb();
+//			return;
+//		}
+		data.setWaitForPatterns(StaticPreferences.getPreference(Statics.NUM_OF_PATTERN_SETS, Statics.NUM_OF_PATTERN_SETS_DEFAULT));
+		this.loadContextFromDb(true);
+		Statics.setSyncMode(SyncMode.Partial);
+		StaticPreferences.setPreference(Statics.LAST_FULL_DOWN, new Date().getTime());
+	}
+	
+	public void LoadContextFromDb()
+	{
 			data.setWaitForPatterns(1);
-			this.loadDigitsFromFile(Statics.DIGIT_FILE);
-		}
-		this.loadContextFromDb(withImageData);
+			loadListFromFile(StaticPreferences.getPreference(Statics.DIGIT_FILE, Statics.DIGIT_FILE_DEFAULT));
+			loadListFromFile(StaticPreferences.getPreference(Statics.IMAGE_FILE, Statics.IMAGE_FILE_DEFAULT));
+			loadListFromFile(StaticPreferences.getPreference(Statics.ICON_FILE, Statics.ICON_FILE_DEFAULT));
+		this.loadContextFromDb(false);
 	}
 	
 	public void SaveContext()
 	{
-		this.SaveContextToFile(Statics.LAST_SESSION, true);
-		this.SaveDigitsToFile(Statics.DIGIT_FILE);
-		this.actionStackLoad(Statics.UNDOSTACK);
-		applyUnDoStackToSession();
+		this.SaveContextToFile(StaticPreferences.getPreference(Statics.LAST_SESSION, Statics.LAST_SESSION_DEFAULT), true);
+		if(Statics.getSyncMode() == SyncMode.Full)
+		{
+			this.SaveListToFile(StaticPreferences.getPreference(Statics.DIGIT_FILE, Statics.DIGIT_FILE_DEFAULT));
+			this.SaveListToFile(StaticPreferences.getPreference(Statics.IMAGE_FILE, Statics.IMAGE_FILE_DEFAULT));
+			this.SaveListToFile(StaticPreferences.getPreference(Statics.ICON_FILE, Statics.ICON_FILE_DEFAULT));
+		}
 	}
 	
 	public void WriteEmptyFile(String fileName)
@@ -134,10 +178,30 @@ public class DataContextManager implements ICallBack
 		return true;
 	}
 	
-	public boolean SaveDigitsToFile(String fileName)
+//	public boolean SaveListToFile(String fileName)
+//	{
+//		String[] dataLines = new String[2];
+//		dataLines[1] = JsonStatics.JsonTimestamp(this.data.getDigitlist()); 
+//		dataLines[0] = "true";
+//
+//		try {
+//			Statics.WriteRawFile(fileName, false, dataLines);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			return false;
+//		}
+//		return true;
+//	}
+	
+	public boolean SaveListToFile(String fileName)
 	{
 		String[] dataLines = new String[2];
-		dataLines[1] = JsonStatics.JsonTimestamp(this.data.getDigitlist()); 
+		if(fileName.equals(StaticPreferences.getPreference(Statics.DIGIT_FILE, Statics.DIGIT_FILE_DEFAULT)))
+			dataLines[1] = JsonStatics.JsonTimestamp(StaticGaugeLibrary.getGauges()); 
+		if(fileName.equals(StaticPreferences.getPreference(Statics.IMAGE_FILE, Statics.IMAGE_FILE_DEFAULT)))
+			dataLines[1] = JsonStatics.JsonTimestamp(StaticImageLibrary.getImages()); 
+		if(fileName.equals(StaticPreferences.getPreference(Statics.ICON_FILE, Statics.ICON_FILE_DEFAULT)))
+			dataLines[1] = JsonStatics.JsonTimestamp(StaticIconLibrary.getIcons()); 
 		dataLines[0] = "true";
 
 		try {
@@ -149,19 +213,20 @@ public class DataContextManager implements ICallBack
 		return true;
 	}
 	
-	private void loadDigitsFromFile(String fileName)
+	private void loadListFromFile(String fileName)
 	{
-		data.getDigitlist().clear();
+		//data.getDigitlist().clear();
 		GenericMemberListAsyncFileLoader gml = new GenericMemberListAsyncFileLoader();
-		gml.execute(new Object[] { fileName, InternalGaugeDeviceDigitList.class, new InternalGaugeDeviceDigitList(this.data)});
-	}
-	
-	public void LoadContextFromFile(String file, boolean context) 
-	{
-		data.SessionIsSynchronizing();
- 		if(file == null)
-			file = Statics.MAIN_SESSION;
-		loadContextFromFile(file, context);
+		if(fileName.equals(StaticPreferences.getPreference(Statics.DIGIT_FILE, Statics.DIGIT_FILE_DEFAULT)))
+			gml.execute(new Object[] { fileName, InternalGaugeDeviceDigitList.class, new InternalGaugeDeviceDigitList(this.data)});
+		if(fileName.equals(StaticPreferences.getPreference(Statics.IMAGE_FILE, Statics.IMAGE_FILE_DEFAULT)))
+		{
+			InternalImageList images = new InternalImageList(this.data);
+			images.setIsImageList(true);
+			gml.execute(new Object[] { fileName, ImageList.class, images});
+		}
+		if(fileName.equals(StaticPreferences.getPreference(Statics.ICON_FILE, Statics.ICON_FILE_DEFAULT)))
+			gml.execute(new Object[] { fileName, ImageList.class, new InternalImageList(this.data)});
 	}
 	
 	private void loadContextFromFile(String path, boolean context)
@@ -209,7 +274,8 @@ public class DataContextManager implements ICallBack
 			br.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if(e != null)
+				e.printStackTrace();
 		}
 	}
 	
@@ -224,9 +290,9 @@ public class DataContextManager implements ICallBack
 	public void clearStacks()
 	{
 		this.unDoStack.clear();
-		WriteEmptyFile(Statics.UNDOSTACK);
+		WriteEmptyFile(StaticPreferences.getPreference(Statics.UNDO_STACK_FILE, Statics.UNDO_STACK_FILE_DEFAULT));
 		this.reDoStack.clear();
-		WriteEmptyFile(Statics.REDOSTACK);
+		WriteEmptyFile(StaticPreferences.getPreference(Statics.REDO_STACK_FILE, Statics.REDO_STACK_FILE_DEFAULT));
 	}
 	
 	private boolean loadContextFromDb(boolean withImageData) 
@@ -246,18 +312,18 @@ public class DataContextManager implements ICallBack
 				gml.execute(new Object[] { wsURL, RouteList.class, data.getRoutes(), "GetRouteList"});
 				gml = new GenericMemberListAsyncDbLoader();
 				gml.execute(new Object[] { wsURL, GaugeList.class, data.getGauges()});
+				gml = new GenericMemberListAsyncDbLoader();
+				gml.execute(new Object[] { wsURL, PreferenceList.class, data.getPreferences(), "GetPreferenceList"});
 				if (withImageData)
 				{
-					data.isFullUpdate = true;
+					GenericPartialListAsyncDbLoader pll = new GenericPartialListAsyncDbLoader();
+					pll.execute(new Object[] { wsURL, ImageList.class, new InternalImageList(this.data), "GetImageListPartial", "type", 0}); //type = 0 == icons
 
-					gml = new GenericMemberListAsyncDbLoader();
-					gml.execute(new Object[] { wsURL, ImageList.class, data.getImagelist(), "GetIconList"});
+					pll = new GenericPartialListAsyncDbLoader();
+					pll.execute(new Object[] { wsURL, ImageList.class, new InternalImageList(this.data), "GetImageListPartial", "type", 1}); //type = 1 == images
 					
-					for (int i = 1; i <= Statics.NUM_OF_SETS_OF_PATTERNS; i++)
-					{
-						gml = new GenericMemberListAsyncDbLoader();
-						gml.execute(new Object[] { wsURL, GaugeDeviceDigitList.class, data.getDigitlist(), "GetGaugeDeviceDigitList", "set", i });
-					}
+					pll = new GenericPartialListAsyncDbLoader();
+					pll.execute(new Object[] { wsURL, GaugeDeviceDigitList.class, new InternalGaugeDeviceDigitList(data), "GetGaugeDeviceDigitList" });
 				}
 			} catch (Exception e) {
 				return false;
@@ -283,7 +349,7 @@ public class DataContextManager implements ICallBack
 		if(read.getStationId() == null && data.getStations().getByGaugeId(read.getGaugeId()) != null)
 			read.setStationId(data.getStations().getByGaugeId(read.getGaugeId()).getRouteStationId());
 		if(read.getUtcFrom() == null)
-			read.setUtcFrom(data.getGauges().getById(read.getGaugeId()).getGaugeDevice().getUtcInstallation());
+			read.setUtcFrom(read.getUtcTo());
 		
 		data.getReadings().getReadingList().add(read);
 		data.getSession().InsertNewReading(read);
@@ -300,7 +366,7 @@ public class DataContextManager implements ICallBack
     	String json = JsonStatics.JsonTimestamp(action);
     	try
 		{
-			Statics.WriteRawFile(Statics.UNDOSTACK, true, json);
+			Statics.WriteRawFile(StaticPreferences.getPreference(Statics.UNDO_STACK_FILE, Statics.UNDO_STACK_FILE_DEFAULT), true, json);
 		}
 		catch (IOException e)
 		{
@@ -316,7 +382,7 @@ public class DataContextManager implements ICallBack
     
     protected IMeterReaderAction unDoStackPop()
     {
-    	Statics.RemoveLastLineOfFile(Statics.UNDOSTACK);
+    	Statics.RemoveLastLineOfFile(StaticPreferences.getPreference(Statics.UNDO_STACK_FILE, Statics.UNDO_STACK_FILE_DEFAULT));
     	return this.unDoStack.pop();
     }
     
@@ -331,15 +397,17 @@ public class DataContextManager implements ICallBack
     	try
 		{
 			 reader = Statics.ReadFile(stackFile);
+			 if(reader == null)
+				 return;
 			 String line = null;
 			 try
 			{
 				while((line = reader.readLine()) != null)
 				 {
 					IMeterReaderAction act = ActionFactory.CreateAction(line);
-					if(act != null && stackFile.equals(Statics.UNDOSTACK))
+					if(act != null && stackFile.equals(StaticPreferences.getPreference(Statics.UNDO_STACK_FILE, Statics.UNDO_STACK_FILE_DEFAULT)))
 						this.unDoStack.push(act);
-					else if(act != null && stackFile.equals(Statics.REDOSTACK));
+					else if(act != null && stackFile.equals(StaticPreferences.getPreference(Statics.REDO_STACK_FILE, Statics.REDO_STACK_FILE_DEFAULT)));
 						this.reDoStack.push(act);
 				 }
 			}
@@ -356,7 +424,7 @@ public class DataContextManager implements ICallBack
 		}
     }
     
-    private void applyUnDoStackToSession()
+    public void applyUnDoStackToSession()
     {
     	areStacksBlocked = true;
     	List<IMeterReaderAction> acts = new ArrayList<IMeterReaderAction>(unDoStack);
@@ -385,7 +453,6 @@ public class DataContextManager implements ICallBack
 				context.AddContextEventListener(cont);
 			this.data = context;
 			data.fillGaugeLibrary();
-			data.setCompletelyLoaded(true);
 			data.SessionFileSynchronized(data.getSession());
 		}
 		else

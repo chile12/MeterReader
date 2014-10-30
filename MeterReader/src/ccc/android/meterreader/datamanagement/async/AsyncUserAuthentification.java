@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import ccc.android.meterdata.types.User;
 import ccc.android.meterreader.internaldata.ICallBack;
 import ccc.android.meterreader.statics.Statics;
-import ccc.android.meterreader.viewelements.UserAuthentificationDialog;
 import ccc.java.restclient.ParameterMap;
 import ccc.java.restclient.RestClient;
 
@@ -22,7 +21,7 @@ public class AsyncUserAuthentification  extends AsyncTask<Object, Void, User>
 		RestClient client = null;
 		dia = (ICallBack)login[0];
 		try {
-			client = new RestClient (new URL(Statics.BASE_WS_URL));
+			client = new RestClient (new URL(Statics.getWSURL()));
 		} catch (MalformedURLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -31,7 +30,7 @@ public class AsyncUserAuthentification  extends AsyncTask<Object, Void, User>
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("login", login[1].toString().trim());
 			map.put("password", login[2].toString().trim());
-			return client.GetSingleObject(User.class, new ParameterMap(map, "GetUserByLogin"));
+			return (User) client.GetSingleObject(User.class, new ParameterMap(map, "GetUserByLogin"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -4,46 +4,56 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import ccc.android.meterdata.enums.GaugeMedium;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewFlipper;
+import ccc.android.meterdata.listtypes.PreferenceList;
 import ccc.android.meterdata.types.Gauge;
+import ccc.android.meterdata.types.GaugeDevice;
 import ccc.android.meterdata.types.Reading;
-import ccc.android.meterreader.camerafragments.DigitReaderFragment;
-import ccc.android.meterreader.datamanagement.DataContext;
 import ccc.android.meterreader.datamanagement.DataContextManager;
 import ccc.android.meterreader.datamanagement.IDataContextEventListener;
 import ccc.android.meterreader.deviceregistration.DeviceRegistrationFragment;
 import ccc.android.meterreader.exceptions.UserNotInitializedException;
 import ccc.android.meterreader.gaugedisplaydialog.GaugeDisplayDialog;
-import ccc.android.meterreader.helpfuls.PreferencesHelper;
 import ccc.android.meterreader.internaldata.InternalDialogDisplayData;
 import ccc.android.meterreader.internaldata.Session;
+import ccc.android.meterreader.statics.StaticPreferences;
 import ccc.android.meterreader.statics.Statics;
 import ccc.android.meterreader.statics.Statics.SyncState;
 import ccc.android.meterreader.viewelements.ConnectionConfigDialog;
 import ccc.android.meterreader.viewelements.GaugeListViewFragment;
 import ccc.android.meterreader.viewelements.VerticalButton;
-import android.os.Bundle;
-import android.app.*;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Typeface;
-import android.view.*;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.View.*;
-import android.widget.*;
-import android.os.CountDownTimer;
-import android.preference.PreferenceActivity;
 
 public class MainActivity extends Activity implements IDataContextEventListener
 {
-
+	public static Context ApplicationContext;
+	
     private static final int SWIPE_MIN_DISTANCE = 200;
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
@@ -62,7 +72,8 @@ public class MainActivity extends Activity implements IDataContextEventListener
     
     
 	private IntentFilter barcodeIntentFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_BAR);
-	private IntentFilter barcodeForRegFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_BFR);
+	private IntentFilter barcodeForRegFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_NBFR);
+	private IntentFilter readbarcodeForRegFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_RBFR);
 	private IntentFilter newReadIntentFilter = new IntentFilter(Statics.ANDROID_INTENT_ACTION_NEW);
     
 	static
@@ -76,14 +87,9 @@ public class MainActivity extends Activity implements IDataContextEventListener
     {
         super.onCreate(savedInstanceState);          
         setContentView(R.layout.activity_main);
-//        FragmentManager mFragmentManager = getFragmentManager();
-//        FragmentTransaction mFragmentTransaction = mFragmentManager
-//                                .beginTransaction();
-//        PreferencesHelper mPrefsFragment = new PreferencesHelper();
-//        mFragmentTransaction.replace(android.R.id.content, mPrefsFragment);
-//        mFragmentTransaction.commit();
-        
-        Statics.initializeStatics(this, Typeface.createFromAsset(getAssets(), "fonts/SourceSansPro.ttf"), "de");
+        ApplicationContext = getApplicationContext();
+        StaticPreferences.setPreferences(new PreferenceList());
+        Statics.initializeStatics(this);
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         manager  = new DataContextManager(this);
         
@@ -132,22 +138,21 @@ public class MainActivity extends Activity implements IDataContextEventListener
     protected void onPause()
     {
     	Statics.stopPing();
+    	Statics.pauseTimer();
     	super.onPause();
-    	//TODO
- //   	Statics.pauseTimer();
     }
     
     @Override
     protected void onResume()
     {
-    	Statics.startPing();
     	super.onResume();
+    	Statics.startPing();
+    	Statics.resumeTimer();
     	this.registerReceiver(BarcodeReceiver, barcodeIntentFilter);
     	this.registerReceiver(BarcodeReceiver, barcodeForRegFilter);
+    	this.registerReceiver(BarcodeReceiver, readbarcodeForRegFilter);
     	this.registerReceiver(newReadReceiver, newReadIntentFilter);
     	updateRedoStackView();
-//    	if(! this.initial)
-//    		Statics.resumeTimer();
     	setSessionButtonView ();
     }
 
@@ -162,20 +167,16 @@ public class MainActivity extends Activity implements IDataContextEventListener
     @Override
     protected void onStop()
     {
+		Intent i = new Intent(Statics.ANDROID_INTENT_ACTION_FIN);
+		this.sendBroadcast(i);
     	this.unregisterReceiver(this.BarcodeReceiver);
     	this.unregisterReceiver(this.newReadReceiver);
-//    	if(manager.getData().getSession() != null && manager.getData().getSession().hasNewDate())
-//    		manager.SaveContextToFile(Statics.LAST_SESSION, false);
-//    	else
-//    		manager.WriteEmptyFile(Statics.LAST_SESSION);
    	   	super.onStop();
     }
     
     @Override
     protected void onDestroy()
     {
-		Intent i = new Intent(Statics.ANDROID_INTENT_ACTION_FIN);
-		this.sendBroadcast(i);
     	super.onDestroy();
     }
     
@@ -201,21 +202,6 @@ public class MainActivity extends Activity implements IDataContextEventListener
     	return true;
     }
     
-    private void setDesctopIcon()
-    {
-        Intent shortcutIntent = new Intent(this, MainActivity.class);
-        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        final Intent intent = new Intent();
-        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME,Statics.getDefaultResources().getString(R.string.app_name));
-        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, R.drawable.ic_launcher);
-        intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        sendBroadcast(intent);
-    }
-
-    
 	public void openGaugeDisplayDialog(String androidIntentAction) 
 	{
 	    Intent startGaugeDisplay = new Intent(MainActivity.this, GaugeDisplayDialog.class);
@@ -224,15 +210,15 @@ public class MainActivity extends Activity implements IDataContextEventListener
 	    startActivity(startGaugeDisplay);
 	}
     
-	public void openGaugeDisplayDialog(Gauge st, Reading rd) 
+	public void openGaugeDisplayDialog(Gauge ga, GaugeDevice de, Reading rd) 
 	{
-		if(st.getGaugeDevice() == null)
+		if(de == null)
 		{
 			Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_device_not_found));
 			return;
 		}
 	    Intent startGaugeDisplay = new Intent(MainActivity.this, GaugeDisplayDialog.class);
-	    InternalDialogDisplayData data = new InternalDialogDisplayData(st, rd);
+	    InternalDialogDisplayData data = new InternalDialogDisplayData(ga, de, rd);
 	    startGaugeDisplay.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 	    startGaugeDisplay.putExtra("data", data);
 	    startGaugeDisplay.putExtra("requestCode", Statics.ANDROID_INTENT_ACTION_GDR); 
@@ -262,7 +248,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
         	if(manager.getData().isCompletelyLoaded())
         		openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_BAR);
         	else
-        		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_done), Statics.SHORT_DIALOG_DURATION);
+        		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_done), StaticPreferences.getPreference(Statics.SHORT_DIALOG_DURATION, Statics.SHORT_DIALOG_DURATION_DEFAULT));
         }
     };
     
@@ -270,7 +256,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
         public void onClick(View v) 
         {    
 
-	        	manager.LoadContextFromFile(Statics.LAST_SESSION, true);
+	        	manager.LoadContextFromFile(StaticPreferences.getPreference(Statics.LAST_SESSION, Statics.LAST_SESSION_DEFAULT), true);
 	        	setSessionButtonView ();
         	
         }
@@ -283,20 +269,17 @@ public class MainActivity extends Activity implements IDataContextEventListener
 				manager.getData().NewSession();
 	        	setSessionButtonView ();
 			} catch (UserNotInitializedException e) {
-				Statics.ShowAlertDiaMsgWithBt("no user!", Statics.INFINIT_DIALOG_DURATION);
+				Statics.ShowAlertDiaMsgWithBt("no user!", StaticPreferences.getPreference(Statics.INFINIT_DIALOG_DURATION, Statics.INFINIT_DIALOG_DURATION_DEFAULT));
 			}
         }
     };
     
 	public void loadContextFromDb() {
 		if(Statics.isOnline())
-    	{
-        	manager.LoadContextFromDb(true);
-    	}
+        	manager.LoadFullContextFromDb();
     	else
-    	{
-    		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_successful), Statics.INFINIT_DIALOG_DURATION);
-    	}
+    		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_successful), 
+    				StaticPreferences.getPreference(Statics.INFINIT_DIALOG_DURATION, Statics.INFINIT_DIALOG_DURATION_DEFAULT));
 	}
     
     private void setSessionButtonView()
@@ -324,7 +307,8 @@ public class MainActivity extends Activity implements IDataContextEventListener
 				}
     			else
     			{
-    				Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_done), Statics.SHORT_DIALOG_DURATION);
+    				Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_done), 
+    						StaticPreferences.getPreference(Statics.SHORT_DIALOG_DURATION, Statics.SHORT_DIALOG_DURATION_DEFAULT));
     				return;
     			}
         	}
@@ -340,41 +324,43 @@ public class MainActivity extends Activity implements IDataContextEventListener
             String barcode = intent.getStringExtra("barcode");
     		Gauge ga = manager.getData().getGauges().getByBarcode(barcode);
     		Reading lastRead = null;
+    		GaugeDevice de = null;
     		if(ga != null)
+    		{
     			lastRead = manager.getData().getReadings().getLastReadingById(ga.getGaugeId());
+    			de = manager.getData().getDevices().getById(ga.getGaugeDeviceId());
+    		}
     		
-            if(intent.getAction() == Statics.ANDROID_INTENT_ACTION_BFR)
+            if(intent.getAction() == Statics.ANDROID_INTENT_ACTION_NBFR && newDeviceFragment != null)
             {
         		if(ga == null)
         		{
-        			if(newDeviceFragment != null) //registration in progress
-        			{
-        				newDeviceFragment.setBarcode(barcode, ga);
-        			}
-        			else
-        				return;
+        			newDeviceFragment.setBarcode(barcode, ga);
         		}
         		else
         		{
-        			if(lastRead != null && Statics.getDateDiff(lastRead.getUtcTo(), new Date(), TimeUnit.MINUTES) < 16)
-        			{
-        				newDeviceFragment.setNewRead(lastRead);
-        				return;
-        			}
-        			else
-        			{
-        				if(ga.getGaugeDevice() != null)
-        				{
-	        				Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_step0_barcode_take_last_read));
-	        				openGaugeDisplayDialog(ga, lastRead);
-        				}
-        			}
+        			Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_barcode_in_use));
+        			openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_NBFR);
+        		}
+            }
+            else if(intent.getAction() == Statics.ANDROID_INTENT_ACTION_RBFR && newDeviceFragment != null)
+            {
+        		if(ga == null)
+        		{
+        			newDeviceFragment.setBarcode(barcode, ga);
+        			newDeviceFragment.setGauge(ga);
+        		}
+        		else
+        		{
+        			newDeviceFragment.setGauge(ga);
         		}
             }
             else if(barcode != null && intent.getAction() == Statics.ANDROID_INTENT_ACTION_BAR)
         	{
         		if(ga != null)
-        			openGaugeDisplayDialog(ga, lastRead);
+        			openGaugeDisplayDialog(ga, de, lastRead);
+        		else
+        			openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_BAR);
         	}
         	else
         	{
@@ -405,7 +391,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
     
     private OnClickListener saveBT_listener = new OnClickListener() {
         public void onClick(View v) {
-        	manager.SaveContextToFile(Statics.DEBUG_SESSION, true);
+        	manager.SaveContextToFile(StaticPreferences.getPreference(Statics.DEBUG_SESSION, Statics.DEBUG_SESSION_DEFAULT), true);
         }
     };
     
@@ -431,7 +417,7 @@ public class MainActivity extends Activity implements IDataContextEventListener
     
     private OnClickListener loadFromLastSession = new OnClickListener() {
         public void onClick(View v) {
-        	manager.LoadContextFromFile(Statics.DEBUG_SESSION, true);
+        	manager.LoadContextFromFile(StaticPreferences.getPreference(Statics.DEBUG_SESSION, Statics.DEBUG_SESSION_DEFAULT), true);
         }
     };
     
@@ -560,6 +546,8 @@ public class MainActivity extends Activity implements IDataContextEventListener
 			this.syncState = SyncState.Synchron;
 			invalidateOptionsMenu();
 		}
+		this.manager.actionStackLoad(StaticPreferences.getPreference(Statics.UNDO_STACK_FILE, Statics.UNDO_STACK_FILE_DEFAULT));
+		this.manager.applyUnDoStackToSession();
 		updateRedoStackView();
 	}
 
@@ -571,12 +559,15 @@ public class MainActivity extends Activity implements IDataContextEventListener
         if(listViewFragment != null)
         	listViewFragment.RedoMappings();
         
-        showSyncStatusToast(Statics.getDefaultResources().getString(R.string.main_sync_file), Statics.NORMAL_DIALOG_DURATION);
+        showSyncStatusToast(Statics.getDefaultResources().getString(R.string.main_sync_file), StaticPreferences.getPreference(Statics.NORMAL_DIALOG_DURATION, Statics.NORMAL_DIALOG_DURATION_DEFAULT));
 		if(syncDias.size() == 0)
 		{
 			this.syncState = SyncState.Desynchron;
 			invalidateOptionsMenu();
 		}
+
+		this.manager.actionStackLoad(StaticPreferences.getPreference(Statics.UNDO_STACK_FILE, Statics.UNDO_STACK_FILE_DEFAULT));
+		this.manager.applyUnDoStackToSession();
 		updateRedoStackView();
 	}
 	
@@ -587,18 +578,19 @@ public class MainActivity extends Activity implements IDataContextEventListener
 		closeSyncDialog();
 		closeSyncDialog();
 		closeSyncDialog();
-		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_successful) + "\n" + msg, Statics.INFINIT_DIALOG_DURATION);
+		Statics.resumeTimer();
+		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_not_successful) + "\n" + msg, 
+				StaticPreferences.getPreference(Statics.INFINIT_DIALOG_DURATION, Statics.NORMAL_DIALOG_DURATION_DEFAULT));
 	}
 	
 	private void showSyncStatusToast()
 	{
-		showSyncStatusToast(Statics.getDefaultResources().getString(R.string.main_sync_done), Statics.SHORT_DIALOG_DURATION);
+		showSyncStatusToast(Statics.getDefaultResources().getString(R.string.main_sync_done), StaticPreferences.getPreference(Statics.SHORT_DIALOG_DURATION, Statics.SHORT_DIALOG_DURATION_DEFAULT));
 	}
 	
 	private void showSyncStatusToast(String msg, int duration)
 	{
-			closeSyncDialog();
-			if(syncDias.size() == 0)
+			if(closeSyncDialog())
 				Statics.ShowAlertDiaMsg(msg, duration);
 	}
 		
@@ -615,20 +607,24 @@ public class MainActivity extends Activity implements IDataContextEventListener
 					MainActivity.this.closeSyncDialog();
 					MainActivity.this.closeSyncDialog();
 					
-					Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_aborted), Statics.INFINIT_DIALOG_DURATION);
+					Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_sync_aborted), 
+							StaticPreferences.getPreference(Statics.INFINIT_DIALOG_DURATION, Statics.INFINIT_DIALOG_DURATION_DEFAULT));
 				}});
 		AlertDialog d = builder.create();
 		d.show();
 		syncDias.add(d);
 	}
 	
-	private void closeSyncDialog()
+	private boolean closeSyncDialog()
 	{
 		if(syncDias.size() > 0)
 		{
 			syncDias.get(0).dismiss();
 			syncDias.remove(0);
+			if(syncDias.size() == 0)
+				return true;
 		}
+		return false;
 	}
 	
 	private void getNewDeviceFragment() {
@@ -685,10 +681,10 @@ public class MainActivity extends Activity implements IDataContextEventListener
     private void checkSystemConfigurations()
     {
     	//TODO some more checks...
-    	if(Math.min(Statics.DISPLAY_HEIGHT,  Statics.DISPLAY_WIDTH) < 540)
+    	if(Math.min(Statics.DISPLAY_HEIGHT,  Statics.DISPLAY_WIDTH) < StaticPreferences.getPreference(Statics.MIN_DISPLAY_HEIGHT, Statics.MIN_DISPLAY_HEIGHT_DEFAULT))
     	{
     		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.main_display_size_warning));
-            new CountDownTimer(Toast.LENGTH_LONG, Statics.NORMAL_DIALOG_DURATION*1000) {
+            new CountDownTimer(Toast.LENGTH_LONG, StaticPreferences.getPreference(Statics.NORMAL_DIALOG_DURATION, Statics.NORMAL_DIALOG_DURATION_DEFAULT)*1000) {
 
                 public void onTick(long millisUntilFinished) {
 

@@ -10,6 +10,7 @@ import ccc.java.restclient.RestClient;
 
 public class ActionFactory
 {
+	@SuppressWarnings("unchecked")
 	public static IMeterReaderAction CreateAction(String jsonString)
 	{
 		try

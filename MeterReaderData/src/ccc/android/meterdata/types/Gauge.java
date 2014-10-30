@@ -1,11 +1,8 @@
 package ccc.android.meterdata.types;
 
-import java.io.Serializable;
-
-import org.codehaus.jackson.annotate.*;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import ccc.android.meterdata.OfficialNaming;
-import ccc.android.meterdata.enums.GaugeMedium;
 import ccc.android.meterdata.enums.GaugeType;
 import ccc.android.meterdata.interfaces.IGenericMember;
 
@@ -33,8 +30,8 @@ public class Gauge implements IGenericMember
 	private String typeDescription;
 	@OfficialNaming(Type = "Gauge", Field = "hardware")
 	private String hardware;
-	@OfficialNaming(Type = "Gauge", Field = "device")
-	private GaugeDevice gaugeDevice;
+	@OfficialNaming(Type = "Gauge", Field = "device id")
+	private Integer gaugeDeviceId;
 	
 	public Gauge(int id)
 	{
@@ -116,11 +113,15 @@ public class Gauge implements IGenericMember
 	public void setHardware(String hardware) {
 		this.hardware = hardware;
 	}
-
-	public GaugeDevice getGaugeDevice() {
-		return gaugeDevice;
+	public Integer getGaugeDeviceId()
+	{
+		return gaugeDeviceId;
 	}
-	public void setGaugeDevice(GaugeDevice device) {
-		this.gaugeDevice = device;
-	}	
+	public void setGaugeDeviceId(Integer gaugeDeviceId)
+	{
+		if(gaugeDeviceId == null || gaugeDeviceId < 0)
+			this.gaugeDeviceId = null;
+		else
+			this.gaugeDeviceId = gaugeDeviceId;
+	}
 }

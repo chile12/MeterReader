@@ -2,13 +2,12 @@ package ccc.android.meterreader.datamanagement.async;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.AbstractMap;
 
+import android.os.AsyncTask;
 import ccc.android.meterreader.datamanagement.DataContextManager;
 import ccc.android.meterreader.internaldata.Session;
 import ccc.android.meterreader.statics.Statics;
-import ccc.java.restclient.*;
-import android.os.AsyncTask;
+import ccc.java.restclient.RestClient;
 
 public class AsyncSessionSynchronizer extends AsyncTask<Object, Void, Boolean>
 {
@@ -21,7 +20,7 @@ public class AsyncSessionSynchronizer extends AsyncTask<Object, Void, Boolean>
 		manager = (DataContextManager) params[1];
 		URL wsUrl;
 		try {
-			wsUrl = new URL(Statics.BASE_WS_URL);
+			wsUrl = new URL(Statics.getWSURL());
 		} catch (MalformedURLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

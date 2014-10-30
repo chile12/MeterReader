@@ -1,21 +1,24 @@
 package ccc.android.meterreader.helpfuls;
 
-import java.util.Date;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-import ccc.android.meterreader.MainActivity;
-import ccc.android.meterreader.R;
-import ccc.android.meterreader.statics.Statics;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Bundle;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Typeface;
+import android.preference.PreferenceManager;
+import ccc.android.meterdata.types.Preference;
+import ccc.android.meterreader.R;
 
 @SuppressLint("CommitPrefEdits")
-public class PreferencesHelper// extends PreferenceFragment
+public class PreferencesHelper
 {
 	private SharedPreferences sharedPreferences;
 	private Editor editor;
@@ -25,52 +28,94 @@ public class PreferencesHelper// extends PreferenceFragment
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		PreferenceManager.setDefaultValues(context, R.xml.constants, true);
 		this.editor = sharedPreferences.edit(); 
+		
+		for(String key : sharedPreferences.getAll().keySet())
+		{
+			if(!(sharedPreferences.getAll().get(key) instanceof Set<?>))
+			{
+				editor.remove(key);
+			}
+		}
+		//EditPreferences("WS_URL", "http://192.168.2.191/mobilegaugereading");
+		editor.commit();
+		
+//		sharedPreferences.getAll().clear();
+//		editor.remove("WS_URL");
+//		EditPreferences("WS_URL", "http://192.168.2.191/mobilegaugereading");
+//		editor.remove("WS_URL_KEY");
+//		editor.remove("LAST_FULL_DOWN_KEY");
+//		editor.commit();
 	}
-	
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) 
-//    {
-//        super.onCreate(savedInstanceState);
-////        getPreferenceManager().setSharedPreferencesName("constants");
-////        getPreferenceManager().setSharedPreferencesMode(Context.MODE_MULTI_PROCESS);
-//		PreferenceManager.setDefaultValues(this.getActivity(), R.xml.constants, false);
-//        addPreferencesFromResource(R.xml.constants);
-////		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-////		//PreferenceManager.setDefaultValues(this.getActivity().getApplicationContext(), "constants", Context.MODE_MULTI_PROCESS, R.xml.constants, false);
-////		this.editor = sharedPreferences.edit(); 
-//    }
     
-	@SuppressWarnings("unchecked")
-	public <T> T GetPreferences(String key, Class<T> type)
+	public <T> T GetPreferences(String key, T defaultVal)
 	{
-		if (type == int.class)
-			return (T)((Integer)sharedPreferences.getInt(key, 0));
-		else if (type == boolean.class)
-			return (T)(Boolean)sharedPreferences.getBoolean(key, true);
-		else if (type == float.class)
-			return (T)(Float)sharedPreferences.getFloat(key, (Float) 0f);
-		else if (type == long.class)
-			return (T)(Long) sharedPreferences.getLong(key, (Long) 0L);
-		else if (type == String.class)
-			return (T)(String) sharedPreferences.getString(key, (String) "");
-		else
-			return null;
+		T retVal = defaultVal;
+		String defVal = defaultVal == null ? null : defaultVal.toString();
+		Set<String> result = sharedPreferences.getStringSet(key, new HashSet<String>());
+		if(result == null || result.size() == 0)
+			return retVal;
+		
+		try
+		{
+			String[] zw = result.toArray(new String[2]);
+			retVal = (T) Preference.mapper.readValue(zw[0], Class.forName(zw[1]));
+		}
+		catch (JsonParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (JsonMappingException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (ClassNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return retVal;
 	}
 	
 	public void EditPreferences(String key, Object value)
 	{
-		if(value.getClass() == Integer.class)
-			editor.putInt(key, ((Integer)value).intValue());
-		else if(value.getClass() == Boolean.class)
-			editor.putBoolean(key, ((Boolean)value).booleanValue());
-		else if(value.getClass() == Float.class)
-			editor.putFloat(key, ((Float)value).floatValue());
-		else if(value.getClass() == String.class)
-			editor.putString(key, (String)value);
-		else if(value.getClass() == Long.class)
-			editor.putLong(key, ((Long)value).longValue());
-		else
-			editor.putString(key, (String)value.toString());
+		if(value == null)
+			return;
+		try
+		{
+			Set<String> input = new HashSet<String>();
+			input.add(Preference.mapper.writeValueAsString(value));
+			input.add(Preference.mapper.writeValueAsString(value.getClass()).replace("\"", ""));
+			editor.putStringSet(key, input);
+		}
+		catch (JsonGenerationException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (JsonMappingException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		editor.commit();
+	}
+	
+	public void remove(String key)
+	{
+		editor.remove(key);
 		editor.commit();
 	}
 

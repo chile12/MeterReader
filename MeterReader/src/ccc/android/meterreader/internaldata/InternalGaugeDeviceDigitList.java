@@ -1,12 +1,12 @@
 package ccc.android.meterreader.internaldata;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonTypeName;
 
+import ccc.android.meterdata.errors.RestError;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.listtypes.GaugeDeviceDigitList;
-import ccc.android.meterdata.types.ServerError;
+import ccc.android.meterdata.listtypes.ImageList;
 @JsonTypeName("InternalGaugeDeviceDigitList")
 public class InternalGaugeDeviceDigitList extends ccc.android.meterdata.listtypes.GaugeDeviceDigitList implements ICallbackList
 {
@@ -38,13 +38,15 @@ public class InternalGaugeDeviceDigitList extends ccc.android.meterdata.listtype
 		if(list != null)
 		{
 			this.setDigitList(((GaugeDeviceDigitList) list).getDigitList());
+			this.setImageType(((GaugeDeviceDigitList) list).getImageType());
+			this.setSize(((GaugeDeviceDigitList) list).getSize());
 			this.setIsLoaded(true);
 			container.RegisterLoadedDataObject(this);
 		}
 	}
 	
 	@Override
-	public void ErrorCallback(ServerError error) {
+	public void ErrorCallback(RestError error) {
 		container.ReceiveErrorObject(error);
 		
 	}	

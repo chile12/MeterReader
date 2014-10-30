@@ -62,6 +62,7 @@
                         android:layout_height="wrap_content" >
 
                         <com.neopixl.pixlui.components.textview.TextView
+							pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/infoDisplayTitleLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -85,6 +86,7 @@
                             	android:visibility="gone" />
                     </LinearLayout>
                     <com.neopixl.pixlui.components.textview.TextView
+                        pixlui:typeface="SourceSansPro.ttf"
                         android:id="@+id/infoDisplayDescriptionLA"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -99,6 +101,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/infoLocationLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -108,6 +111,7 @@
                             android:textColor="#000000"
                             android:visibility="invisible" />
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/infoLocationLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -125,16 +129,18 @@
                         android:layout_height="wrap_content" >
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/infoLastReadLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
+                        	android:layout_marginLeft="2dp"
                             android:text="@string/gauge_display_last_read"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="#000000"
                             android:visibility="invisible" />
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/infoLastReadLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -146,6 +152,7 @@
                             android:visibility="invisible" />
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/infoLastReadUnitLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -162,6 +169,7 @@
                         android:layout_height="wrap_content" >
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/infoLastReadDateLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -172,6 +180,7 @@
                             android:visibility="invisible" />
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/infoLastReadDateLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -184,33 +193,29 @@
                     </LinearLayout>
                     
                     <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_gravity="top|bottom|right|start"
-                        android:gravity="right"
-                        android:orientation="vertical" >
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_gravity="bottom|right"
-                            android:layout_marginTop="10dp"
-                            android:layout_weight="2.36"
-                            android:gravity="bottom"
-                            android:orientation="vertical" >
-
-                            <Button
-                                android:id="@+id/closeInfoBT"
-                                style="@style/ButtonBaseStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="left|center_vertical"
-                                android:layout_margin="5dp"
-                                android:padding="@dimen/activity_horizontal_margin"
-                                android:text="@string/common_cancel"
-                                android:visibility="invisible" />
-                        </LinearLayout>
-                    </LinearLayout>
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical" >
+	                    <ImageView
+		                    android:id="@+id/infoDeviceIV"
+		                    android:scaleType="centerCrop"
+		                    android:adjustViewBounds="true"
+		                    android:layout_width="fill_parent"
+		                    android:layout_height="wrap_content"/>
+	                </LinearLayout>
+                    
+                    <com.neopixl.pixlui.components.button.Button
+                        android:id="@+id/closeInfoBT"
+			            style="@style/ButtonWithMargins"
+			            pixlui:typeface="SourceSansPro.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|center_vertical"
+                        android:layout_margin="5dp"
+                        android:padding="@dimen/activity_horizontal_margin"
+                        android:text="@string/common_cancel"
+                        android:visibility="invisible" />
 
                 </LinearLayout>
 
@@ -226,11 +231,12 @@
                         android:layout_height="wrap_content" >
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/gaugeDisplayTitleLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="3dp"
-                        android:layout_marginLeft="2dp"
+                        	android:layout_marginLeft="2dp"
                             android:maxLines="1"
                             android:text="gaugeDisplayTitleLA"
                             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -241,6 +247,7 @@
                     </LinearLayout>
 
                     <com.neopixl.pixlui.components.textview.TextView
+                        pixlui:typeface="SourceSansPro.ttf"
                         android:id="@+id/gaugeDisplayDescriptionLA"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -257,6 +264,7 @@
                         android:layout_height="wrap_content" >
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/gaugeDisplayLocationLableLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -267,6 +275,7 @@
                             android:visibility="invisible" />
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/gaugeDisplayLocationLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -284,6 +293,7 @@
                         android:layout_height="wrap_content" >
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/gaugeDisplayLastRead"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -294,6 +304,7 @@
                             android:visibility="invisible" />
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/lastReadLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -306,6 +317,7 @@
                             android:visibility="invisible" />
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/lastReadUnitLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -317,6 +329,7 @@
                             android:visibility="invisible" />
 
                         <com.neopixl.pixlui.components.textview.TextView
+                            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/lastReadDateLA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -349,6 +362,7 @@
 	                        android:visibility="invisible" >
 	
 	                        <com.neopixl.pixlui.components.textview.TextView
+	                            pixlui:typeface="SourceSansPro.ttf"
 	                            android:id="@+id/point1"
 	                            android:layout_width="wrap_content"
 	                            android:layout_height="wrap_content"
@@ -358,6 +372,7 @@
 	                            android:visibility="invisible" />
 	
 	                        <!-- <com.neopixl.pixlui.components.textview.TextView
+	                        	pixlui:typeface="SourceSansPro.ttf"
 	                            android:id="@+id/displayUnitLA"
 	                            android:layout_width="wrap_content"
 	                            android:layout_height="wrap_content"
@@ -369,6 +384,7 @@
 	                            android:visibility="invisible" />-->
 	                    </LinearLayout>
 	                    <com.neopixl.pixlui.components.textview.TextView
+	                        	pixlui:typeface="SourceSansPro.ttf"
 	                           android:id="@+id/unitDisplayLA"
 	                           android:layout_width="wrap_content"
 	                           android:layout_height="wrap_content"
@@ -384,9 +400,10 @@
                         android:gravity="bottom"
                         android:orientation="horizontal" >
 
-                        <Button
+                    	<com.neopixl.pixlui.components.button.Button
+				            style="@style/ButtonWithMargins"
+				            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/closeDiaBT"
-                            style="@style/ButtonBaseStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/common_cancel"
@@ -395,9 +412,10 @@
                         	android:layout_marginLeft="5dp"
                             android:visibility="invisible" />
 
-                        <Button
+                        <com.neopixl.pixlui.components.button.Button
+				            style="@style/ButtonWithMargins"
+				            pixlui:typeface="SourceSansPro.ttf"
                             android:id="@+id/saveReadingBT"
-                            style="@style/ButtonBaseStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/common_confirm"
@@ -444,9 +462,10 @@
                             android:layout_gravity="bottom"
                             android:orientation="vertical" >
 
-                            <Button
+                            <com.neopixl.pixlui.components.button.Button
+					            style="@style/ButtonWithMargins"
+					            pixlui:typeface="SourceSansPro.ttf"
                                 android:id="@+id/suspendPreviewBT"
-                                style="@style/ButtonBaseStyle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="right|bottom"
@@ -525,6 +544,7 @@
 					                        android:visibility="visible" >
 					
 					                        <com.neopixl.pixlui.components.textview.TextView
+					                            pixlui:typeface="SourceSansPro.ttf"
 					                            android:id="@+id/point2"
 					                            android:layout_width="wrap_content"
 					                            android:layout_height="wrap_content"
@@ -534,6 +554,7 @@
 					                            android:visibility="visible" />
 					                    </LinearLayout>
 					                    <com.neopixl.pixlui.components.textview.TextView
+					                        	pixlui:typeface="SourceSansPro.ttf"
 					                            android:id="@+id/unitReaderLA"
 					                            android:layout_width="wrap_content"
 					                            android:layout_height="wrap_content"
@@ -551,18 +572,20 @@
 				                        android:layout_width="wrap_content"
 				                        android:layout_height="wrap_content" 
 				                        android:layout_gravity="bottom" >"
-				                        <Button
+				                        <com.neopixl.pixlui.components.button.Button
+								            style="@style/ButtonWithMargins"
+								            pixlui:typeface="SourceSansPro.ttf"
 			                                android:id="@+id/suspendReaderBT"
-			                                style="@style/ButtonBaseStyle"
 			                                android:layout_width="wrap_content"
 			                                android:layout_height="wrap_content"
 			                                android:layout_marginLeft="5dp"
 				                   			android:layout_alignParentRight="true"
 				                   			android:layout_alignParentBottom="true"
 			                                android:text="@string/abort_scan" />
-				                        <Button
+				                        <com.neopixl.pixlui.components.button.Button
+								            style="@style/ButtonWithMargins"
+								            pixlui:typeface="SourceSansPro.ttf"
 			                                android:id="@+id/confirmReaderBT"
-			                                style="@style/ButtonBaseStyle"
 			                                android:layout_width="wrap_content"
 			                                android:layout_height="wrap_content"
 			                                android:layout_marginRight="5dp"
@@ -575,6 +598,7 @@
                         </FrameLayout>
 <!-- change visibility and weight for debug! and weightsum -->
                             <com.neopixl.pixlui.components.textview.TextView
+                                pixlui:typeface="SourceSansPro.ttf"
                                 android:id="@+id/debugDigitLA"
                                 android:layout_width="fill_parent"
                                 android:layout_height="0dp"

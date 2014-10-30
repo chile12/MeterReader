@@ -5,6 +5,7 @@ import java.util.Date;
 import android.os.Parcel;
 import android.os.Parcelable;
 import ccc.android.meterdata.types.Gauge;
+import ccc.android.meterdata.types.GaugeDevice;
 import ccc.android.meterdata.types.Reading;
 
 public class InternalDialogDisplayData implements Parcelable
@@ -104,7 +105,7 @@ public class InternalDialogDisplayData implements Parcelable
 		this.location = location;
 	}
 
-	public InternalDialogDisplayData(Gauge ga, Reading re)
+	public InternalDialogDisplayData(Gauge ga, GaugeDevice de, Reading re)
 	{
 		if(re != null)
 		{
@@ -114,9 +115,9 @@ public class InternalDialogDisplayData implements Parcelable
 			this.setUtcTo(new Date(re.getUtcTo().getTime()));
 		}
 		this.setGaugeId(ga.getGaugeId());
-		this.setGaugeDeviceId(ga.getGaugeDevice().getGaugeDeviceId());
-		this.setDecimalPlaces(ga.getGaugeDevice().getDecimalPlaces());
-		this.setDigitCount(ga.getGaugeDevice().getDigitCount());
+		this.setGaugeDeviceId(de.getGaugeDeviceId());
+		this.setDecimalPlaces(de.getDecimalPlaces());
+		this.setDigitCount(de.getDigitCount());
 		this.setLocation(ga.getLocation());
 		this.setUnit(ga.getUnit().getName());
 		this.setUnitLong(ga.getUnit().getDescription());

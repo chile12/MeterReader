@@ -1,20 +1,27 @@
 package ccc.android.meterreader.viewelements;
 
-import java.util.*;
+import java.util.List;
 
-import ccc.android.meterdata.*;
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import ccc.android.meterdata.types.Gauge;
 import ccc.android.meterdata.types.Reading;
 import ccc.android.meterreader.R;
 import ccc.android.meterreader.helpfuls.EpviMeterListMapper;
 import ccc.android.meterreader.internaldata.GroupIdentifier;
+import ccc.android.meterreader.internaldata.InternalImage;
 import ccc.android.meterreader.internaldata.ListItemIdentifier;
+import ccc.android.meterreader.statics.StaticIconLibrary;
+import ccc.android.meterreader.statics.StaticPreferences;
 import ccc.android.meterreader.statics.Statics;
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.view.*;
-import android.widget.*;
 
 public class EpviExpandeableListViewAdapter  extends BaseExpandableListAdapter
 {
@@ -98,6 +105,8 @@ public class EpviExpandeableListViewAdapter  extends BaseExpandableListAdapter
 
 		mapper.setChildViewExpanded(viewId, isExpanded);
 		convertView.setId(viewId);
+		ImageView imgListChild = null;
+		
 		if(!isExpanded) //not!
 		{
 			int[] ids = new int[2];
@@ -105,9 +114,7 @@ public class EpviExpandeableListViewAdapter  extends BaseExpandableListAdapter
 			ids[1] =  R.id.gaugeLastReadLA;
 			setAllText(convertView, ids, listItem);
 
-	        ImageView imgListChild = (ImageView) convertView.findViewById(R.id.gaugeListItemImage);
-	        imgListChild.setFocusable(false);
-			imgListChild.setImageResource(context.getResources().getIdentifier(gauge.getMedium().toLowerCase(),"drawable", context.getPackageName()));
+	        imgListChild = (ImageView) convertView.findViewById(R.id.gaugeListItemImage);
 		}
 		else
 		{
@@ -122,18 +129,18 @@ public class EpviExpandeableListViewAdapter  extends BaseExpandableListAdapter
 			ids[7] =  R.id.gaugeBottomRightExLA;
 			setAllText(convertView, ids, listItem);
 			
-	        ImageView imgListChild = (ImageView) convertView.findViewById(R.id.gaugeListItemExImage);
-	        imgListChild.setFocusable(false);
-			imgListChild.setImageResource(context.getResources().getIdentifier(gauge.getMedium().toLowerCase(),"drawable", context.getPackageName()));
-				
+	        imgListChild = (ImageView) convertView.findViewById(R.id.gaugeListItemExImage);				
 		}
+
+        imgListChild.setFocusable(false);
+		InternalImage img = (InternalImage) StaticIconLibrary.getIcons().getByMedium(gauge.getMedium());
+		if(img != null)
+			imgListChild.setImageBitmap(img.getBitmap());
 		
-		
-		//set background by number of days since last reading
-		if(lastRead == null || lastRead.getUtcTo() == null || Statics.daysSince(lastRead.getUtcTo()) >= Statics.DAYS_FOR_WARNING_COLOR_RED)
+		if(lastRead == null || lastRead.getUtcTo() == null || Statics.daysSince(lastRead.getUtcTo()) >= StaticPreferences.getPreference(Statics.DAYS_TIL_LIST_WARNING_RED, Statics.DAYS_TIL_LIST_WARNING_RED_DEFAULT))
 			((LinearLayout) convertView).getChildAt(0).setBackgroundColor(Statics.getDefaultResources().getColor(R.color.OrangeBack));
-//		else if(Statics.daysSince(lastRead.getUtcTo()) >= Statics.DAYSTOYEL)
-//			((LinearLayout) convertView).getChildAt(0).setBackgroundColor(Statics.getDefaultResources().getColor(R.color.YellowBack));
+		else if(lastRead == null || lastRead.getUtcTo() == null || Statics.daysSince(lastRead.getUtcTo()) >= StaticPreferences.getPreference(Statics.DAYS_TIL_LIST_WARNING_YELLOW, Statics.DAYS_TIL_LIST_WARNING_YELLOW_DEFAULT))
+			((LinearLayout) convertView).getChildAt(0).setBackgroundColor(Statics.getDefaultResources().getColor(R.color.YellowBack));
 		else
 			((LinearLayout) convertView).getChildAt(0).setBackgroundColor(Statics.getDefaultResources().getColor(R.color.WhiteSmoke));
 		
@@ -199,7 +206,9 @@ public class EpviExpandeableListViewAdapter  extends BaseExpandableListAdapter
 			setSimpleText(convertView, R.id.groupLA, id.GetTitle());
 			ImageView imgListChild = (ImageView) convertView.findViewById(R.id.groupIcon);
 			imgListChild.setFocusable(false);
-			imgListChild.setImageResource(mapper.getGroupIdentifier(group).GetImage());
+			InternalImage img = (InternalImage) id.getIcon();
+			if(img != null)
+				imgListChild.setImageBitmap(img.getBitmap());
 			return convertView;
 		}
 		else

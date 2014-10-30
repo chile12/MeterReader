@@ -8,36 +8,24 @@ package ccc.android.meterreader.camerafragments;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import android.app.Activity;
-import android.os.Bundle;
-
-import android.util.Log;
-
-import android.view.Display;
-import android.view.View;
-import android.view.Surface;
-import android.view.SurfaceView;
-import android.view.SurfaceHolder;
-import android.view.WindowManager;
-
 import android.content.Context;
-
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
+import android.hardware.Camera.PreviewCallback;
+import android.util.Log;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.WindowManager;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     private Camera mCamera;
     private PreviewCallback previewCallback;
     private AutoFocusCallback autoFocusCallback;
-    private Camera.Parameters parameters;
     private boolean scalePreviewToDisplaySize = true;
+    private boolean surfaceReady = false;
     
     
     public CameraPreview(Context context, Camera camera,PreviewCallback previewCb,AutoFocusCallback autoFocusCb) 
@@ -56,6 +44,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private void setCameraDisplayOrientation(Camera camera)
     {
         int rotation = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+//        Parameters p = mCamera.getParameters();
 
         int degrees = 0;
         switch (rotation) {
@@ -66,6 +55,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
 
         int result= (CameraStatics.BACK_CAMERA_ORIENTATION - degrees + 360) % 360;
+//        p.setRotation(result);
+//        mCamera.setParameters(p);
         setDisplayOrientation(camera, result);
 
     }
@@ -88,7 +79,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         try {
             mCamera.setPreviewDisplay(holder);
-            //mCamera.autoFocus(autoFocusCallback);
+            surfaceReady = true;
         } catch (IOException e) {
             Log.d("DBG", "Error setting camera preview: " + e.getMessage());
         }
@@ -98,7 +89,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) 
-    {
+    {    	
         try {
             mCamera.stopPreview();
         } catch (Exception e){
@@ -118,10 +109,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
 
         try {
+            mCamera.autoFocus(autoFocusCallback);
             mCamera.setPreviewDisplay(mHolder);
             mCamera.setPreviewCallback(previewCallback);
             mCamera.startPreview();
-            mCamera.autoFocus(autoFocusCallback);
         } catch (Exception e){
             Log.d("DBG", "Error starting camera preview: " + e.getMessage());
         }

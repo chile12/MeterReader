@@ -6,12 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonSubTypes;
 
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.types.Reading;
 
-public class ReadingList  implements IGenericMemberList,  Iterable<Reading> 
+public class ReadingList  implements IGenericMemberList<Reading>,  Iterable<Reading> 
 {
 	private List<Reading> readingList = new ArrayList<Reading>();
 	private String restriction;
@@ -82,5 +81,29 @@ public class ReadingList  implements IGenericMemberList,  Iterable<Reading>
 	public void clear() 
 	{
 		readingList.clear();
+	}
+
+	@Override
+	public void add(Reading addi)
+	{
+		this.readingList.add(addi);
+	}
+
+	@Override
+	public void addAll(IGenericMemberList<Reading> list)
+	{
+		this.readingList.addAll(list.getList());
+	}
+
+	@Override
+	public Reading get(int index)
+	{
+		return this.readingList.get(index);
+	}
+
+	@Override
+	public List<Reading> getList()
+	{
+		return this.readingList;
 	}
 }

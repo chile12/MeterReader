@@ -4,6 +4,7 @@
     <string name="common_confirm">Confirm</string>
     <string name="common_next">Next</string>
     <string name="common_back">Back</string>
+    <string name="common_wait">Wait</string>
     
     <string name="qr_not_recognized">Gauge-Id was not recognized. Please check the provided QR-code and try again.</string>
     <string name="main_display_size_warning">The display-size of your device is too small. Please use at least a 540x960 display.</string>
@@ -16,12 +17,14 @@
     <string name="main_data_asynchron">!failed to synchronize with the EPVI database!</string>
     <string name="main_sync_not_done">synchronization not yet completed</string>
     <string name="main_sync_done">synchronization was successful</string>
-    <string name="main_sync_file">No connection with the EPVI database could be established. Last session was loaded instead.</string>
+    <string name="main_sync_file">Last session was loaded from memory.</string>
     <string name="main_sync_inprog">Synchronization in progress. Please wait.</string>
     <string name="main_sync_not_successful">Youre device could not be synchronized with a local database!</string>
     <string name="main_sync_abort">abort synchronization</string>
     <string name="main_sync_aborted">Synchronization aborted!</string>
     <string name="main_sync_faild_upload">New entries were not saved to the database!</string>
+    <string name="main_sync_load_from_file_msg">No connection with the EPVI database could be established. Load last session from memory?</string>
+    <string name="main_sync_timeout_msg" formatted="false">Synchronization failed due to synchronization timout of %d seconds.</string>
     
     <string name="main_button_panel_new_session">new session</string>
     <string name="main_button_panel_load_session">load session</string>
@@ -44,18 +47,25 @@
     <string name="no_base_ws_url_warning">No EPVI-Service endpoint has been specified. Please configure connection-settings first.</string>
     
     <string name="gauge_display_last_read">last:</string>
-    <string name="gauge_display_gauge_id">gauge id:</string>
+    <string name="gauge_display_gauge_name">gauge name:</string>
     <string name="gauge_display_gauge_location">location:</string>
-    <string name="gauge_display_barcode_scan">qr-code scanner</string>
+    <string name="gauge_display_barcode_scan">qr-/barcode scanner</string>
     <string name="gauge_display_meter_scan">digit scanner</string>
     <string name="gauge_display_show_display">manual input</string>
     <string name="gauge_display_gauge_date">date of reading:</string>
+    <string name="gauge_display_gauge_digits">number of digits:</string>
+    <string name="gauge_display_gauge_decimals">decimal places:</string>
+    <string name="gauge_display_gauge_barcode">qr-/barcode:</string>
+    <string name="gauge_display_gauge_comment">comment:</string>
+    <string name="gauge_display_read_qr_code">scan a qr- or barcode to identify the gauge</string>
         
     <string name="gauge_display_read_warning_less">The entered value is less than the value of the last reading!</string>
     <string name="gauge_display_data_warning">The current reading has been corrupted, please start this dialog again.</string>
     <string name="gauge_display_no_data_warning">No data for this gauge found. Please register this gauge with the EPVI web application first.</string>
     
     <string name="abort_scan">abort scan</string>
+    <string name="take_pcture">take a picture</string>
+    <string name="take_pcture_again">change picture</string>
     <string name="list_item_last_read">last reading: </string>
     <string name="list_item_medium">medium: </string>
     
@@ -72,13 +82,12 @@
     
     <string name="new_device_title">Device Registration</string>
     <string name="new_device_step0_subtitle">Select a gauge</string>
-    <string name="new_device_step1_subtitle">Step 1: Picture</string>
-    <string name="new_device_step2_subtitle">Step 2: Name</string>
-    <string name="new_device_step3_subtitle">Step 3: Manufacturer</string>
-    <string name="new_device_step4_subtitle">Step 4: Digits</string>
-    <string name="new_device_step5_subtitle">Step 5: Contrast</string>
-    <string name="new_device_step6_subtitle">Step 6: Location</string>
-    <string name="new_device_step7_subtitle">Step 7: Description</string>
+    <string name="new_device_step2_subtitle">Step 1: Picture</string>
+    <string name="new_device_step3_subtitle">Step 2: Manufacturer</string>
+    <string name="new_device_step4_subtitle">Step 3: Digits</string>
+    <string name="new_device_step5_subtitle">Step 4: Contrast</string>
+    <string name="new_device_step6_subtitle">Step 5: Location</string>
+    <string name="new_device_step7_subtitle">Step 6: Description</string>
     <string name="new_device_step8_subtitle">Summary</string>
     <string name="new_device_step0_info">please note: In case of a whole new gauge, create a new gauge in the EPVI web application first. Than register the gauge-device with this application. Otherwise a device exchange is carried out.</string>
     <string name="new_device_step0_spinner_prompt">choose a gauge:</string>
@@ -106,6 +115,7 @@
     <string name="new_device_take_last_read">please take a last reading before exchanging the gauge devices</string>
     <string name="new_device_take_first_read">please take the first reading of the new gauge device</string>
     <string name="new_device_device_not_found">No gauge device is registered for this gauge yet. Do this by using the oiption \'register new device\'.</string>
+    <string name="new_device_barcode_in_use">This qr- or barcode is already taken.</string>
 
     <string name="epvi_options_show_options">groups and filter</string>
     <string name="epvi_options_show_list">update list</string>

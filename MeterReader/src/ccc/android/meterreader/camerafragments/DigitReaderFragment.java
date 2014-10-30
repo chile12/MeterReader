@@ -1,26 +1,17 @@
 package ccc.android.meterreader.camerafragments;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.bytedeco.javacpp.opencv_core.CvScalar;
-import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Rect;
 
 import net.sourceforge.zbar.Config;
 import net.sourceforge.zbar.ImageScanner;
+
+import org.bytedeco.javacpp.opencv_core.CvScalar;
+import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.bytedeco.javacpp.opencv_core.Rect;
+
 import android.app.DialogFragment;
-import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
@@ -29,49 +20,35 @@ import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.Media;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import ccc.android.meterdata.types.GaugeDevice;
-import ccc.android.meterreader.R;
 import ccc.android.meterreader.gaugedisplaydialog.GaugeDisplayDialog;
 import ccc.android.meterreader.internaldata.InternalGaugeDevice;
 import ccc.android.meterreader.statics.StaticGaugeLibrary;
 import ccc.android.meterreader.statics.Statics;
 import ccc.android.meterreader.viewelements.CccNumberPicker;
 import ccc.java.digitextractor.DigitReadingProcessor;
-import ccc.java.digitextractor.ImageStatics;
-import ccc.java.digitextractor.MeterImage;
 import ccc.java.digitextractor.data.BackGroundShade;
-import ccc.java.digitextractor.exceptions.FrameNotFoundException;
-import ccc.java.simpleocr.DigitOcr;
 
 public class DigitReaderFragment extends DialogFragment
 {
 	private ImageScanner scanner;
     private Camera mCamera;
     private CameraPreview mPreview;
-    private Handler autoFocusHandler;
+    //private Handler autoFocusHandler;
     private ViewGroup containerView;
-    private static DigitOcr standardOcr;
     private GaugeDevice device;
     private int callCount = 0;
-    private boolean isFocused = false;
     private List<String> readings = new ArrayList<String>();
 	private List<CccNumberPicker> readerPickers = new ArrayList<CccNumberPicker>();
 
 
 	private DigitReadingProcessor processor;
     private Rect frame;
-    private int count =0;
     
     public ViewGroup getContainerView() {
 		return containerView;
@@ -90,7 +67,7 @@ public class DigitReaderFragment extends DialogFragment
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        autoFocusHandler = new Handler();
+        //autoFocusHandler = new Handler();
 
         /* Instance barcode scanner */
         scanner = new ImageScanner();

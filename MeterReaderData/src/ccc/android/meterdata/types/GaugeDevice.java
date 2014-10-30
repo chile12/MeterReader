@@ -2,7 +2,7 @@ package ccc.android.meterdata.types;
 
 import java.util.Date;
 
-import org.codehaus.jackson.annotate.*;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import ccc.android.meterdata.interfaces.IGenericMember;
 import ccc.android.meterdata.listtypes.GaugeDeviceDigitList;
@@ -22,7 +22,7 @@ public class GaugeDevice implements IGenericMember
 	private int backGroundShade;
 	private String barcode;
 	private GaugeDeviceDigitList digitPatterns;
-	private Integer imageId;
+	private Image image;
 
 	@JsonProperty("SerialNumber")
 	public String getSerialNumber() {
@@ -144,14 +144,14 @@ public class GaugeDevice implements IGenericMember
 	{
 		this.barcode = barcode;
 	}
-	@JsonProperty("ImageId")
-	public Integer getImageId()
+	@JsonProperty("Image")
+	public Image getImage()
 	{
-		return imageId;
+		return image;
 	}
-	@JsonProperty("ImageId")
-	public void setImageId(Integer imageId)
+	@JsonProperty("Image")
+	public void setImage(Image image)
 	{
-		this.imageId = imageId;
+		this.image = image;
 	}
 }

@@ -1,12 +1,12 @@
 package ccc.android.meterdata.types;
 
-import org.codehaus.jackson.annotate.*;
-
-import ccc.android.meterdata.interfaces.IGenericMember;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+import ccc.android.meterdata.interfaces.IGenericMember;
 
 public class Route implements IGenericMember
 {

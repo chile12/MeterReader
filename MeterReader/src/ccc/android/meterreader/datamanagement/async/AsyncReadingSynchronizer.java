@@ -3,10 +3,10 @@ package ccc.android.meterreader.datamanagement.async;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import android.os.AsyncTask;
 import ccc.android.meterdata.types.Reading;
 import ccc.android.meterreader.statics.Statics;
-import ccc.java.restclient.*;
-import android.os.AsyncTask;
+import ccc.java.restclient.RestClient;
 
 public class AsyncReadingSynchronizer extends AsyncTask<Reading, Void, Void>
 {
@@ -17,7 +17,7 @@ public class AsyncReadingSynchronizer extends AsyncTask<Reading, Void, Void>
 		Reading read = params[0];
 		URL wsUrl;
 		try {
-			wsUrl = new URL(Statics.BASE_WS_URL + "/PostReading");
+			wsUrl = new URL(Statics.getWSURL() + "/PostReading");
 		} catch (MalformedURLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

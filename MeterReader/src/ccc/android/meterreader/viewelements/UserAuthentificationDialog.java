@@ -1,11 +1,6 @@
 package ccc.android.meterreader.viewelements;
 
 
-import ccc.android.meterreader.datamanagement.async.*;
-import ccc.android.meterreader.MainActivity;
-import ccc.android.meterreader.R;
-import ccc.android.meterreader.internaldata.ICallBack;
-import ccc.android.meterreader.helpfuls.DialogCallbackListener;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -13,18 +8,20 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import ccc.android.meterreader.MainActivity;
+import ccc.android.meterreader.R;
+import ccc.android.meterreader.datamanagement.async.AsyncUserAuthentification;
+import ccc.android.meterreader.helpfuls.DialogCallbackListener;
 
 public class UserAuthentificationDialog  extends Dialog implements android.view.View.OnClickListener
 {
 	private TextView logInTB;
 	private TextView passwordTB;
 	public DialogCallbackListener callbackListener;
-	private MainActivity main;
 
 	public UserAuthentificationDialog(MainActivity context, DialogCallbackListener listener)
 	{
 		super(context);
-		this.main = context;
 		this.callbackListener = listener;
 	}
 	

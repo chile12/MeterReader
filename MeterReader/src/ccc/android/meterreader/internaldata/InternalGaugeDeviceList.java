@@ -7,10 +7,10 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonTypeName;
 
+import ccc.android.meterdata.errors.RestError;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.listtypes.GaugeDeviceList;
 import ccc.android.meterdata.types.GaugeDevice;
-import ccc.android.meterdata.types.ServerError;
 @JsonTypeName("InternalGaugeDeviceList")
 public class InternalGaugeDeviceList extends ccc.android.meterdata.listtypes.GaugeDeviceList implements ICallbackList
 {
@@ -30,7 +30,7 @@ public class InternalGaugeDeviceList extends ccc.android.meterdata.listtypes.Gau
 	public InternalGaugeDeviceList()
 	{
 		super();
-		}
+	}
 	public InternalGaugeDeviceList(IMeterDataContainer manager)
 	{
 		super();
@@ -55,7 +55,7 @@ public class InternalGaugeDeviceList extends ccc.android.meterdata.listtypes.Gau
 	
 	@JsonIgnore
 	@Override
-	public void ErrorCallback(ServerError error) {
+	public void ErrorCallback(RestError error) {
 		container.ReceiveErrorObject(error);
 		
 	}
@@ -87,5 +87,21 @@ public class InternalGaugeDeviceList extends ccc.android.meterdata.listtypes.Gau
 	public void setInternalGaugeDeviceList(List<InternalGaugeDevice> gaugeDeviceList)
 	{
 		this.list = (List<InternalGaugeDevice>) gaugeDeviceList;
+	}
+	
+	@JsonIgnore
+	@Override
+	public GaugeDevice getById(Object id) 
+	{
+		if(id == null)
+			return null;
+		if(!(id.getClass().equals(Integer.class) || id.getClass().equals(int.class)))
+			return null;
+		for(GaugeDevice ga : this.getInternalGaugeDeviceList())
+		{
+			if(ga.getGaugeDeviceId() == ((Integer)id).intValue())
+				return ga;
+		}
+		return null;
 	}
 }

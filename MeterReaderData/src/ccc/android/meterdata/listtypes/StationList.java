@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.types.Station;
@@ -15,7 +13,7 @@ import ccc.android.meterdata.types.Station;
 //@JsonSubTypes({  
 //	@JsonSubTypes.Type(name = "InternalStationList", value = InternalStationList.class)
 //})
-public class StationList implements IGenericMemberList,  Iterable<Station> 
+public class StationList implements IGenericMemberList<Station>,  Iterable<Station> 
 {
 	private List<Station> stationList = new ArrayList<Station>();
 	private String restriction;
@@ -76,5 +74,29 @@ public class StationList implements IGenericMemberList,  Iterable<Station>
 	public void clear() 
 	{
 		stationList.clear();
+	}
+
+	@Override
+	public void add(Station addi)
+	{
+		this.stationList.add(addi);
+	}
+
+	@Override
+	public void addAll(IGenericMemberList<Station> list)
+	{
+		this.stationList.addAll(list.getList());
+	}
+
+	@Override
+	public Station get(int index)
+	{
+		return this.stationList.get(index);
+	}
+
+	@Override
+	public List<Station> getList()
+	{
+		return this.stationList;
 	}
 }

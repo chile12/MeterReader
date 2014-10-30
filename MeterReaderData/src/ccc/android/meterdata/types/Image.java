@@ -9,9 +9,9 @@ public class Image implements IGenericMember
 {
 	private int id;
 	private String caption;
-	private int height;
-	private int width;
+	private String medium;
 	private byte[] imgData;
+	private Integer GaugeDeviceId;
 	
 	public int getId()
 	{
@@ -29,29 +29,13 @@ public class Image implements IGenericMember
 	{
 		this.caption = caption;
 	}
-	public int getHeight()
-	{
-		return height;
-	}
-	public void setHeight(int height)
-	{
-		this.height = height;
-	}
-	public int getWidth()
-	{
-		return width;
-	}
-	public void setWidth(int width)
-	{
-		this.width = width;
-	}
 	@JsonIgnore
-	public byte[] getImg()
+	public byte[] getBinary()
 	{
 		return imgData;
 	}
 	@JsonIgnore
-	public void setImg(byte[] imgData)
+	public void setBinary(byte[] imgData)
 	{
 		this.imgData = imgData;
 	}
@@ -61,6 +45,22 @@ public class Image implements IGenericMember
 	}
 	public void setImgData(String dataString)
 	{
-		this.imgData = MeterDataUtils.decodeToImage(dataString);
+		this.setBinary(MeterDataUtils.decodeToImage(dataString));
+	}
+	public String getMedium()
+	{
+		return medium;
+	}
+	public void setMedium(String medium)
+	{
+		this.medium = medium;
+	}
+	public Integer getGaugeDeviceId()
+	{
+		return GaugeDeviceId;
+	}
+	public void setGaugeDeviceId(Integer gaugeDeviceId)
+	{
+		GaugeDeviceId = gaugeDeviceId;
 	}
 }

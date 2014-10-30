@@ -3,10 +3,9 @@ package ccc.android.meterreader.internaldata;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeName;
 
-import ccc.android.meterdata.*;
+import ccc.android.meterdata.errors.RestError;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.listtypes.RouteList;
-import ccc.android.meterdata.types.ServerError;
 @JsonTypeName("InternalRouteList")
 public class InternalRouteList  extends ccc.android.meterdata.listtypes.RouteList implements ICallbackList
 {
@@ -43,7 +42,7 @@ public class InternalRouteList  extends ccc.android.meterdata.listtypes.RouteLis
 	}
 	
 	@Override
-	public void ErrorCallback(ServerError error) {
+	public void ErrorCallback(RestError error) {
 		container.ReceiveErrorObject(error);
 		
 	}	

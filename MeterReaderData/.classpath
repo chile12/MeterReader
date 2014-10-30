@@ -2,6 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="C:/Program Files/adt-bundle-windows-x86_64-20131030/jars/resteasy-jaxrs-3.0.6.Final/lib/jackson-core-asl-1.9.12.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/adt-bundle-windows-x86_64-20131030/jars/apache/commons-lang3-3.3.2/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Program Files/adt-bundle-windows-x86_64-20131030/sdk/platforms/android-19/android.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/adt-bundle-windows-x86_64-20131030/jars/resteasy-jaxrs-3.0.6.Final/lib/jackson-mapper-asl-1.9.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

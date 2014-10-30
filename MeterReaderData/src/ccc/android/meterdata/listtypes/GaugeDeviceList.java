@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.*;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.types.GaugeDevice;
@@ -13,7 +14,7 @@ import ccc.android.meterdata.types.GaugeDevice;
 //@JsonSubTypes({  
 //	@JsonSubTypes.Type(name = "InternalGaugeDeviceList", value = InternalGaugeDeviceList.class)
 //})
-public class GaugeDeviceList implements IGenericMemberList,  Iterable<GaugeDevice> 
+public class GaugeDeviceList implements IGenericMemberList<GaugeDevice>,  Iterable<GaugeDevice> 
 {
 	private List<GaugeDevice> gaugeDeviceList = new ArrayList<GaugeDevice>();
 	private String restriction;
@@ -54,6 +55,8 @@ public class GaugeDeviceList implements IGenericMemberList,  Iterable<GaugeDevic
 	@Override
 	public GaugeDevice getById(Object id) 
 	{
+		if(id == null)
+			return null;
 		if(!(id.getClass().equals(Integer.class) || id.getClass().equals(int.class)))
 			return null;
 		for(GaugeDevice ga : this.getGaugeDeviceList())
@@ -68,5 +71,30 @@ public class GaugeDeviceList implements IGenericMemberList,  Iterable<GaugeDevic
 	public void clear() 
 	{
 		gaugeDeviceList.clear();
+	}
+
+	@Override
+	public void add(GaugeDevice addi)
+	{
+		gaugeDeviceList.add(addi);
+	}
+
+	@Override
+	public void addAll(IGenericMemberList<GaugeDevice> list)
+	{
+		gaugeDeviceList.addAll(list.getList());
+	}
+
+	@Override
+	public GaugeDevice get(int index)
+	{
+		return gaugeDeviceList.get(index);
+	}
+
+	@Override
+	@JsonIgnore
+	public List<GaugeDevice> getList()
+	{
+		return gaugeDeviceList;
 	}
 }

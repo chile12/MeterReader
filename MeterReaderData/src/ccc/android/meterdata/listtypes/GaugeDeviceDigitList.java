@@ -4,18 +4,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import ccc.android.meterdata.interfaces.IGenericMember;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
+import ccc.android.meterdata.interfaces.IGenericPartialList;
 import ccc.android.meterdata.types.GaugeDeviceDigit;
 
-public class GaugeDeviceDigitList  implements IGenericMemberList,  Iterable<GaugeDeviceDigit> 
+public class GaugeDeviceDigitList  implements IGenericPartialList<GaugeDeviceDigit>,  Iterable<GaugeDeviceDigit> 
 {
 	List<GaugeDeviceDigit> digitList = Collections.synchronizedList(new ArrayList<GaugeDeviceDigit>());
 	private String restriction;
+	private int imageType; //0 == icon, 1 == meterImage
+	private int skip;
+	private int limit;
+	private int size;
 	
 	@JsonProperty("DigitList")
 	public List<GaugeDeviceDigit> getDigitList() {
@@ -55,7 +59,7 @@ public class GaugeDeviceDigitList  implements IGenericMemberList,  Iterable<Gaug
 	}
 
 	@Override
-	public IGenericMember getById(Object id) {
+	public GaugeDeviceDigit getById(Object id) {
 		if(!(id.getClass().equals(Integer.class) || id.getClass().equals(int.class)))
 			return null;
 		synchronized(this)
@@ -71,26 +75,71 @@ public class GaugeDeviceDigitList  implements IGenericMemberList,  Iterable<Gaug
 
 	@Override
 	public void clear() {
-		synchronized(this)
-		{
 			digitList.clear();
-		}
 	}
 
 	public void add(GaugeDeviceDigit memb) 
 	{
-		synchronized(this)
-		{
 			digitList.add(memb);
-		}
 	}
-	
-	public void addAll(GaugeDeviceDigitList list) 
+
+	@Override
+	public void addAll(IGenericMemberList<GaugeDeviceDigit> list)
 	{
-		synchronized(this)
-		{
-			digitList.addAll(list.getDigitList());
-		}
+		this.digitList.addAll(list.getList());
+	}
+
+	@Override
+	public GaugeDeviceDigit get(int index)
+	{
+		return this.getList().get(index);
+	}
+
+	@Override
+	@JsonIgnore
+	public List<GaugeDeviceDigit> getList()
+	{
+		return this.digitList;
+	}
+
+	public int getImageType()
+	{
+		return imageType;
+	}
+
+	public void setImageType(int imageType)
+	{
+		this.imageType = imageType;
+	}
+
+	public int getSkip()
+	{
+		return skip;
+	}
+
+	public void setSkip(int skip)
+	{
+		this.skip = skip;
+	}
+
+	public int getLimit()
+	{
+		return limit;
+	}
+
+	public void setLimit(int limit)
+	{
+		this.limit = limit;
+	}
+
+	public int getSize()
+	{
+		return size;
+	}
+
+	public void setSize(int size)
+	{
+		this.size = size;
 	}
 }
 

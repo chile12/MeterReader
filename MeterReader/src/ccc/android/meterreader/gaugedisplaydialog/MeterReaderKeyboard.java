@@ -3,7 +3,6 @@ package ccc.android.meterreader.gaugedisplaydialog;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import ccc.android.meterreader.statics.Statics;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
@@ -17,6 +16,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import ccc.android.meterreader.statics.Statics;
 
 public class MeterReaderKeyboard 
 {

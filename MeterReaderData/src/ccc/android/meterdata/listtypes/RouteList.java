@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonSubTypes;
 
+import ccc.android.meterdata.interfaces.IGenericMember;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.types.Route;
 
@@ -14,7 +14,7 @@ import ccc.android.meterdata.types.Route;
 //@JsonSubTypes({  
 //	@JsonSubTypes.Type(name = "InternalRouteList", value = InternalRouteList.class)
 //})
-public class RouteList implements IGenericMemberList,  Iterable<Route> 
+public class RouteList implements IGenericMemberList<Route>,  Iterable<Route> 
 {
 	List<Route> routeList = new ArrayList<Route>();
 	public List<Route> getRouteList() {
@@ -65,5 +65,29 @@ public class RouteList implements IGenericMemberList,  Iterable<Route>
 	public void clear() 
 	{
 		routeList.clear();
+	}
+	
+	@Override
+	public Route get(int index)
+	{
+		return this.routeList.get(index);
+	}
+
+	@Override
+	public List<Route> getList()
+	{
+		return this.routeList;
+	}
+
+	@Override
+	public void add(Route addi)
+	{
+		this.routeList.add(addi);
+	}
+
+	@Override
+	public void addAll(IGenericMemberList<Route> list)
+	{
+		this.routeList.addAll(list.getList());
 	}
 }

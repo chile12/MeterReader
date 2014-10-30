@@ -1,14 +1,16 @@
 package ccc.android.meterreader.datamanagement.async;
 
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
+import android.os.AsyncTask;
+import ccc.android.meterdata.errors.RestError;
 import ccc.android.meterdata.interfaces.IGenericMember;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
-import ccc.android.meterdata.types.ServerError;
 import ccc.android.meterreader.internaldata.ICallbackList;
-import ccc.java.restclient.*;
-import android.os.AsyncTask;
+import ccc.java.restclient.ParameterMap;
+import ccc.java.restclient.RestClient;
 
 public class GenericMemberListAsyncDbLoader extends AsyncTask<Object, Void, IGenericMember>
 {
@@ -42,7 +44,7 @@ public class GenericMemberListAsyncDbLoader extends AsyncTask<Object, Void, IGen
 		}
 		if(list == null) //collect server error
 		{
-			ServerError err = client.getLatestServerError();
+			RestError err = client.getLatestServerError();
 			return err;
 		}
 		return list;
@@ -53,10 +55,10 @@ public class GenericMemberListAsyncDbLoader extends AsyncTask<Object, Void, IGen
     	{
     		if(result instanceof IGenericMemberList)
     			callableList.ListCallback((IGenericMemberList)result);
-    		else if(result instanceof ServerError)
-    			callableList.ErrorCallback((ServerError) result);
+    		else if(result instanceof RestError)
+    			callableList.ErrorCallback((RestError) result);
     	}
     	else
-    		callableList.ErrorCallback(new ServerError());
+    		callableList.ErrorCallback(new RestError("UnknowenError", "an unknowen Error occurred"));
     }
 }

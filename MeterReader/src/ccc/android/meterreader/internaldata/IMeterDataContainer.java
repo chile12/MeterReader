@@ -1,10 +1,10 @@
 package ccc.android.meterreader.internaldata;
 
-import ccc.android.meterdata.types.ServerError;
+import ccc.android.meterdata.errors.RestError;
 
 public interface IMeterDataContainer 
 {
 	void RegisterLoadedDataObject(ICallbackList data);
 	
-	void ReceiveErrorObject(ServerError error);
+	void ReceiveErrorObject(RestError error);
 }

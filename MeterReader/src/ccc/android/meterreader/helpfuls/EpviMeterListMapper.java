@@ -1,21 +1,18 @@
 package ccc.android.meterreader.helpfuls;
 
 import java.lang.reflect.Field;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.concurrent.TimeUnit;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.util.DisplayMetrics;
-
 import ccc.android.meterdata.OfficialNaming;
 import ccc.android.meterdata.enums.GaugeType;
 import ccc.android.meterdata.types.Gauge;
@@ -23,12 +20,14 @@ import ccc.android.meterdata.types.Reading;
 import ccc.android.meterreader.MainActivity;
 import ccc.android.meterreader.datamanagement.DataContext;
 import ccc.android.meterreader.internaldata.GroupIdentifier;
+import ccc.android.meterreader.internaldata.InternalImage;
 import ccc.android.meterreader.internaldata.ListItemIdentifier;
+import ccc.android.meterreader.statics.StaticIconLibrary;
 import ccc.android.meterreader.statics.Statics;
 
+@SuppressLint({ "DefaultLocale", "UseSparseArrays" })
 public class EpviMeterListMapper
 {
-	private Activity context;
 	private DataContext data;
 	private String[] groupKeys;
 	private String[] filterKeys;
@@ -39,14 +38,13 @@ public class EpviMeterListMapper
 	private Map<Integer, Boolean> viewExpanded;										//ViewId - is expanded View?
 	private Map<Integer, Entry<Gauge, Reading>> viewDict;							//ViewId - <Gauge, last Reading>
 	
-	public EpviMeterListMapper(MainActivity context)
+	public EpviMeterListMapper(DataContext context)
 	{
 		Resources resources = Statics.getLocalResources("us");
 		groupKeys = resources.getStringArray(ccc.android.meterreader.R.array.group_array);
 		filterKeys = resources.getStringArray(ccc.android.meterreader.R.array.filter_array);
 		
-		this.context = context;
-		this.data = context.getManager().getData();
+		this.data = context;
 		groupDict = new HashMap<Integer, Entry<GroupIdentifier, List<Gauge>>>();
 		lastReadings = new HashMap<Integer, Reading>();
 		viewDict = new HashMap<Integer, Entry<Gauge, Reading>>();
@@ -54,7 +52,6 @@ public class EpviMeterListMapper
 		childFilterMap = new HashMap<Integer, List<Boolean>>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void DoDataMapping(long groupKey)
 	{
 		currentGroupKey = Integer.parseInt(String.valueOf(groupKey));
@@ -76,46 +73,45 @@ public class EpviMeterListMapper
 			{ 
 				if(getGroupGaugeList(st) == null)
 				{
-					groupDict.put(groupDict.size(), (Entry)new SimpleEntry<GroupIdentifier, ArrayList<Gauge>>(getGroupIdentifier(st), new ArrayList<Gauge>()));
+					groupDict.put(groupDict.size(), (Entry<GroupIdentifier, List<Gauge>>)new SimpleEntry<GroupIdentifier, List<Gauge>>(getGroupIdentifier(st), new ArrayList<Gauge>()));
 				}
 				addToGroupGaugeList(st);
 			}
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private GroupIdentifier getGroupIdentifier(Gauge ga)
 	{
 		if(groupKeys[currentGroupKey].equals("medium"))
-			return new GroupIdentifier(ga.getMedium(), ga.getMedium().toLowerCase(), context);
+			return new GroupIdentifier(ga.getMedium(), (InternalImage) StaticIconLibrary.getIcons().getByMedium(ga.getMedium()));
 		if(groupKeys[currentGroupKey].equals("name"))
 		{
 			String ret = prettyUp(ga.getName(), 0,1);
-			return new GroupIdentifier(ret.toUpperCase(), "", context);
+			return new GroupIdentifier(ret.toUpperCase());
 		}
 		if(groupKeys[currentGroupKey].equals("location"))
 		{
 			String ret = prettyUp(ga.getLocation(), 0,12);
-			return new GroupIdentifier(ret,"", context);
+			return new GroupIdentifier(ret);
 		}
 		if(groupKeys[currentGroupKey].equals("description"))
 		{
 			String ret = prettyUp(ga.getDescription(), 0,1);
-			return new GroupIdentifier(ret.toUpperCase(),"", context);
+			return new GroupIdentifier(ret.toUpperCase());
 		}
 		if(groupKeys[currentGroupKey].equals("last reading date"))
 		{
 			Reading ra = getLastReadingFromGaugeId(ga.getGaugeId());
 			if(ra != null)
-				return new GroupIdentifier(Statics.getLocaleDateFormat().format(ra.getUtcTo()), "", context);
-			return new GroupIdentifier("--", "", context);
+				return new GroupIdentifier(Statics.getLocaleDateFormat().format(ra.getUtcTo()));
+			return new GroupIdentifier("--");
 		}
 		if(groupKeys[currentGroupKey].equals("days since reading"))
 		{
 			Reading ra = getLastReadingFromGaugeId(ga.getGaugeId());
 			if(ra != null)
-				return new GroupIdentifier(String.valueOf(Statics.getDateDiff(ra.getUtcTo(), Statics.getUtcTime(), TimeUnit.DAYS)), "", context);
-			return new GroupIdentifier("--", "", context);
+				return new GroupIdentifier(String.valueOf(Statics.getDateDiff(ra.getUtcTo(), Statics.getUtcTime(), TimeUnit.DAYS)));
+			return new GroupIdentifier("--");
 		}
 		return null;
 	}
@@ -138,6 +134,7 @@ public class EpviMeterListMapper
 		String subject = filterKeys[filterSubjectKey];
 		SetNewFilter(subject, filterTerm);
 	}
+	
 	public void SetNewFilter(String filterSubject, String filterTerm)
 	{
 		
@@ -286,7 +283,7 @@ public class EpviMeterListMapper
 	
 	public void setGaugeReadingForViewId(int id, Gauge ga, Reading ra)
 	{
-		viewDict.put(id, (Entry)new SimpleEntry<Gauge, Reading>(ga,ra));
+		viewDict.put(id, (Entry<Gauge, Reading>)new SimpleEntry<Gauge, Reading>(ga,ra));
 	}
 	
 	public ListItemIdentifier getListItemIdentifier (int groupPos, int childPos)

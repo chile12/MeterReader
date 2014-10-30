@@ -10,18 +10,20 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import ccc.android.meterdata.listtypes.*;
 import ccc.android.meterdata.types.*;
+import ccc.android.meterdata.errors.ClientError;
+import ccc.android.meterdata.errors.RestError;
+import ccc.android.meterdata.errors.ServerError;
 import ccc.android.meterdata.interfaces.IGenericMember;
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.types.GaugeDeviceDigit;
 import ccc.android.meterdata.types.PingCallback;
-import ccc.android.meterdata.types.ServerError;
 
 public class RestClient
 {
 	private URL connectionUrl;
     private final ObjectMapper mapper = new ObjectMapper();
     private final int normalTimeout = 1000000;
-    private List<ServerError> errors = new ArrayList<ServerError>();
+    private List<RestError> errors = new ArrayList<RestError>();
 
     public RestClient(URL baseUrl) {
     	
@@ -38,7 +40,8 @@ public class RestClient
         mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
     
-    public <T> T GetSingleObject(Class <T> type, String jsonData) throws Exception
+    @SuppressWarnings("unchecked")
+	public <T> T GetSingleObject(Class <T> type, String jsonData) throws Exception
     {
     	Object returnObject = null;
         try {
@@ -46,28 +49,32 @@ public class RestClient
         		returnObject = type.cast(mapper.readValue(jsonData, type));
         	
 		} catch (Exception e) {
-			// TODO: handle exception do not return null!;
-			return null;
+			errors.add( new ClientError(e));
 		}    	
     	return (T) returnObject;
     }
     
-    public <T extends IGenericMember> T GetSingleObject(Class <T> type, ParameterMap restriction) throws Exception
+    public <T extends IGenericMember> IGenericMember GetSingleObject(Class <T> type, ParameterMap restriction)
     {
-    	//TODO Exception!
     	if(connectionUrl==null)
-    		throw new Exception("no url provided");  		
-    	Object returnObj = null;
+    	{
+    		errors.add(new ClientError(new MalformedURLException("no connection-url provided")));
+    		return null;
+    	}
+    	
     	String path = GetSubPath(type, restriction, HttpMethod.Get);
 		
-    	String jsonList = HandleHttpResponse(path); 
-        try {
-        		returnObj = mapper.readValue(jsonList, type);
-		} catch (Exception e) {
-			// TODO: handle exception do not return null!;
-			return null;
+    	String jsonList = null;
+		try
+		{
+			jsonList = HandleHttpResponse(path);
+	        return type.cast(mapper.readValue(jsonList, type));
 		}
-        return type.cast(returnObj);
+		catch (IOException e1)
+		{
+			errors.add( new ClientError(e1));
+		} 
+		return null;
     }
     
     public <T extends IGenericMember> IGenericMember GetMultipleObjects(Class <T> type) throws Exception
@@ -75,20 +82,23 @@ public class RestClient
     	return GetMultipleObjects(type, new ParameterMap(null));
     }
     
-    public <T extends IGenericMember> IGenericMember GetMultipleObjects(Class <T> type, ParameterMap restriction) throws Exception
+    public <T extends IGenericMember> IGenericMember GetMultipleObjects(Class <T> type, ParameterMap restriction)
     {
-    	//TODO Exception!
     	if(connectionUrl==null)
-    		throw new Exception("no url provided");  	
+    		errors.add( new ClientError(new MalformedURLException("no connection-url provided")));
+    	
     	String path = GetSubPath(type, restriction, HttpMethod.Get);
-
-    	String jsonList = HandleHttpResponse(path); 
-
-        try {
+    	String jsonList = null;
+		try
+		{
+			jsonList = HandleHttpResponse(path);
 			return GetMultipleObjects(type, jsonList);
-		} catch (Exception e) {
-			return new ServerError(e.getMessage());
 		}
+		catch (IOException e1)
+		{
+			errors.add( new ClientError(e1));
+		} 
+		return null;
     }
     
 	public boolean PostSingleObjectToServer(IGenericMember obj, ParameterMap map) throws IOException
@@ -103,9 +113,8 @@ public class RestClient
 			os.close();
 			status = conn.getResponseCode();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			conn.disconnect();
+			errors.add(new ClientError(e));
+			return false;
 		}
 		conn.disconnect();
 		if(status == 200 || status == 201)
@@ -114,46 +123,51 @@ public class RestClient
 			return false;
 	}
 	
-	public <T extends IGenericMember> boolean  PostListOfObject(Class<? extends IGenericMember> type, List<GaugeDeviceDigit> digits, ParameterMap map) throws IOException
+	public <T extends IGenericMember> boolean  PostListOfObject(Class<? extends IGenericMember> type, List<GaugeDeviceDigit> digits, ParameterMap map)
 	{
     	String path = GetSubPath(type ,map, HttpMethod.Post, true);
-		HttpURLConnection conn = getHttpPostConnection(path);
 		int status = 0;
+		HttpURLConnection conn = null;
 		try {
+			conn = getHttpPostConnection(path);
 			OutputStream os = conn.getOutputStream();
 			byte[] output = JsonStatics.JsonMvcTime(digits).getBytes();
 			os.write(output);
 			os.close();
 			status = conn.getResponseCode();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			conn.disconnect();
+			errors.add( new ClientError(e));
 		}
-		conn.disconnect();
+		finally
+		{
+			if(conn != null)
+				conn.disconnect();
+		}
 		if(status == 200 || status == 201)
 			return true;
 		else
 			return false;		
 	}
 	
-	public boolean PostMultipleObjectsToServer(IGenericMemberList obj, ParameterMap map) throws IOException
+	public boolean PostMultipleObjectsToServer(IGenericMemberList obj, ParameterMap map)
 	{
     	String path = GetSubPath(obj.getClass(), map, HttpMethod.Post);
-		HttpURLConnection conn = getHttpPostConnection(path);
+		HttpURLConnection conn = null;
 		int status = 0;
 		try {
+			conn = getHttpPostConnection(path);
 			OutputStream os = conn.getOutputStream();
 			byte[] output = JsonStatics.JsonMvcTime(obj).getBytes();
 			os.write(output);
 			os.close();
 			status = conn.getResponseCode();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			errors.add( new ClientError(e));
+		}
+		finally
+		{
 			conn.disconnect();
 		}
-		conn.disconnect();
 		if(status == 200 || status == 201)
 			return true;
 		else
@@ -211,10 +225,9 @@ public class RestClient
 			conn.disconnect();
 			return val;
 		} catch (IOException io) {
-			// TODO Auto-generated catch block
-		 io.printStackTrace();
+			errors.add( new ClientError(io));
 		} catch (Exception e){
-			e.printStackTrace();
+			errors.add( new ClientError(e));
 		}
 		conn.disconnect();
 		PingCallback err = new PingCallback();
@@ -226,6 +239,7 @@ public class RestClient
 	{
 		int milliseconds = (int) (date.getTime() % 1000l);
 		milliseconds =  milliseconds<0 ? milliseconds+1000 : milliseconds;
+		@SuppressWarnings("deprecation")
 		String ret = (date.getDay()+1) + "-" + (date.getMonth()+1) + "-" + (date.getYear()+1900) + 
 				"%20" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "." + milliseconds;
 		return ret;
@@ -234,7 +248,6 @@ public class RestClient
     public <T extends IGenericMember> T GetMultipleObjects(Class <T> type, String jsonData)
     {
     	T returnObjects = null;
-    	ServerError err = null;
         	if(jsonData != null)
 				try {
 					returnObjects = type.cast(mapper.readValue(jsonData, type));
@@ -250,15 +263,15 @@ public class RestClient
     }
 
 	private void tryGetError(String jsonData) {
-		ServerError err;
+		RestError err;
 		try {
 			err = ServerError.class.cast(mapper.readValue(jsonData, ServerError.class));
 		} catch (JsonParseException e1) {
-			err = new ServerError("An undefines server error occured");
+			err = new ClientError(e1);
 		} catch (JsonMappingException e1) {
-			err = new ServerError("An undefines server error occured");
+			err = new ClientError(e1);
 		} catch (IOException e1) {
-			err = new ServerError("An undefines server error occured");
+			err = new ClientError(e1);
 		}
 		errors.add(err);
 	}
@@ -272,8 +285,8 @@ public class RestClient
 			status = conn.getResponseCode();
 			json = ReadJsonResponse(conn);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			return null;		}
+			errors.add( new ClientError(e));	
+			}
 
 	        conn.disconnect();
 			return json;
@@ -328,7 +341,6 @@ public class RestClient
 			conn.setDoOutput (true);
 		}
 		conn.connect();
-      //TODO do not return null!
 	    return conn;
     }
 
@@ -336,7 +348,7 @@ public class RestClient
 		return mapper;
 	}
 	
-	public ServerError getLatestServerError()
+	public RestError getLatestServerError()
 	{
 		if(errors.size() > 0)
 			return errors.get(errors.size()-1);

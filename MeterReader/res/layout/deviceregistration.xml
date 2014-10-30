@@ -88,9 +88,9 @@
 			        <com.neopixl.pixlui.components.button.Button
 			            android:id="@+id/newDeviceStep0BarcodeBT"
 			            style="@style/ButtonWithMargins"
-			            android:layout_width="wrap_content"
+			            android:layout_width="match_parent"
 			            android:layout_height="wrap_content"
-			            android:text="Qr-/Barcode"
+			            android:text="@string/gauge_display_barcode_scan"
 			            pixlui:typeface="SourceSansPro.ttf" />
 				</LinearLayout>
             </LinearLayout>
@@ -129,56 +129,51 @@
                 android:maxLines="3"
                 android:text="@string/new_device_step1_info"
                 pixlui:typeface="SourceSansPro.ttf" />
-        </LinearLayout>
+            
+                <LinearLayout
+                    android:id="@+id/previewLL"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal" >
 
-        <LinearLayout
-            android:id="@+id/newDeviceStep2LL"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
+                    <FrameLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" >
 
-            <com.neopixl.pixlui.components.textview.TextView
-                android:id="@+id/newDeviceStep2TitleLA"
-                style="@style/TitleStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/new_device_title"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                pixlui:typeface="SourceSansPro.ttf" />
-
-            <com.neopixl.pixlui.components.textview.TextView
-                android:id="@+id/newDeviceStep2SubTitleLA"
-                style="@style/SubTitleStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/new_device_step2_subtitle"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                pixlui:typeface="SourceSansPro.ttf" />
-
-            <com.neopixl.pixlui.components.textview.TextView
-                android:id="@+id/newDeviceStep2InfoLA"
-                style="@style/TextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:lines="3"
-                android:maxLines="3"
-                android:text="@string/new_device_step2_info"
-                pixlui:typeface="SourceSansPro.ttf" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" >
-
-                <EditText
-                    android:id="@+id/newDeviceStep2NameTB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:singleLine="true" />
-            </RelativeLayout>
+                        <LinearLayout
+                            android:id="@+id/cameraPreviewLL"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@color/Aqua"
+                            android:gravity="bottom"
+                            android:orientation="vertical" >
+                        </LinearLayout>
+                            <LinearLayout
+	                            android:layout_width="match_parent"
+	                            android:layout_height="wrap_content"
+	                            android:layout_gravity="bottom"
+	                            android:orientation="horizontal" >
+	                            <com.neopixl.pixlui.components.button.Button
+	                                android:id="@+id/tryAgainBT"
+	                                style="@style/ButtonWithMargins"
+	                                android:layout_width="wrap_content"
+	                                android:layout_height="wrap_content"
+	                                android:layout_gravity="left|bottom"
+	                                android:text="@string/take_pcture_again"
+					                pixlui:typeface="SourceSansPro.ttf" />
+	                           <com.neopixl.pixlui.components.button.Button
+	                                android:id="@+id/takePictureBT"
+	                                style="@style/ButtonWithMargins"
+	                                android:layout_width="wrap_content"
+	                                android:layout_height="wrap_content"
+	                                android:layout_gravity="right|bottom"
+	                                android:text="@string/take_pcture"
+					                pixlui:typeface="SourceSansPro.ttf" />
+                           </LinearLayout>
+                    </FrameLayout>
+                </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -534,6 +529,173 @@
                 android:text="@string/new_device_step8_subtitle"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 pixlui:typeface="SourceSansPro.ttf" />
+            
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:paddingTop="5dp"
+                android:orientation="vertical" >
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">"
+                    
+                   <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <com.neopixl.pixlui.components.textview.TextView
+                            android:id="@+id/newDeviceStep8GaugeNameLabelLA"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                        	android:layout_marginLeft="2dp"
+                            android:text="@string/gauge_display_gauge_name"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#000000"
+                            android:visibility="visible" />
+
+                        <com.neopixl.pixlui.components.textview.TextView
+                            android:id="@+id/newDeviceStep8GaugeNamelLA"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#000000"
+                            android:visibility="visible" />
+                        
+                        <com.neopixl.pixlui.components.textview.TextView
+                            android:id="@+id/newDeviceStep8GaugeIdlLA"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#000000"
+                            android:visibility="visible" />
+                    </LinearLayout>
+                    <RelativeLayout
+                    	android:layout_width="match_parent"
+                    	android:layout_height="wrap_content"
+                    	android:layout_gravity="center_vertical">
+	                    <LinearLayout
+	                        android:layout_width="match_parent"
+	                        android:layout_height="wrap_content"
+	                        android:orientation="vertical"
+			                android:layout_alignParentLeft="true">
+		                    <LinearLayout
+		                        android:layout_width="match_parent"
+		                        android:layout_height="wrap_content" >
+		
+		                        <com.neopixl.pixlui.components.textview.TextView
+		                            android:id="@+id/newDeviceStep8DigitsLabelLA"
+		                            android:layout_width="wrap_content"
+		                            android:layout_height="wrap_content"
+		                        	android:layout_marginLeft="2dp"
+		                            android:text="@string/gauge_display_gauge_digits"
+		                            android:textAppearance="?android:attr/textAppearanceMedium"
+		                            android:textColor="#000000"
+		                            android:visibility="visible" />
+		
+		                        <com.neopixl.pixlui.components.textview.TextView
+		                            android:id="@+id/newDeviceStep8DigitsLA"
+		                            android:layout_width="wrap_content"
+		                            android:layout_height="wrap_content"
+		                            android:layout_marginLeft="5dp"
+		                            android:layout_marginRight="5dp"
+		                            android:textAppearance="?android:attr/textAppearanceMedium"
+		                            android:textColor="#000000"
+		                            android:visibility="visible" />
+		                    </LinearLayout>
+		                    
+		                    <LinearLayout
+		                        android:layout_width="match_parent"
+		                        android:layout_height="wrap_content" >
+		
+		                        <com.neopixl.pixlui.components.textview.TextView
+		                            android:id="@+id/newDeviceStep8DecimalsLabelLA"
+		                            android:layout_width="wrap_content"
+		                            android:layout_height="wrap_content"
+		                        	android:layout_marginLeft="2dp"
+		                            android:text="@string/gauge_display_gauge_decimals"
+		                            android:textAppearance="?android:attr/textAppearanceMedium"
+		                            android:textColor="#000000"
+		                            android:visibility="visible" />
+		
+		                        <com.neopixl.pixlui.components.textview.TextView
+		                            android:id="@+id/newDeviceStep8DecimalLA"
+		                            android:layout_width="wrap_content"
+		                            android:layout_height="wrap_content"
+		                            android:layout_marginLeft="5dp"
+		                            android:layout_marginRight="5dp"
+		                            android:textAppearance="?android:attr/textAppearanceMedium"
+		                            android:textColor="#000000"
+		                            android:visibility="visible" />
+		                    </LinearLayout>
+                        </LinearLayout>
+                        <ImageView
+	                        android:id="@+id/newDeviceStep8BackgroundIV"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:layout_alignParentRight="true"
+	                        android:src="@drawable/brightone" />
+	                </RelativeLayout>
+                    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <com.neopixl.pixlui.components.textview.TextView
+                            android:id="@+id/newDeviceStep8BarcodeLabelLA"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                        	android:layout_marginLeft="2dp"
+                            android:text="@string/gauge_display_gauge_barcode"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#000000"
+                            android:visibility="visible" />
+
+                        <com.neopixl.pixlui.components.textview.TextView
+                            android:id="@+id/newDeviceStep8BarcodeLA"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#000000"
+                            android:visibility="visible" />
+                    </LinearLayout>
+                    
+                    <com.neopixl.pixlui.components.textview.TextView
+                        android:id="@+id/newDeviceStep8CommentLabelLA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginRight="5dp"
+                        android:text="@string/gauge_display_gauge_comment"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000000"
+                        android:visibility="visible" />
+                                        
+                    <com.neopixl.pixlui.components.textview.TextView
+                        android:id="@+id/newDeviceStep8CommentLA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginRight="5dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000000"
+                        android:visibility="visible" />
+                    
+                    <ImageView
+                        android:id="@+id/newDeviceStep8DeviceIV"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/brightone" />
+                </LinearLayout>
+            </ScrollView>
         </LinearLayout>
     </ViewFlipper>
 
@@ -542,13 +704,13 @@
         android:layout_height="wrap_content" >
 
         <com.neopixl.pixlui.components.button.Button
-            android:id="@+id/newDeviceConfirmBT"
             style="@style/ButtonWithMargins"
+            pixlui:typeface="SourceSansPro.ttf"
+            android:id="@+id/newDeviceConfirmBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="@string/common_confirm"
-                pixlui:typeface="SourceSansPro.ttf"
             android:visibility="gone" />
 
         <com.neopixl.pixlui.components.button.Button
@@ -557,7 +719,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-                pixlui:typeface="SourceSansPro.ttf"
+            pixlui:typeface="SourceSansPro.ttf"
             android:text="@string/common_cancel" />
 
         <com.neopixl.pixlui.components.button.Button

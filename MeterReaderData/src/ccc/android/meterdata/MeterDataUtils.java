@@ -3,8 +3,6 @@ package ccc.android.meterdata;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
 
 public class MeterDataUtils 
 {

@@ -1,7 +1,6 @@
 package ccc.android.meterreader.viewelements;
 
 import android.content.Context;
-import android.view.MotionEvent;
 import android.widget.NumberPicker;
 
 public class CccNumberPicker extends NumberPicker 

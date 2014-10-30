@@ -1,6 +1,17 @@
 package ccc.android.meterreader.statics;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -13,13 +24,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import ccc.android.meterdata.types.PingCallback;
-import ccc.android.meterreader.BuildConfig;
-import ccc.android.meterreader.MainActivity;
-import ccc.android.meterreader.R;
-import ccc.android.meterreader.datamanagement.async.AsyncPingBack;
-import ccc.android.meterreader.helpfuls.PreferencesHelper;
-
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,41 +43,79 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+import ccc.android.meterdata.types.PingCallback;
+import ccc.android.meterreader.BuildConfig;
+import ccc.android.meterreader.MainActivity;
+import ccc.android.meterreader.R;
+import ccc.android.meterreader.datamanagement.async.AsyncPingBack;
+import ccc.android.meterreader.helpfuls.PreferencesHelper;
 
+@SuppressLint("DefaultLocale")
 public class Statics 
 {
-	public static final String WS_URL_KEY = "WS_URL_KEY";
-	public static final String LAST_FULL_DOWN_KEY = "LAST_FULL_DOWN_KEY";
-	public static String BASE_WS_URL = null;
-	public static final String UNDOSTACK = "undo.txt";
-	public static final String REDOSTACK = "redo.txt";
-	public static final String MAIN_SESSION = "MainSession.txt";
-	public static final String LAST_SESSION = "LastSession.txt";
-	public static final String DEBUG_SESSION = "DebugSession.txt";
-	public static final String DIGIT_FILE = "digits.txt";
-	public static final int NUM_OF_SETS_OF_PATTERNS = 10;
-	public static final int PINGS_TIL_CONTEXT_LOAD = 5;
-	public static final int SHORT_DIALOG_DURATION = 3;
-	public static final int NORMAL_DIALOG_DURATION = 8;
-	public static final int LONG_DIALOG_DURATION = 16;
-	public static final int INFINIT_DIALOG_DURATION = 300;
+	///DEBUG
+	public static boolean debugMode = true;
+	///DEBUG END
+	
+	public static final String WS_URL = "WS_URL";
+	public static final String LAST_FULL_DOWN = "LAST_FULL_DOWN";
+	public static final String UNDO_STACK_FILE_DEFAULT = "undo.txt";
+	public static final String UNDO_STACK_FILE = "UNDO_STACK_FILE";
+	public static final String REDO_STACK_FILE_DEFAULT = "redo.txt";
+	public static final String REDO_STACK_FILE = "REDO_STACK_FILE";
+	public static final String MAIN_SESSION_DEFAULT = "MainSession.txt";
+	public static final String MAIN_SESSION = "MAIN_SESSION";
+	public static final String LAST_SESSION_DEFAULT = "LastSession.txt";
+	public static final String LAST_SESSION = "LAST_SESSION";
+	public static final String DEBUG_SESSION_DEFAULT = "DebugSession.txt";
+	public static final String DEBUG_SESSION = "DEBUG_SESSION";
+	public static final String DIGIT_FILE_DEFAULT = "digits.txt";
+	public static final String DIGIT_FILE = "DIGIT_FILE";
+	public static final String IMAGE_FILE_DEFAULT = "images.txt";
+	public static final String IMAGE_FILE = "IMAGE_FILE";
+	public static final String ICON_FILE_DEFAULT = "icons.txt";
+	public static final String ICON_FILE = "ICON_FILE";
+	public static final int NUM_OF_PATTERN_SETS_DEFAULT = 10;
+	public static final String NUM_OF_PATTERN_SETS = "NUM_OF_PATTERN_SETS";
+	public static final int PINGS_TIL_CONTEXT_LOAD_DEFAULT = 10;
+	public static final String PINGS_TIL_CONTEXT_LOAD = "PINGS_TIL_CONTEXT_LOAD";
+	public static final int SHORT_DIALOG_DURATION_DEFAULT = 3;
+	public static final String SHORT_DIALOG_DURATION = "SHORT_DIALOG_DURATION";
+	public static final int NORMAL_DIALOG_DURATION_DEFAULT = 8;
+	public static final String NORMAL_DIALOG_DURATION = "NORMAL_DIALOG_DURATION";
+	public static final int LONG_DIALOG_DURATION_DEFAULT = 16;
+	public static final String LONG_DIALOG_DURATION = "LONG_DIALOG_DURATION";
+	public static final int INFINIT_DIALOG_DURATION_DEFAULT = 300;
+	public static final String INFINIT_DIALOG_DURATION = "INFINIT_DIALOG_DURATION";
+	public static final int DAYS_TIL_LIST_WARNING_RED_DEFAULT = 7;
+	public static final String DAYS_TIL_LIST_WARNING_RED = "DAYS_TIL_LIST_WARNING_RED";
+	public static final int DAYS_TIL_LIST_WARNING_YELLOW_DEFAULT = 3;
+	public static final String DAYS_TIL_LIST_WARNING_YELLOW = "DAYS_TIL_LIST_WARNING_YELLOW";
+	public static final int ONLINE_TIMER_DELAY_MS_DEFAULT = 1000;
+	public static final String ONLINE_TIMER_DELAY_MS = "ONLINE_TIMER_DELAY_MS";
+	public static final int OFFLINE_TIMER_DELAY_MS_DEFAULT = 30000;
+	public static final String OFFLINE_TIMER_DELAY_MS = "OFFLINE_TIMER_DELAY_MS";
+	public static final int UPLOAD_SYNC_TIMER_DELAY_MS_DEFAULT = 900000; 	//15 min
+	public static final String UPLOAD_SYNC_TIMER_DELAY_MS = "UPLOAD_SYNC_TIMER_DELAY_MS";
+	public static final int DOWNLOAD_SYNC_TIMER_DELAY_MS_DEFAULT = 3600000;//1 h
+	public static final String DOWNLOAD_SYNC_TIMER_DELAY_MS = "DOWNLOAD_SYNC_TIMER_DELAY_MS";
+	public static final int SYNC_TIMEOUT_DELAY_MS_DEFAULT = 300000;
+	public static final String SYNC_TIMEOUT_DELAY_MS = "SYNC_TIMEOUT_DELAY_MS";
+	public static final int USER_INACTIVITY_THRESHOLD_IN_MIN_DEFAULT = 6;
+	public static final String USER_INACTIVITY_THRESHOLD_IN_MIN = "USER_INACTIVITY_THRESHOLD_IN_MIN";
+	public static final int LAST_FULL_SYNC_THRESHOLD_IN_DAYS_DEFAULT = 6;
+	public static final String LAST_FULL_SYNC_THRESHOLD_IN_DAYS = "LAST_FULL_SYNC_THRESHOLD_IN_DAYS";
+	public static final int MIN_DISPLAY_HEIGHT_DEFAULT = 540;
+	public static final String MIN_DISPLAY_HEIGHT = "MIN_DISPLAY_HEIGHT";
 
-	//TODO replace with gauge specific threshold values
-	public static final int DAYS_FOR_WARNING_COLOR_RED = 7;
-	public static final int DAYS_FOR_WARNING_COLOR_YEL = 3;
-	
-	public static final int IS_ONLINE_TIMER_DELAY = 1000;
-	public static final int OFFLINE_TIMER_DELAY = 10000;
-	public static final int UPLOAD_SYNC_TIMER_DELAY = 600000; 	//10 min
-	public static final int DOWNLOAD_SYNC_TIMER_DELAY = 3600000;//1 h
-	public static final int USER_INACTIVITY_THRESHOLD_IN_MIN = 3;
-	
+	//private static String BASE_WS_URL = null;
 	public static final String EPVI_LIST_ITEM_EXPANDED = "epviListItemExpanded";
 	public static final String EPVI_LIST_ITEM = "epviListItem";
 	public static final String ANDROID_INTENT_ACTION_GDR = "android.intent.action.GaugeDisplayRequest";
 	public static final String ANDROID_INTENT_ACTION_NEW = "android.intent.action.NewReading";
 	public static final String ANDROID_INTENT_ACTION_BAR = "android.intent.action.Barcode";
-	public static final String ANDROID_INTENT_ACTION_BFR = "android.intent.action.BarcodeForReg";
+	public static final String ANDROID_INTENT_ACTION_NBFR = "android.intent.action.NewBarcodeForReg";
+	public static final String ANDROID_INTENT_ACTION_RBFR = "android.intent.action.ReadBarcodeForReg";
 	public static final String ANDROID_INTENT_ACTION_FIN = "android.intent.action.Finish";
 	public static final String BARCODE_GAUGEID = "[0-9]+(?=D)";
 	public static final String BARCODE_PATTERN = "ID[A-Z]{3}[0-9]{5}D[0-9]{6}";
@@ -84,31 +127,27 @@ public class Statics
 
 	public static int DISPLAY_HEIGHT;
 	public static int DISPLAY_WIDTH;
-	
-	
-	//DEBUG
-	public static boolean debugMode = true;
-	//ENDDEBUG
-	
+		
 	//private statics
 	private static PowerManager.WakeLock wl;
 	private static Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 	private static Date lastUtcTime;
-	private static long utcDiff;
 	private static boolean isOnline = false;
+    private static boolean wasOnline = false;
 	private static Timer pingTimer;
 	private static Timer upSyncTimer;
 	private static Timer downSyncTimer;
-	private static int pingsTilContextLoad = PINGS_TIL_CONTEXT_LOAD;  //ergo  pingsTilContextLoad*isOnlineTimerDelay = time before context gets loaded from file and not database!
+	private static int pingsTilContextLoad;  //ergo  pingsTilContextLoad*isOnlineTimerDelay = time before context gets loaded from file and not database!
 	private static MainActivity activity;
-    private static boolean wasOnline = false;
     private static Typeface sansPro; 
     private static Resources LocaleResources;
     private static java.text.DateFormat localeDateFormat;
-    //used for constants editable by user
-    private static PreferencesHelper Preferences;
+//    private static List<UpSyncTask> upSyncs = new ArrayList<UpSyncTask>();
+//    private static List<DownSyncTask> downSyncs = new ArrayList<DownSyncTask>();
     
     private static Date lastInteraction;
+    
+    private static SyncMode syncMode = SyncMode.Partial;
 	
 	public enum SyncState
 	{
@@ -117,38 +156,76 @@ public class Statics
 		Asynchron		//down- and up-synchronization is out of date
 	}
 
+	public enum SyncMode
+	{
+		Full,			//All data gets synchronized with the database (including images)
+		Partial			//Images will not be synchronized with the database, but loaded from last session
+	}
 	
-	public static void initializeStatics(MainActivity activ,Typeface tf, String language)
+	public static void initializeStatics(MainActivity activ)
 	{
 		upSyncTimer = new Timer();
 		downSyncTimer = new Timer();
 
-		upSyncTimer.schedule(new UpSyncTask(), UPLOAD_SYNC_TIMER_DELAY);
 		
 		//TODO read settings file
 		activity = activ;
-		sansPro = tf;
-		Preferences = new PreferencesHelper(activ);
-	    if (BuildConfig.DEBUG)
-	    	LocaleResources = getLocalResources(language);
-	    else
-	    	LocaleResources = getLocalResources(null);
-	    localeDateFormat = DateFormat.getDateFormat(activ);
-		BASE_WS_URL = (String) Preferences.GetPreferences(WS_URL_KEY, String.class);
-		if(BASE_WS_URL == null)
-			Statics.ShowAlertDiaMsgWithBt(LocaleResources.getString(R.string.no_base_ws_url_warning), INFINIT_DIALOG_DURATION);
+		sansPro = Typeface.createFromAsset(activ.getAssets(), "fonts/SourceSansPro.ttf");
 		
+	    if (Statics.debugMode)
+	    	LocaleResources = getLocalResources("en");
+	    else
+	    	LocaleResources = getLocalResources(activ.getResources().getConfiguration().locale.getCountry());
+	    localeDateFormat = DateFormat.getDateFormat(activ);
+	    
     	DisplayMetrics displayMetrics = new DisplayMetrics();
     	WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
     	wm.getDefaultDisplay().getMetrics(displayMetrics);
     	DISPLAY_WIDTH = displayMetrics.widthPixels;
     	DISPLAY_HEIGHT = displayMetrics.heightPixels;
     	
+		String BASE_WS_URL = StaticPreferences.getPreference(WS_URL, null);
+		if(BASE_WS_URL == null)
+			Statics.ShowAlertDiaMsgWithBt(LocaleResources.getString(R.string.no_base_ws_url_warning), 300);
+
     	PowerManager pm = (PowerManager)activity.getSystemService(Context.POWER_SERVICE);
     	wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "partialWl");
-    	wl.setReferenceCounted(true);
-		//TODO remove
-		//activity.invalidateOptionsMenu();
+		
+    	Integer pings = StaticPreferences.getPreference(PINGS_TIL_CONTEXT_LOAD, PINGS_TIL_CONTEXT_LOAD_DEFAULT);
+    	pings = pings == null ? 10 : pings;
+		pingsTilContextLoad = pings;
+    	
+		Long l = StaticPreferences.getPreference(LAST_FULL_DOWN, null);
+    	Date last = new Date();
+		if(l != null)
+			last = new Date(l);
+    	Integer lastFullThres = StaticPreferences.getPreference(LAST_FULL_SYNC_THRESHOLD_IN_DAYS, LAST_FULL_SYNC_THRESHOLD_IN_DAYS_DEFAULT);
+    	lastFullThres = lastFullThres == null ? 6 : lastFullThres;
+    	if(last == null || Statics.getDateDiff(last, new Date(), TimeUnit.DAYS) > lastFullThres)
+    		syncMode = SyncMode.Full;
+    	
+    	Integer upSyncDelay = StaticPreferences.getPreference(UPLOAD_SYNC_TIMER_DELAY_MS, UPLOAD_SYNC_TIMER_DELAY_MS_DEFAULT);
+    	upSyncDelay = upSyncDelay == null ? 900000 : upSyncDelay;
+		upSyncTimer.schedule(new UpSyncTask(), upSyncDelay);
+	}
+	
+	public static String getWSURL()
+	{
+		return StaticPreferences.getPreference(WS_URL, null);
+	}
+	
+
+	public static class SyncTimeoutTask extends TimerTask
+	{
+		@Override
+		public void run() {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					activity.OnFailedSessionSynchronization(getDefaultResources().getString(R.string.main_sync_timeout_msg));
+				}
+			});
+		}
 	}
 	
 	private static class UpSyncTask extends TimerTask
@@ -159,7 +236,7 @@ public class Statics
 			if(isOnline)
 			{
 				if(activity.getManager().unDoStackSize() > 0 
-						&& (lastInteraction == null || Statics.getDateDiff(lastInteraction, new Date(), TimeUnit.MINUTES) > USER_INACTIVITY_THRESHOLD_IN_MIN))
+						&& (lastInteraction == null || Statics.getDateDiff(lastInteraction, new Date(), TimeUnit.MINUTES) > StaticPreferences.getPreference(USER_INACTIVITY_THRESHOLD_IN_MIN, USER_INACTIVITY_THRESHOLD_IN_MIN_DEFAULT)))
 				{
 					activity.runOnUiThread(new Runnable() {
 			            @Override
@@ -168,10 +245,10 @@ public class Statics
 			            }
 			        });
 				}
-				upSyncTimer.schedule(new UpSyncTask(), UPLOAD_SYNC_TIMER_DELAY);
+				upSyncTimer.schedule(new UpSyncTask(), StaticPreferences.getPreference(UPLOAD_SYNC_TIMER_DELAY_MS, UPLOAD_SYNC_TIMER_DELAY_MS_DEFAULT));
 			}
 			else
-				upSyncTimer.schedule(new UpSyncTask(), OFFLINE_TIMER_DELAY);
+				upSyncTimer.schedule(new UpSyncTask(), StaticPreferences.getPreference(OFFLINE_TIMER_DELAY_MS, OFFLINE_TIMER_DELAY_MS_DEFAULT));
 	    }
 	}
 	
@@ -182,23 +259,22 @@ public class Statics
 			downSyncTimer = new Timer();
 			if(isOnline)
 			{
-				if(lastInteraction == null || Statics.getDateDiff(lastInteraction, new Date(), TimeUnit.MINUTES) > USER_INACTIVITY_THRESHOLD_IN_MIN)
+				if(lastInteraction == null || Statics.getDateDiff(lastInteraction, new Date(), TimeUnit.MINUTES) > StaticPreferences.getPreference(USER_INACTIVITY_THRESHOLD_IN_MIN, USER_INACTIVITY_THRESHOLD_IN_MIN_DEFAULT))
 				{
 					activity.runOnUiThread(new Runnable() {
 			            @Override
 			            public void run() {
-			            	Date last = new Date(Preferences.GetPreferences(LAST_FULL_DOWN_KEY, long.class));
-			            	if(last == null || Statics.getDateDiff(last, new Date(), TimeUnit.DAYS) > 6)
-			            		activity.getManager().LoadContextFromDb(true);
+ 			            	if(syncMode == SyncMode.Full || Statics.debugMode)
+			            		activity.getManager().LoadFullContextFromDb();
 			            	else
-			            		activity.getManager().LoadContextFromDb(true);
+			            		activity.getManager().LoadContextFromDb();
 			            }
 			        });
 				}
-				downSyncTimer.schedule(new DownSyncTask(), DOWNLOAD_SYNC_TIMER_DELAY);
+				downSyncTimer.schedule(new DownSyncTask(), StaticPreferences.getPreference(DOWNLOAD_SYNC_TIMER_DELAY_MS, DOWNLOAD_SYNC_TIMER_DELAY_MS_DEFAULT));
 			}
 			else
-				downSyncTimer.schedule(new DownSyncTask(), OFFLINE_TIMER_DELAY);
+				downSyncTimer.schedule(new DownSyncTask(), StaticPreferences.getPreference(OFFLINE_TIMER_DELAY_MS, OFFLINE_TIMER_DELAY_MS_DEFAULT));
 	    }
 	}
 	
@@ -215,7 +291,7 @@ public class Statics
 	            }
 	        });
 			
-			downSyncTimer.schedule(new DownSyncTask(), DOWNLOAD_SYNC_TIMER_DELAY);
+			downSyncTimer.schedule(new DownSyncTask(), StaticPreferences.getPreference(DOWNLOAD_SYNC_TIMER_DELAY_MS, DOWNLOAD_SYNC_TIMER_DELAY_MS_DEFAULT));
 	    }
 	}
 	
@@ -227,18 +303,23 @@ public class Statics
 	
 	public static void resumeTimer()
 	{
+		upSyncTimer.cancel();
+		downSyncTimer.cancel();
 		upSyncTimer = new Timer();
-		upSyncTimer.schedule(new UpSyncTask(), OFFLINE_TIMER_DELAY);
+		upSyncTimer.schedule(new UpSyncTask(), StaticPreferences.getPreference(OFFLINE_TIMER_DELAY_MS, OFFLINE_TIMER_DELAY_MS_DEFAULT));
 		downSyncTimer = new Timer();
-		downSyncTimer.schedule(new DownSyncTask(), OFFLINE_TIMER_DELAY);
+		downSyncTimer.schedule(new DownSyncTask(), StaticPreferences.getPreference(OFFLINE_TIMER_DELAY_MS, OFFLINE_TIMER_DELAY_MS_DEFAULT));
 	}
 	
-	public static void downSyncNow()
+	public static void syncNow()
 	{
 		lastInteraction = null;
 		downSyncTimer.cancel();
 		downSyncTimer = new Timer();
 		downSyncTimer.schedule(new DownSyncTask(), 10);
+		upSyncTimer.cancel();
+		upSyncTimer = new Timer();
+		upSyncTimer.schedule(new UpSyncTask(), 10);
 	}
 	
 	public static Configuration getConfiguration()
@@ -284,7 +365,8 @@ public class Statics
 		        });
 			}
 		};
-		pingTimer.schedule(pingInTime, IS_ONLINE_TIMER_DELAY, IS_ONLINE_TIMER_DELAY);
+		int onlineTimerDelay = StaticPreferences.getPreference(ONLINE_TIMER_DELAY_MS, ONLINE_TIMER_DELAY_MS_DEFAULT);
+		pingTimer.schedule(pingInTime, onlineTimerDelay, onlineTimerDelay);
 	}
 	
 	private static void initializePing()
@@ -310,29 +392,62 @@ public class Statics
 			if(res.getError() != null)
 			{
 				stopPing();
-				ShowAlertDiaMsgWithBt(res.getError(), INFINIT_DIALOG_DURATION);
+				ShowAlertDiaMsgWithBt(res.getError(), StaticPreferences.getPreference(INFINIT_DIALOG_DURATION, INFINIT_DIALOG_DURATION_DEFAULT));
 			}
-			if(pingsTilContextLoad == 1)			//load from file
+			if(pingsTilContextLoad == 0)			//load from file
 			{
-				downSyncTimer.schedule(new FileSyncTask(), 10);
+				ShowAlertDiaMsg(activity, Statics.getDefaultResources().getString(R.string.main_sync_load_from_file_msg), 
+						StaticPreferences.getPreference(OFFLINE_TIMER_DELAY_MS,OFFLINE_TIMER_DELAY_MS_DEFAULT), loadFromFileListener, waitListener);
 			}
 		}
 		
 		if(res.getUtc() != null)
 		{
+			@SuppressWarnings("deprecation")
 			int timezoneOffset = res.getUtc().getTimezoneOffset() * 60 * 1000;
 			lastUtcTime = new Date(res.getUtc().getTime() + timezoneOffset);
 			calendar.setTimeInMillis(lastUtcTime.getTime());
-			utcDiff = Statics.getDateDiff(lastUtcTime, new Date(), TimeUnit.MILLISECONDS);
 		}
 		if(wasOnline != isOnline && activity != null)
 		{
 			activity.invalidateOptionsMenu();
 			if(isOnline)											//load from db
+			{
+				downSyncTimer.cancel();
+				downSyncTimer = new Timer();
 				downSyncTimer.schedule(new DownSyncTask(), 10);
+			}
 		}
 		wasOnline = isOnline;
 	}
+	
+	private static DialogInterface.OnClickListener loadFromFileListener = new DialogInterface.OnClickListener(){
+		@Override
+		public void onClick(DialogInterface arg0, int arg1) 
+		{
+			downSyncTimer.schedule(new FileSyncTask(), 10);
+		}
+		
+		@Override
+		public String toString() 
+		{
+			return Statics.getDefaultResources().getString(R.string.common_ok);
+		}
+	};
+	
+	private static DialogInterface.OnClickListener waitListener = new DialogInterface.OnClickListener(){
+		@Override
+		public void onClick(DialogInterface arg0, int arg1) 
+		{
+			pingsTilContextLoad = StaticPreferences.getPreference(PINGS_TIL_CONTEXT_LOAD, PINGS_TIL_CONTEXT_LOAD_DEFAULT)*2;
+		}
+		
+		@Override
+		public String toString() 
+		{
+			return Statics.getDefaultResources().getString(R.string.common_wait);
+		}
+	};
 	
 	public static void WriteRawFile(String fileName, boolean append, String... records) throws IOException {
 
@@ -388,7 +503,7 @@ public class Statics
 		InputStreamReader reader;
 		InputStream targetFile = null;
 		try {
-			if(!path.equals(Statics.MAIN_SESSION)) //not!
+			if(!path.equals(StaticPreferences.getPreference(Statics.MAIN_SESSION, Statics.MAIN_SESSION_DEFAULT))) //not!
 			{
 				targetFile = activity.openFileInput(path);
 			}
@@ -495,54 +610,68 @@ public class Statics
 		notPlausible.show();
 	}
 	
+	private static DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener(){
+		@Override
+		public void onClick(DialogInterface arg0, int arg1) 
+		{
+			arg0.dismiss();
+		}
+		@Override
+		public String toString() 
+		{
+			return Statics.getDefaultResources().getString(R.string.common_ok);
+		}
+	};
 	
 	public static void ShowAlertDiaMsgWithBt(Context context, String message)
 	{
-		ShowAlertDiaMsg(context, message, NORMAL_DIALOG_DURATION, true);
+		ShowAlertDiaMsg(context, message, StaticPreferences.getPreference(NORMAL_DIALOG_DURATION, NORMAL_DIALOG_DURATION_DEFAULT), okListener, null);
 	}
 	
 	public static void ShowAlertDiaMsgWithBt(String message)
 	{
-		ShowAlertDiaMsg(activity, message, NORMAL_DIALOG_DURATION, true);
+		ShowAlertDiaMsg(activity, message, StaticPreferences.getPreference(NORMAL_DIALOG_DURATION, NORMAL_DIALOG_DURATION_DEFAULT), okListener, null);
 	}
 	
 	public static void ShowAlertDiaMsgWithBt(String message, int seconds)
 	{
-		ShowAlertDiaMsg(activity, message, seconds, true);
+		ShowAlertDiaMsg(activity, message, seconds, okListener, null);
 	}
 	
 	public static void ShowAlertDiaMsg(Context context, String message, int seconds)
 	{
-		ShowAlertDiaMsg(context, message, seconds, false);
+		ShowAlertDiaMsg(context, message, seconds, null, null);
 	}
 	
 	public static void ShowAlertDiaMsg(Context context, String message)
 	{
-		ShowAlertDiaMsg(context, message, NORMAL_DIALOG_DURATION, false);
+		ShowAlertDiaMsg(context, message, StaticPreferences.getPreference(NORMAL_DIALOG_DURATION, NORMAL_DIALOG_DURATION_DEFAULT), null, null);
 	}
 	
 	public static void ShowAlertDiaMsg(String message)
 	{
-		ShowAlertDiaMsg(activity, message, NORMAL_DIALOG_DURATION, false);
+		ShowAlertDiaMsg(activity, message, StaticPreferences.getPreference(NORMAL_DIALOG_DURATION, NORMAL_DIALOG_DURATION_DEFAULT), null, null);
 	}
 	
 	public static void ShowAlertDiaMsg(String message, int seconds)
 	{
-		ShowAlertDiaMsg(activity, message, seconds, false);
+		ShowAlertDiaMsg(activity, message, seconds, null, null);
 	}
 	
-	private static void ShowAlertDiaMsg(Context context, String message, int seconds, boolean withButton)
+	private static void ShowAlertDiaMsg(Context context, String message, int seconds, DialogInterface.OnClickListener okListener, DialogInterface.OnClickListener caListener)
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setMessage(message);
 		
-		if(withButton)
-			builder.setPositiveButton(Statics.getDefaultResources().getString(R.string.common_ok), new DialogInterface.OnClickListener(){
-				@Override
-				public void onClick(DialogInterface arg0, int arg1) 
-				{
-					arg0.dismiss();
-				}});
+		if(okListener != null)
+		{
+			builder.setPositiveButton(okListener.toString(), okListener);
+		}
+		
+		if(caListener != null)
+		{
+			builder.setNegativeButton(caListener.toString(), caListener);
+		}
 		
 		final AlertDialog d = builder.create();
 		d.show();
@@ -553,7 +682,15 @@ public class Statics
 		    @Override
 		    public void run() {
 		        if (d.isShowing()) {
-		            d.dismiss();
+		            try
+					{
+						d.dismiss();
+					}
+					catch (IllegalArgumentException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 		        }
 		    }
 		};
@@ -592,21 +729,6 @@ public class Statics
 
 	public static Resources getDefaultResources() {
 		return LocaleResources;
-	}
-
-	public static PreferencesHelper getPreferences() {
-		return Preferences;
-	}
-
-	public static void setBASE_WS_URL(String bASE_WS_URL) {
-		BASE_WS_URL = bASE_WS_URL;
-		try {
-			Preferences.EditPreferences(WS_URL_KEY, bASE_WS_URL);
-			startPing();
-		} catch (Exception e) {
-			Statics.ShowAlertDiaMsgWithBt(LocaleResources.getString(R.string.generic_exception_warning) + e.getMessage(), INFINIT_DIALOG_DURATION);
-			e.printStackTrace();
-		}
 	}
 	
 	public static int daysSince(Date in)
@@ -651,7 +773,8 @@ public class Statics
     	}
     }
     
-    public static <T extends View> List<T> GetSubElementsOfType(View layout, Class<T> t) 
+    @SuppressWarnings("unchecked")
+	public static <T extends View> List<T> GetSubElementsOfType(View layout, Class<T> t) 
     {
     	List<T> list = new ArrayList<T>();
     	if(layout instanceof ViewGroup)
@@ -678,17 +801,13 @@ public class Statics
 		return wl;
 	}
 
-	
-//	public static class LoadFromFile extends TimerTask
-//	{
-//		@Override
-//		public void run() {
-//			activity.runOnUiThread(new Runnable() {
-//	            @Override
-//	            public void run() {
-//
-//	            }
-//			});
-//		};
-//	}
+	public static SyncMode getSyncMode()
+	{
+		return syncMode;
+	}
+
+	public static void setSyncMode(SyncMode syncMode)
+	{
+		Statics.syncMode = syncMode;
+	}
 }

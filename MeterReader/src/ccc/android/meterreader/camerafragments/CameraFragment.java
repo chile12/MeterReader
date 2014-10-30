@@ -12,38 +12,37 @@ package ccc.android.meterreader.camerafragments;
 import java.util.Collections;
 import java.util.List;
 
-import ccc.android.meterreader.statics.Statics;
+import net.sourceforge.zbar.Config;
+import net.sourceforge.zbar.Image;
+import net.sourceforge.zbar.ImageScanner;
+import net.sourceforge.zbar.Symbol;
+import net.sourceforge.zbar.SymbolSet;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.PreviewCallback;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
-import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.PreviewCallback;
-import android.hardware.Camera.AutoFocusCallback;
-import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
-
-
+import ccc.android.meterreader.statics.Statics;
 /* Import ZBar Class files */
-import net.sourceforge.zbar.ImageScanner;
-import net.sourceforge.zbar.Image;
-import net.sourceforge.zbar.Symbol;
-import net.sourceforge.zbar.SymbolSet;
-import net.sourceforge.zbar.Config;
 
-public class BarcodeFragment extends DialogFragment
+public class CameraFragment extends DialogFragment
 {
     private Camera mCamera;
     private CameraPreview mPreview;
     private Handler autoFocusHandler;
     private ViewGroup containerView;
     private String targetIntent;
+    private PictureCallback pictureCallback;
 
 	public ViewGroup getContainerView() {
 		return containerView;
@@ -113,6 +112,8 @@ public class BarcodeFragment extends DialogFragment
     		mCamera.setParameters(p);
             previewing = false;
             mPreview.getHolder().removeCallback(mPreview);
+	        LinearLayout preview = (LinearLayout)getActivity().findViewById(ccc.android.meterreader.R.id.camerapreview);
+	        preview.removeView(mPreview);
             mCamera.setPreviewCallback(null);
             mCamera.release();
             mCamera = null;
@@ -125,12 +126,12 @@ public class BarcodeFragment extends DialogFragment
 		{
 			mCamera = CameraStatics.getCameraWithId(CameraInfo.CAMERA_FACING_BACK);
 			Parameters p = mCamera.getParameters();
+			p.setPictureSize(640, 480);
 		    p.setFlashMode(Parameters.FLASH_MODE_TORCH);
 		    List<Camera.Size> pSizes = p.getSupportedPreviewSizes();
 		    Collections.sort(pSizes, Statics.previewSizeComp);
-		    p.setPreviewSize(pSizes.get(0).width, pSizes.get(0).height);
+		    p.setPreviewSize(pSizes.get(1).width, pSizes.get(1).height);
 		    mCamera.setParameters(p);
-	        //mCamera.setPreviewCallback(previewCb);
 	        previewing = true;
 			mPreview = new CameraPreview(getActivity(), mCamera, previewCb, autoFocusCB);
 			mPreview.setScalePreviewToDisplaySize(false);
@@ -152,6 +153,8 @@ public class BarcodeFragment extends DialogFragment
     PreviewCallback previewCb = new PreviewCallback() 
     {
         public void onPreviewFrame(byte[] data, Camera camera) {
+        	if(pictureCallback == null)
+        	{
 				Camera.Parameters parameters = camera.getParameters();
 				Size size = parameters.getPreviewSize();
 				Image barcode = new Image(size.width, size.height, "Y800");
@@ -161,17 +164,34 @@ public class BarcodeFragment extends DialogFragment
 					SymbolSet syms = scanner.getResults();
 					for (Symbol sym : syms) {
 						Intent i = new Intent(targetIntent).putExtra("barcode", sym.getData());
-						BarcodeFragment.this.getActivity().sendBroadcast(i);
+						CameraFragment.this.getActivity().sendBroadcast(i);
 						getActivity().finish();
 					}
+				}
 			}
         }
     };
+    
+    public void takePicture()
+    {
+    	if(pictureCallback != null)
+    	{
+    		mCamera.takePicture(null, null, pictureCallback);
+    	}
+    }
+    
+    public void restartPreview()
+    {
+    	ReleaseCamera();
+    	mCamera = null;
+    	InitializeCamera();
+    }
         
     AutoFocusCallback autoFocusCB = new AutoFocusCallback() 
     {
         public void onAutoFocus(boolean success, Camera camera) {
-            autoFocusHandler.postDelayed(doAutoFocus, 1000);
+        	if(success)
+        		autoFocusHandler.postDelayed(doAutoFocus, 1000);
         }
     };
 
@@ -183,5 +203,14 @@ public class BarcodeFragment extends DialogFragment
 	public void setTargetIntent(String targetIntent)
 	{
 		this.targetIntent = targetIntent;
+	}
+	public PictureCallback getPictureCallback()
+	{
+		return pictureCallback;
+	}
+
+	public void setPictureCallback(PictureCallback pCallback)
+	{
+		this.pictureCallback = pCallback;
 	}
 }

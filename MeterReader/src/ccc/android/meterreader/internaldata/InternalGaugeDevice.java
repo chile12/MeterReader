@@ -33,6 +33,7 @@ public class InternalGaugeDevice extends GaugeDevice
 		this.setUtcInstallation(device.getUtcInstallation());
 		this.setValueOffset(device.getValueOffset());
 		this.setDigitPatterns(device.getDigitPatterns());
+		this.setImage(device.getImage());
 	}
 
 	@JsonIgnore

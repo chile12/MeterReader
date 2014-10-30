@@ -3,14 +3,12 @@ package ccc.android.meterreader.gaugedisplaydialog;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import ccc.android.meterreader.statics.Statics;
-
-import android.app.Activity;
 import android.inputmethodservice.KeyboardView;
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import ccc.android.meterreader.statics.Statics;
 
 public class MeterReaderKeyboardActionListener implements KeyboardView.OnKeyboardActionListener 
 {
@@ -33,7 +31,6 @@ public class MeterReaderKeyboardActionListener implements KeyboardView.OnKeyboar
 	    	return;
 	    editText = (EditText) focusCurrent;
 	    editable = editText.getText();
-	    int start = editText.getSelectionStart();
 	    		
 		if(primaryCode == KeyEvent.FLAG_EDITOR_ACTION)
 			activity.sendNewRead();

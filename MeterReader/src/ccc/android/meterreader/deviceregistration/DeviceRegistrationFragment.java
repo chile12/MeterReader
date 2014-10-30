@@ -1,39 +1,53 @@
 package ccc.android.meterreader.deviceregistration;
 
-import java.util.Date;
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import ccc.android.meterdata.types.Gauge;
-import ccc.android.meterdata.types.GaugeDevice;
-import ccc.android.meterdata.types.Reading;
-import ccc.android.meterreader.R;
-import ccc.android.meterreader.statics.Statics;
 import android.annotation.SuppressLint;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.hardware.Camera;
+import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.RadioButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
+import ccc.android.meterdata.types.Gauge;
+import ccc.android.meterdata.types.GaugeDevice;
+import ccc.android.meterdata.types.Image;
+import ccc.android.meterdata.types.Reading;
+import ccc.android.meterreader.R;
+import ccc.android.meterreader.camerafragments.CameraFragment;
+import ccc.android.meterreader.camerafragments.CameraStatics;
+import ccc.android.meterreader.internaldata.InternalImage;
+import ccc.android.meterreader.statics.StaticPreferences;
+import ccc.android.meterreader.statics.Statics;
 
 @SuppressLint("UseSparseArrays")
 public class DeviceRegistrationFragment extends DialogFragment
@@ -56,8 +70,9 @@ public class DeviceRegistrationFragment extends DialogFragment
     private Button next;
     private Button back;
     private Button confirm;
-    private EditText nameTB;
     private Spinner gaugeDD;
+    
+    private CameraFragment cameraFragment;
     
     public ViewGroup getContainerView() {
 		return containerView;
@@ -81,34 +96,48 @@ public class DeviceRegistrationFragment extends DialogFragment
     	super.onStart();
     }
 
-	private void initializeDevice()
+	private void initializeDevice(Gauge ga)
 	{
+		this.gauge = ga;
+		GaugeDevice de = ((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getDevices().getById(gauge.getGaugeDeviceId());
 		this.device = new GaugeDevice();
 		device.setGaugeId(gauge.getGaugeId());
 		device.setUtcInstallation(Statics.getUtcTime());
         registrationSteps.put(0, false);
-        registrationSteps.put(1, true);
+        registrationSteps.put(1, false);
         registrationSteps.put(2, true);
-        registrationSteps.put(3, true);
+        registrationSteps.put(3, false);
         registrationSteps.put(4, false);
-        registrationSteps.put(5, false);
+        registrationSteps.put(5, true);
         registrationSteps.put(6, true);
-        registrationSteps.put(7, true);
+        
+		//TODO
+		//new gauge
+		if(de != null)
+		{
+			isExchange = true;
+			lastRead = ((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getReadings().getLastReadingById(gauge.getGaugeId());
+		}
+        initializeNumPickers(mainLL);
 	}
     
     @Override
     public void onResume() {
     	super.onResume();
+		Statics.ChangeLayoutElementsVisibility(mainLL, View.INVISIBLE, View.VISIBLE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
     	mainLL = (LinearLayout)inflater.inflate(ccc.android.meterreader.R.layout.deviceregistration, containerView, false);
+    	((LinearLayout) mainLL.findViewById(R.id.cameraPreviewLL)).setOnClickListener(takePictureListener);
+        ((Button) mainLL.findViewById(R.id.takePictureBT)).setOnClickListener(this.takePictureListener);
         flipper = (ViewFlipper) mainLL.findViewById(R.id.newDeviceVF);
         confirm = ((Button) mainLL.findViewById(R.id.newDeviceConfirmBT));
         confirm.setOnClickListener(confirmListener);
         ((Button) mainLL.findViewById(R.id.newDeviceAbortBT)).setOnClickListener(abortListener);
+        ((Button) mainLL.findViewById(R.id.tryAgainBT)).setOnClickListener(tryAgainListener);
         ((Button) mainLL.findViewById(R.id.newDeviceStep0BarcodeBT)).setOnClickListener(barcodeScanListener);
         next = ((Button) mainLL.findViewById(R.id.newDeviceNextBT));
         next.setOnClickListener(nextListener);
@@ -118,8 +147,6 @@ public class DeviceRegistrationFragment extends DialogFragment
         darkShadeRB.setOnCheckedChangeListener(backGroundChanged);
         brightShadeRB = (RadioButton) mainLL.findViewById(R.id.newDeviceStep5brightRB);
         brightShadeRB.setOnCheckedChangeListener(backGroundChanged);
-        nameTB = (EditText) mainLL.findViewById(R.id.newDeviceStep2NameTB);
-        nameTB.setOnFocusChangeListener(editTextFocusChanged);
         ((EditText) mainLL.findViewById(R.id.newDeviceStep3ManufTB)).setOnFocusChangeListener(editTextFocusChanged);
         ((EditText) mainLL.findViewById(R.id.newDeviceStep3SerialTB)).setOnFocusChangeListener(editTextFocusChanged);
         ((EditText) mainLL.findViewById(R.id.newDeviceStep7DescriptionTB)).setOnFocusChangeListener(editTextFocusChanged);
@@ -128,10 +155,9 @@ public class DeviceRegistrationFragment extends DialogFragment
         List<String> gaugeStrings = ((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getGauges().GetGaugeNames();
         gaugeStrings.add(0, "");
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, gaugeStrings);
-        //spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         gaugeDD.setAdapter(spinnerArrayAdapter);
         gaugeDD.setOnItemSelectedListener(gaugeSelectedListener);
-        
+
 		return mainLL;
     }
 
@@ -182,22 +208,7 @@ public class DeviceRegistrationFragment extends DialogFragment
 		{
 			if(position == 0)
 				return;
-			gauge = ((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getGauges().getGaugeList().get(position-1);
-	        initializeDevice();
-	        
-			//TODO
-			//new gauge
-			if(gauge.getGaugeDevice() == null)
-			{
-		        initializeNumPickers(mainLL);
-			}
-			//divice exchange
-			else
-			{
-				isExchange = true;
-				lastRead = ((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getReadings().getLastReadingById(gauge.getGaugeId());
-		        initializeNumPickers(mainLL);
-			}
+	        initializeDevice(((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getGauges().getGaugeList().get(position-1));
 		}
 
 		@Override
@@ -260,7 +271,8 @@ public class DeviceRegistrationFragment extends DialogFragment
 			else
 			{
 				//TODO
-				Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_decimal_warning), Statics.SHORT_DIALOG_DURATION);
+				Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_decimal_warning), 
+						StaticPreferences.getPreference(Statics.SHORT_DIALOG_DURATION, Statics.SHORT_DIALOG_DURATION_DEFAULT));
 				arg0.setValue(0);
 			}
 		}
@@ -280,7 +292,8 @@ public class DeviceRegistrationFragment extends DialogFragment
         	{
         		if(gauge == null)
         		{
-        			Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_step0_barcode_select_gauge), Statics.SHORT_DIALOG_DURATION);
+        			Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_step0_barcode_select_gauge), 
+        					StaticPreferences.getPreference(Statics.SHORT_DIALOG_DURATION, Statics.SHORT_DIALOG_DURATION_DEFAULT));
         			return;
         		}
         		if(isExchange)
@@ -288,7 +301,8 @@ public class DeviceRegistrationFragment extends DialogFragment
         			if(lastRead == null || Statics.getDateDiff(lastRead.getUtcTo(), Statics.getUtcTime(), TimeUnit.MINUTES) > 15)
         			{
 	        			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_take_last_read));
-	        			((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(gauge, lastRead);
+	        			GaugeDevice de = ((ccc.android.meterreader.MainActivity) getActivity()).getManager().getData().getDevices().getById(gauge.getGaugeDeviceId());
+	        			((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(gauge, de, lastRead);
 	        			return;
         			}
         		}
@@ -297,8 +311,7 @@ public class DeviceRegistrationFragment extends DialogFragment
         			expectFirstRead = true;
         			if(barcode == null || barcode.trim() == "")
         			{
-	        			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_take_last_read));
-	        			((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_BFR);
+	        			((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_NBFR);
 	        			return;
         			}
         		}
@@ -309,29 +322,7 @@ public class DeviceRegistrationFragment extends DialogFragment
         		Statics.ShowAlertDiaMsgWithBt(Statics.getDefaultResources().getString(R.string.new_device_next_step_warning));
         		return;
         	}
-        	
-        	if(flipper.getDisplayedChild() == 1)
-        	{
-        		nameTB.requestFocus();
-        		//TODO workaround to step over DeviceName mask
-        		flipper.setDisplayedChild(flipper.getDisplayedChild()+1);
-        	}
-        	if(flipper.getDisplayedChild() == 5)
-        	{
-        		((EditText) mainLL.findViewById(R.id.newDeviceStep7DescriptionTB)).requestFocus();
-        	}
-        	if(flipper.getDisplayedChild() < flipper.getChildCount()-2)
-        	{
-        		next.setVisibility(View.VISIBLE);
-        		confirm.setVisibility(View.INVISIBLE);
-        		flipper.setDisplayedChild(flipper.getDisplayedChild()+1);
-        	}
-        	else if(flipper.getDisplayedChild() < flipper.getChildCount()-1)
-        	{
-        		next.setVisibility(View.INVISIBLE);
-        		confirm.setVisibility(View.VISIBLE);
-        		flipper.setDisplayedChild(flipper.getDisplayedChild()+1);
-        	}
+            nextView();
         }
     };
     
@@ -339,12 +330,7 @@ public class DeviceRegistrationFragment extends DialogFragment
 	{
 		if(et.getText().length() == 0)
 			return;
-		if(et.getId() == R.id.newDeviceStep2NameTB)
-		{
-			device.setDeviceName(et.getText().toString());
-			registrationSteps.put(flipper.getDisplayedChild(), true);
-		}
-		else if(et.getId() == R.id.newDeviceStep3ManufTB)
+		if(et.getId() == R.id.newDeviceStep3ManufTB)
 		{
 			device.setManufacturer(et.getText().toString());
 		}
@@ -367,8 +353,8 @@ public class DeviceRegistrationFragment extends DialogFragment
         		if(barcode != null && barcode.trim().length() > 0)
         			device.setBarcode(barcode);
     			Statics.ShowToast(Statics.getDefaultResources().getString(R.string.new_device_take_first_read));
-    			gauge.setGaugeDevice(device);
-        		((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(gauge, null);
+        		((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(gauge, device, null);
+        		Statics.ChangeLayoutElementsVisibility(mainLL, View.VISIBLE, View.INVISIBLE);
         	}
         	else
         	{
@@ -385,11 +371,56 @@ public class DeviceRegistrationFragment extends DialogFragment
         	resetRegistration();
         }
     };
+    
+    private OnClickListener tryAgainListener = new OnClickListener() {
+        public void onClick(View v) 
+        {
+        	if(cameraFragment != null)
+        	{
+        		cameraFragment.restartPreview();
+        	}
+        }
+    };
+    
+    private OnClickListener takePictureListener = new OnClickListener() {
+        public void onClick(View v) 
+        {
+        	if(cameraFragment != null)
+        	{
+        		cameraFragment.setPictureCallback(pCallback);
+        		cameraFragment.takePicture();
+        	}
+        }
+    };
+    
+    PictureCallback pCallback = new PictureCallback()
+    {
+		@Override
+		public void onPictureTaken(byte[] data, Camera arg1)
+		{
+            Bitmap bit = BitmapFactory.decodeByteArray(data, 0, data.length);
+            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        	Camera.getCameraInfo(CameraStatics.BACK_CAMERA_ID, cameraInfo);
+            int w = bit.getWidth();
+            int h = bit.getHeight();
+            Matrix mtx = new Matrix();
+            mtx.postRotate(cameraInfo.orientation);
+            bit = Bitmap.createBitmap(bit, 0, 0, w, h, mtx, true);
+            
+			Image img = new Image();
+
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			bit.compress(Bitmap.CompressFormat.PNG, 100, stream);
+			img.setBinary(stream.toByteArray());
+			device.setImage(img);
+			registrationSteps.put(flipper.getDisplayedChild(), true);
+		}
+    };
 
     private OnClickListener barcodeScanListener = new OnClickListener() {
         public void onClick(View v) 
         {
-        	((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_BFR);
+        	((ccc.android.meterreader.MainActivity) getActivity()).openGaugeDisplayDialog(Statics.ANDROID_INTENT_ACTION_RBFR);
         }
     };
     
@@ -397,6 +428,58 @@ public class DeviceRegistrationFragment extends DialogFragment
 	{
 		((ccc.android.meterreader.MainActivity) getActivity()).openOptionsPanelLayout();
 		((ccc.android.meterreader.MainActivity) getActivity()).hideNewDeviceFragment();
+	}
+	
+	private void nextView()
+	{
+    	if(flipper.getDisplayedChild() == 1)
+    	{
+    		((EditText) mainLL.findViewById(R.id.newDeviceStep3ManufTB)).requestFocus();
+    	}
+    	if(flipper.getDisplayedChild() == 4)
+    	{
+    		((EditText) mainLL.findViewById(R.id.newDeviceStep7DescriptionTB)).requestFocus();
+    	}
+    	if(flipper.getDisplayedChild() < flipper.getChildCount()-2)
+    	{
+    		next.setVisibility(View.VISIBLE);
+    		confirm.setVisibility(View.INVISIBLE);
+    		flipper.setDisplayedChild(flipper.getDisplayedChild()+1);
+    	}
+    	else if(flipper.getDisplayedChild() < flipper.getChildCount()-1)
+    	{
+    		next.setVisibility(View.INVISIBLE);
+    		confirm.setVisibility(View.VISIBLE);
+    		flipper.setDisplayedChild(flipper.getDisplayedChild()+1);
+    	}
+    	if(flipper.getDisplayedChild() == 1)
+    		getCameraFragment();
+    	else
+    		hideCameraFragment();
+    	if(flipper.getDisplayedChild() == 6)
+    	{
+    		if(device.getImage() != null)
+    		{
+    			InternalImage img = new InternalImage(device.getImage());
+    			((ImageView) mainLL.findViewById(R.id.newDeviceStep8DeviceIV)).setImageBitmap(img.getBitmap());
+    		}
+    		if(gauge != null)
+    		{
+    			Statics.SetText(((TextView) mainLL.findViewById(R.id.newDeviceStep8GaugeNamelLA)), gauge.getName());
+    			Statics.SetText(((TextView) mainLL.findViewById(R.id.newDeviceStep8BarcodeLA)), device.getBarcode() == null ? gauge.getBarcode() : device.getBarcode());
+    		}
+    		if(barcode != null)
+    			Statics.SetText(((TextView) mainLL.findViewById(R.id.newDeviceStep8BarcodeLA)), barcode);
+    		
+			Statics.SetText(((TextView) mainLL.findViewById(R.id.newDeviceStep8GaugeIdlLA)), device.getGaugeId());
+			Statics.SetText(((TextView) mainLL.findViewById(R.id.newDeviceStep8CommentLA)), device.getComment());
+			Statics.SetText(((TextView) mainLL.findViewById(R.id.newDeviceStep8DecimalLA)), device.getDecimalPlaces());
+			Statics.SetText(((TextView) mainLL.findViewById(R.id.newDeviceStep8DigitsLA)), device.getDigitCount());
+			if(device.getBackGround() == 1)
+    			((ImageView) mainLL.findViewById(R.id.newDeviceStep8BackgroundIV)).setImageResource(R.drawable.darkone);
+			if(device.getBackGround() == 2)
+    			((ImageView) mainLL.findViewById(R.id.newDeviceStep8BackgroundIV)).setImageResource(R.drawable.brightone);
+    	}
 	}
     
     private OnClickListener backListener = new OnClickListener() {
@@ -410,6 +493,10 @@ public class DeviceRegistrationFragment extends DialogFragment
         		back.setVisibility(View.INVISIBLE);
         		flipper.setDisplayedChild(flipper.getDisplayedChild()-1);
         	}
+        	if(flipper.getDisplayedChild() == 1)
+        		getCameraFragment();
+        	else
+        		hideCameraFragment();
         }
     };
 
@@ -440,9 +527,9 @@ public class DeviceRegistrationFragment extends DialogFragment
 
 	public void setGauge(Gauge gauge)
 	{
-		this.gauge = gauge;
 		if(gauge != null)
 		{
+			this.initializeDevice(gauge);
 			for(int i =1; i < gaugeDD.getCount(); i++)
 				if(gaugeDD.getItemAtPosition(i) instanceof String && gaugeDD.getItemAtPosition(i).equals(gauge.getName()))
 					gaugeDD.setSelection(i);
@@ -464,7 +551,7 @@ public class DeviceRegistrationFragment extends DialogFragment
 			if(lastRead != null)
 				device.setValueOffset(device.getValueOffset() + lastRead.getRead() - firstRead.getRead());
 			else
-				device.setValueOffset(device.getValueOffset() + firstRead.getRead());
+				device.setValueOffset(device.getValueOffset());
     		((ccc.android.meterreader.MainActivity) getActivity()).getManager().AddNewDevice(device);
     		resetRegistration();
 		}
@@ -486,12 +573,43 @@ public class DeviceRegistrationFragment extends DialogFragment
 		if(ga != null)
 		{
 			ga.setBarcode(barcode);
-			setGauge(ga);
 		}
 	}
 
 	public Reading getFirstRead()
 	{
 		return firstRead;
+	}
+	
+	private void getCameraFragment() {
+		FragmentManager fragmentManager = this.getFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		cameraFragment = (CameraFragment) fragmentManager.findFragmentByTag("devicePicture");
+		if(cameraFragment != null)
+		{
+			cameraFragment.InitializeCamera();
+			fragmentTransaction.show(cameraFragment);
+		}
+		else
+		{
+			cameraFragment = new ccc.android.meterreader.camerafragments.CameraFragment();
+			fragmentTransaction.add(R.id.cameraPreviewLL, cameraFragment, "devicePicture");
+		}
+		fragmentTransaction.commit();
+	}
+	
+	private void hideCameraFragment() 
+	{
+		if(cameraFragment == null)
+			return;
+		FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        cameraFragment = (CameraFragment) fragmentManager.findFragmentByTag("devicePicture");
+        if (cameraFragment != null) {
+        	cameraFragment.ReleaseCamera();
+			fragmentTransaction.remove(cameraFragment);
+			fragmentTransaction.commit();
+			cameraFragment = null;
+		}
 	}
 }

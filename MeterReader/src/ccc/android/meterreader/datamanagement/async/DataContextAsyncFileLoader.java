@@ -1,10 +1,8 @@
 package ccc.android.meterreader.datamanagement.async;
 
 import android.os.AsyncTask;
-import ccc.android.meterreader.R;
 import ccc.android.meterreader.datamanagement.DataContext;
 import ccc.android.meterreader.datamanagement.DataContextManager;
-import ccc.android.meterreader.statics.Statics;
 import ccc.java.restclient.RestClient;
 
 public class DataContextAsyncFileLoader   extends AsyncTask<Object, Void, DataContext>

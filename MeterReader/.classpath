@@ -16,5 +16,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/javacpp.jar" sourcepath="C:/Users/Chile/.m2/repository/org/bytedeco/javacpp/0.9/javacpp-0.9-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/javacv.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/opencv.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/adt-bundle-windows-x86_64-20131030/jars/apache/commons-lang3-3.3.2/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

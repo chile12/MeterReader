@@ -2,9 +2,12 @@ package ccc.android.meterreader.internaldata;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import ccc.android.meterdata.interfaces.IGenericMember;
 import ccc.android.meterdata.listtypes.GaugeDeviceList;
 import ccc.android.meterdata.listtypes.GaugeList;
+import ccc.android.meterdata.listtypes.PreferenceList;
 import ccc.android.meterdata.listtypes.ReadingList;
 import ccc.android.meterdata.listtypes.RouteList;
 import ccc.android.meterdata.listtypes.StationList;
@@ -25,6 +28,7 @@ public class Session  implements IGenericMember
 	private ReadingList newReadings = new ReadingList();
 	private RouteList newRoutes = new RouteList();
 	private StationList newStations = new StationList();
+	private PreferenceList preferences = new PreferenceList();
 	
 	public int getSessionId() {
 		return sessionId;
@@ -85,8 +89,7 @@ public class Session  implements IGenericMember
 	}
 	public Integer getUserId() {
 		return this.userId;
-	}
-	
+	}	
 	public void InsertNewReading(Reading read)
 	{
 		this.newReadings.getReadingList().add(read);
@@ -97,7 +100,8 @@ public class Session  implements IGenericMember
 		this.newDevices.getGaugeDeviceList().add(device);
 	}
 	
-	public boolean hasNewDate()
+	@JsonIgnore
+	public boolean hasNewData()
 	{
 		if(this.newDevices.size() >0)
 			return true;
@@ -113,6 +117,7 @@ public class Session  implements IGenericMember
 			return false;
 	}
 	
+	@JsonIgnore
 	public void clearAllData()
 	{
 		newDevices.clear();
@@ -120,5 +125,13 @@ public class Session  implements IGenericMember
 		newReadings.clear();
 		newRoutes.clear();
 		newStations.clear();
+	}
+	public PreferenceList getPreferences()
+	{
+		return preferences;
+	}
+	public void setPreferences(PreferenceList preferences)
+	{
+		this.preferences = preferences;
 	}
 }

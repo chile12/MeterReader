@@ -1,11 +1,5 @@
 package ccc.android.meterreader.viewelements;
 
-import ccc.android.meterdata.types.Gauge;
-import ccc.android.meterdata.types.Reading;
-import ccc.android.meterreader.MainActivity;
-import ccc.android.meterreader.R;
-import ccc.android.meterreader.helpfuls.EpviMeterListMapper;
-import ccc.android.meterreader.statics.Statics;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -13,21 +7,28 @@ import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import ccc.android.meterdata.types.Gauge;
+import ccc.android.meterdata.types.GaugeDevice;
+import ccc.android.meterdata.types.Reading;
+import ccc.android.meterreader.MainActivity;
+import ccc.android.meterreader.R;
+import ccc.android.meterreader.helpfuls.EpviMeterListMapper;
+import ccc.android.meterreader.statics.Statics;
 
 public class GaugeListViewFragment extends Fragment
 {
@@ -42,7 +43,7 @@ public class GaugeListViewFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) 
     {
 		super.onCreate(savedInstanceState);
-		this.mapper = new EpviMeterListMapper(context);
+		this.mapper = new EpviMeterListMapper(context.getManager().getData());
         elvAdapter = new EpviExpandeableListViewAdapter(context);
         elvAdapter.setMapper(mapper, 0);
         this.getResources().updateConfiguration(Statics.getConfiguration(), this.getResources().getDisplayMetrics());
@@ -223,9 +224,10 @@ public class GaugeListViewFragment extends Fragment
 			final EditText input = new EditText(context);
 			input.setInputType(InputType.TYPE_CLASS_NUMBER);
 			View c = elvAdapter.getChildView(group, child, false, null, null);
-			Gauge st = elvAdapter.GetGaugeFormViewId(c.getId());
+			Gauge ga = elvAdapter.GetGaugeFormViewId(c.getId());
+			GaugeDevice de = context.getManager().getData().getDevices().getById(ga.getGaugeDeviceId());
 			Reading rd = elvAdapter.GetReadingFromViewId(c.getId());
-			context.openGaugeDisplayDialog(st, rd);
+			context.openGaugeDisplayDialog(ga, de, rd);
             return true;
         }
     };

@@ -5,6 +5,7 @@
     <string name="common_ok">Ok</string>
     <string name="common_next">Weiter</string>
     <string name="common_back">Zurück</string>
+    <string name="common_wait">Warten</string>
     
     <string name="qr_not_recognized">Zähler-ID konnte nicht identifiziert werden, bitte vesuchen Sie es erneut.</string>
      <string name="main_display_size_warning">Die Auflösung Ihres Bildschirms muss mindestens 540x960 betragen.</string>
@@ -17,12 +18,14 @@
     <string name="main_data_asynchron">!Die Synchronisation ist fehlgeschlagen!</string>
     <string name="main_sync_not_done">Die Synchronisation ist noch nicht abgeschlossen.</string>
     <string name="main_sync_done">Synchronisation erfolgreich beendet.</string>
-    <string name="main_sync_file">Eine Verbindung mit der EPVI Datenbank konnte nicht hergestellt werden. Der letzte Vorgang wurde geladen.</string>
+    <string name="main_sync_file">Der letzte gespeicherte Vorgang wurde geladen.</string>
     <string name="main_sync_inprog">Synchronisation läuft.</string>
     <string name="main_sync_not_successful">Die Synchronisation war nicht erfolgreich!</string>
     <string name="main_sync_abort">Synchronisation abbrechen</string>
     <string name="main_sync_aborted">Synchronisation abgebrochen!</string>
     <string name="main_sync_faild_upload">Neue Einträge konnten nicht auf die Datenbank geschrieben werden!</string>
+    <string name="main_sync_load_from_file_msg">Eine Verbindung mit der EPVI Datenbank konnte nicht hergestellt werden. Soll der letzte gespeicherte Zwischenstand geladen werden?</string>
+    <string name="main_sync_timeout_msg" formatted="false">Synchronisation fehlgeschlagen, da eine Zeitspanne von %d überschritten wurde.</string>
    
     <string name="main_button_panel_new_session">Neuer Vorgang</string>
     <string name="main_button_panel_load_session">Vorgang laden</string>
@@ -45,12 +48,17 @@
     <string name="no_base_ws_url_warning">Keine EPVI-Service Adresse vorhanden. Bitte ändern Sie die Verbindungseinstellungen.</string>
     
     <string name="gauge_display_last_read">letzte:</string>
-    <string name="gauge_display_gauge_id">Zähler Id:</string>
+    <string name="gauge_display_gauge_name">Zählername:</string>
     <string name="gauge_display_gauge_location">Ort:</string>
     <string name="gauge_display_barcode_scan">QR-Code Scanner</string>
     <string name="gauge_display_meter_scan">Zählerstanderkennung</string>
     <string name="gauge_display_show_display">Handeingabe</string>
     <string name="gauge_display_gauge_date">Ablesedatum:</string>
+    <string name="gauge_display_gauge_digits">Anzahl sichtbarer Ziffern:</string>
+    <string name="gauge_display_gauge_decimals">Nachkommastellen:</string>
+    <string name="gauge_display_gauge_barcode">QR-/Barcode:</string>
+    <string name="gauge_display_gauge_comment">Kommentar:</string>
+    <string name="gauge_display_read_qr_code">Scannen Sie einen QR- oder Barcode um den Zähler zu identifizieren.</string>
     
     <string name="gauge_display_read_warning_less">Der eingegebene Zählerstand ist kleiner als der letzte Stand!</string>
     <string name="gauge_display_data_warning">Die Ablesedaten wurden beeinträchtigt. Bitte starten Sie diesen Dialog erneut.</string>
@@ -67,12 +75,11 @@
     <string name="new_device_title">Zählerwechsel</string>
     <string name="new_device_step0_subtitle">Zählerauswahl</string>
     <string name="new_device_step1_subtitle">Schritt 1: Abbildung</string>
-    <string name="new_device_step2_subtitle">Schritt 2: Name</string>
-    <string name="new_device_step3_subtitle">Schritt 3: Hersteller</string>
-    <string name="new_device_step4_subtitle">Schritt 4: Ziffern</string>
-    <string name="new_device_step5_subtitle">Schritt 5: Kontrast</string>
-    <string name="new_device_step6_subtitle">Schritt 6: Standort</string>
-    <string name="new_device_step7_subtitle">Schritt 7: Beschreibung</string>
+    <string name="new_device_step3_subtitle">Schritt 2: Hersteller</string>
+    <string name="new_device_step4_subtitle">Schritt 3: Ziffern</string>
+    <string name="new_device_step5_subtitle">Schritt 4: Kontrast</string>
+    <string name="new_device_step6_subtitle">Schritt 5: Standort</string>
+    <string name="new_device_step7_subtitle">Schritt 6: Beschreibung</string>
     <string name="new_device_step8_subtitle">Zusammenfassung</string>
     <string name="new_device_step0_info">Bitte beachten: Im Fall eines neuen Zähler (neuer Zählerstandort), legen Sie diesen in der EPVI Webanwendung zuerst an. Danach registrieren Sie das neue Gerät mit dieser Maske. Andernfalls wird ein Zählerwechsel vorgenommen.</string>
     <string name="new_device_step0_spinner_prompt">Wählen Sie einen Zähler aus:</string>
@@ -99,11 +106,14 @@
     <string name="new_device_take_last_read">Bitte führen Sie eine letzte Ablesung des alten Zählers durch.</string>
     <string name="new_device_take_first_read">Bitte führen Sie die erste Ablesung des neuen Zählers durch.</string>
     <string name="new_device_device_not_found">Für diesen Zähler (Zählerstandort) ist noch kein Zähler (Gerät) registriert. Nutzen Sie dazu die Option \'Zähler registrieren/wechseln\'.</string>
+    <string name="new_device_barcode_in_use">Dieser QR- oder Barcode ist bereits in Benutzung.</string>
     
     <string name="action_new_reading" formatted="false">Ein neuer Zählerstand von %s wurde am %s aufgenommen.</string>
     <string name="action_new_device" formatted="false">Ein Zähler für Zählerstandort %s wurde ausgetauscht.</string>
     
     <string name="abort_scan">Abbrechen</string>
+    <string name="take_pcture">Zähler aufnehmen</string>
+    <string name="take_pcture_again">Abbildung ändern</string>
     <string name="list_item_last_read">letzte: </string>
     <string name="list_item_medium">Medium: </string>
 

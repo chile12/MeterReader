@@ -1,10 +1,8 @@
 package ccc.android.meterreader.camerafragments;
 
 import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.util.Log;
-import android.widget.LinearLayout;
 
 public class CameraStatics {
 	
@@ -40,12 +38,12 @@ public class CameraStatics {
         return cam;
     }
     
-    public static CameraInfo GetCamerainfo(Camera cam)
-    {
-        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-    	Camera.getCameraInfo(cam.getParameters().getInt(CAMERA_INDEX_KEY), cameraInfo);
-    	return cameraInfo;
-    }
+//    public static CameraInfo GetCamerainfo(Camera cam)
+//    {
+//        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+//    	Camera.getCameraInfo(cam.getParameters().getInt(CAMERA_INDEX_KEY), cameraInfo);
+//    	return cameraInfo;
+//    }
 
 	public static boolean isPreviewing() {
 		return previewing;

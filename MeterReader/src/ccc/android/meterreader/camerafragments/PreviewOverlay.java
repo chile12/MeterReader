@@ -15,7 +15,8 @@ public class PreviewOverlay extends SurfaceView implements SurfaceHolder.Callbac
     SurfaceHolder holder;
     static Camera mCamera;
 
-    public PreviewOverlay(Context context, AttributeSet attrs) {
+    @SuppressWarnings("deprecation")
+	public PreviewOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         holder = getHolder();

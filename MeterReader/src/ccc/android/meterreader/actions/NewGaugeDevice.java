@@ -6,7 +6,6 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import ccc.android.meterdata.interfaces.IGenericMember;
 import ccc.android.meterdata.types.Gauge;
-import ccc.android.meterdata.types.GaugeDevice;
 import ccc.android.meterreader.R;
 import ccc.android.meterreader.datamanagement.DataContext;
 import ccc.android.meterreader.internaldata.InternalGaugeDevice;

@@ -19,28 +19,37 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.InputType;
-import android.view.*;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnScrollListener;
+import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.ViewFlipper;
-
+import ccc.android.meterreader.BuildConfig;
 import ccc.android.meterreader.MainActivity;
 import ccc.android.meterreader.R;
-import ccc.android.meterreader.camerafragments.BarcodeFragment;
+import ccc.android.meterreader.camerafragments.CameraFragment;
 import ccc.android.meterreader.camerafragments.DigitReaderFragment;
 import ccc.android.meterreader.helpfuls.FinishReceiver;
 import ccc.android.meterreader.internaldata.InternalDialogDisplayData;
+import ccc.android.meterreader.internaldata.InternalImage;
+import ccc.android.meterreader.statics.StaticImageLibrary;
+import ccc.android.meterreader.statics.StaticPreferences;
 import ccc.android.meterreader.statics.Statics;
 import ccc.android.meterreader.viewelements.CccNumberPicker;
 import ccc.android.meterreader.viewelements.VerticalButton;
@@ -68,7 +77,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	private int currentDeviceID;
 	private int pickerScrollState = OnScrollListener.SCROLL_STATE_IDLE;
 	private int showViewFirst = Statics.GAUGE_DISPLAY_VIEW;
-	private BarcodeFragment barcodePreviewFragment;
+	private CameraFragment barcodePreviewFragment;
 	private DigitReaderFragment digitReaderFragment;
 	private InternalDialogDisplayData gaugeData;
 	private String expectedAction;
@@ -161,7 +170,8 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	{
 		if(gaugeData == null || gaugeData.getDigitCount() == null || gaugeData.getDigitCount() < 1)
 		{
-			Statics.ShowAlertDiaMsgWithBt(GaugeDisplayDialog.this.getResources().getString(ccc.android.meterreader.R.string.gauge_display_no_data_warning), Statics.LONG_DIALOG_DURATION);
+			Statics.ShowAlertDiaMsgWithBt(GaugeDisplayDialog.this.getResources().getString(ccc.android.meterreader.R.string.gauge_display_no_data_warning), 
+					StaticPreferences.getPreference(Statics.LONG_DIALOG_DURATION, Statics.LONG_DIALOG_DURATION_DEFAULT));
 			this.backToMainActivity();
 			return;
 		}
@@ -194,6 +204,11 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		TextView readerUnitLA = (TextView) this.findViewById(R.id.unitReaderLA);
 		readerUnitLA.setText(String.valueOf((Object)gaugeData.getUnitLong()) + " (" + String.valueOf((Object)gaugeData.getUnit()) + ")");
 		currentDeviceID = gaugeData.getGaugeDeviceId();
+
+		ImageView iv = ((ImageView) this.findViewById(R.id.infoDeviceIV));
+		InternalImage img = (InternalImage) StaticImageLibrary.getImages().getByDevice(gaugeData.getGaugeDeviceId());
+		if(img != null)
+			iv.setImageBitmap(img.getBitmap());
 
 	}
 	
@@ -231,7 +246,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
 	    lp.copyFrom(this.getWindow().getAttributes());
 	    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-	    lp.height = WindowManager.LayoutParams.FILL_PARENT;
+	    lp.height = WindowManager.LayoutParams.MATCH_PARENT;
 	    lp.gravity = Gravity.TOP;
 	    lp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
 	    this.getWindow().setAttributes(lp);
@@ -257,7 +272,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
     	{
     		this.findViewById(R.id.closeInfoBT).setOnClickListener(closeInfoToMain);	
     	}
-    	else if(requestCode.equals(Statics.ANDROID_INTENT_ACTION_BFR))
+    	else if(requestCode.equals(Statics.ANDROID_INTENT_ACTION_NBFR) || requestCode.equals(Statics.ANDROID_INTENT_ACTION_RBFR))
     	{
     		this.findViewById(R.id.closeInfoBT).setOnClickListener(closeInfoToMain);	
     	}
@@ -459,7 +474,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
     private void setInfoView()
     {
 		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) this.findViewById(R.id.gaugeDisplayInternalLL).getLayoutParams();
-		params.height = LayoutParams.FILL_PARENT;
+		params.height = LayoutParams.MATCH_PARENT;
 		this.findViewById(R.id.gaugeDisplayInternalLL).setLayoutParams(params);
     	displayViewFlipper.setDisplayedChild(Statics.GAUGE_INFO_VIEW);
 		keyboard.hideCustomKeyboard();	
@@ -493,7 +508,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 	private void setQrCodeView()
 	{
 		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) this.findViewById(R.id.gaugeDisplayInternalLL).getLayoutParams();
-		params.height = LayoutParams.FILL_PARENT;
+		params.height = LayoutParams.MATCH_PARENT;
 		this.findViewById(R.id.gaugeDisplayInternalLL).setLayoutParams(params);
 		showDisplayBT.setVisibility(View.GONE);
 		showScannerBT.setVisibility(View.GONE);
@@ -501,12 +516,14 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		keyboard.hideCustomKeyboard();
 		displayViewFlipper.setDisplayedChild(Statics.QR_PREVIEW_VIEW);
 		getCameraPreviewFragment();
+		Statics.ShowAlertDiaMsgWithBt(GaugeDisplayDialog.this , GaugeDisplayDialog.this.getResources().getString(ccc.android.meterreader.R.string.gauge_display_read_qr_code, 
+				StaticPreferences.getPreference(Statics.NORMAL_DIALOG_DURATION,  Statics.NORMAL_DIALOG_DURATION_DEFAULT)));
 	}
 	
 	private void setDigitReaderView()
 	{
 		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) this.findViewById(R.id.gaugeDisplayInternalLL).getLayoutParams();
-		params.height = LayoutParams.FILL_PARENT;
+		params.height = LayoutParams.MATCH_PARENT;
 		this.findViewById(R.id.gaugeDisplayInternalLL).setLayoutParams(params);
 		showDisplayBT.setVisibility(View.VISIBLE);
 		showScannerBT.setVisibility(View.GONE);
@@ -544,7 +561,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		{
 			FragmentManager fragmentManager = this.getFragmentManager();
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			barcodePreviewFragment = (BarcodeFragment) fragmentManager.findFragmentByTag("cameraPreview");
+			barcodePreviewFragment = (CameraFragment) fragmentManager.findFragmentByTag("cameraPreview");
 			if(barcodePreviewFragment != null)
 			{
 				barcodePreviewFragment.InitializeCamera();
@@ -552,7 +569,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 			}
 			else
 			{
-				barcodePreviewFragment = new ccc.android.meterreader.camerafragments.BarcodeFragment();
+				barcodePreviewFragment = new ccc.android.meterreader.camerafragments.CameraFragment();
 				barcodePreviewFragment.setTargetIntent(expectedAction);
 				fragmentTransaction.add(R.id.qrCodePreviewLL, barcodePreviewFragment, "cameraPreview");
 			}
@@ -566,7 +583,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		{
 			FragmentManager fragmentManager = getFragmentManager();
 	        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-	        barcodePreviewFragment = (BarcodeFragment) fragmentManager.findFragmentByTag("cameraPreview");
+	        barcodePreviewFragment = (CameraFragment) fragmentManager.findFragmentByTag("cameraPreview");
 	        if (barcodePreviewFragment != null) {
 				barcodePreviewFragment.ReleaseCamera();
 				fragmentTransaction.remove(barcodePreviewFragment);
@@ -777,31 +794,6 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
     	return -1;
 	}
     
-    private CccNumberPicker getNextPicker(CccNumberPicker p)
-    {
-    	int digitCount = gaugeData.getDigitCount();
-    	for(int i =0;i< digitCount;i++)
-    	{
-    		if(p.equals(displayPickers.get(i)))
-    		{
-    			if(this.isDecimalPlace)
-    			{
-    				if(i == digitCount-1)
-    				{
-    					this.isDecimalPlace = false;
-    					this.isFirstChange = true;
-    					return displayPickers.get(this.firstNonDecimalDigitPos);
-    				}
-    				else
-    					return displayPickers.get((i+1));
-    			}
-    			else
-    				return displayPickers.get((i));
-    		}
-    	}
-    	return null;
-    }
-    
     private void setNewValue(CccNumberPicker p, char val, boolean simpleValueChange)
     {
     	char[] value = this.value;
@@ -943,6 +935,7 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
 		}
     };
     
+	@SuppressWarnings("deprecation")
 	public void sendNewRead() 
 	{
 		if(gaugeData == null)
@@ -1002,6 +995,8 @@ public class GaugeDisplayDialog extends Activity implements android.view.View.On
     			break;
     		}
     	}
+    	if(stringValue.trim().startsWith("."))
+    		return 0f;
     	float ret = Float.valueOf(stringValue);
     	return ret;
     }

@@ -8,6 +8,7 @@ import static org.bytedeco.javacpp.opencv_core.line;
 import static org.bytedeco.javacpp.opencv_core.mean;
 import static org.bytedeco.javacpp.opencv_core.rectangle;
 import static org.bytedeco.javacpp.opencv_highgui.CV_LOAD_IMAGE_COLOR;
+import static org.bytedeco.javacpp.opencv_highgui.imdecode;
 import static org.bytedeco.javacpp.opencv_highgui.imread;
 import static org.bytedeco.javacpp.opencv_highgui.imwrite;
 import static org.bytedeco.javacpp.opencv_imgproc.BORDER_CONSTANT;
@@ -195,6 +196,7 @@ public class ImageStatics
 
 	public static final int DIGIT_STORE_SIZE_WIDTH = 70;
 	public static final int DIGIT_STORE_SIZE_HEIGHT = 90;
+	public static final int IMAGE_STORE_SIZE_LIMIT = 1000;
 
 	public static final float DIGIT_MIN_HEIGHT = 1.2f;
 	public static final float DIGIT_MAX_HEIGHT = 6f;
@@ -886,5 +888,32 @@ public class ImageStatics
 		bytes[2] = (byte) ((integer << 16) >> 24);
 		bytes[3] = (byte) ((integer << 24) >> 24);
 		return bytes;
+	}
+
+	public static Mat CreateMatFromNv21(byte[] data, int width, int height)
+	{
+		Mat bgra = new Mat(height, width, org.bytedeco.javacpp.opencv_core.CV_8UC3);
+		Mat nv21 = new Mat(height + (height / 2), width, org.bytedeco.javacpp.opencv_core.CV_8UC1);
+		nv21.getByteBuffer().put(data);
+		org.bytedeco.javacpp.opencv_imgproc.cvtColor(nv21, bgra, org.bytedeco.javacpp.opencv_imgproc.CV_YUV2BGR_NV21);
+		return bgra;
+	}
+
+	public static Mat CreateMatFromJpeg(byte[] data, int width, int height)
+	{
+		Mat zw = new Mat(width, height, org.bytedeco.javacpp.opencv_core.CV_8UC3);
+		zw.getByteBuffer().put(data);
+		Mat jpeg = imdecode(zw, 1);
+		return jpeg;
+	}
+
+	public static Mat CreateMatContainer(byte[] data)
+	{
+		Mat zw = new Mat(IMAGE_STORE_SIZE_LIMIT, IMAGE_STORE_SIZE_LIMIT, org.bytedeco.javacpp.opencv_core.CV_8UC3);
+		zw.getByteBuffer().put(data);
+		Mat jpeg = imdecode(zw, 1);
+		jpeg.getByteBuffer().put(data);
+		zw.getByteBuffer().get(data);
+		return jpeg;
 	}
 }

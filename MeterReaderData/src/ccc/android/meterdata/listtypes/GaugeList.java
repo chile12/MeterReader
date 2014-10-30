@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonSubTypes;
 
 import ccc.android.meterdata.interfaces.IGenericMemberList;
 import ccc.android.meterdata.types.Gauge;
@@ -14,7 +13,7 @@ import ccc.android.meterdata.types.Gauge;
 //@JsonSubTypes({  
 //	@JsonSubTypes.Type(name = "InternalGaugeList", value = InternalGaugeList.class)
 //})
-public class GaugeList implements IGenericMemberList,  Iterable<Gauge> 
+public class GaugeList implements IGenericMemberList<Gauge>,  Iterable<Gauge> 
 {
 	List<Gauge> gaugeList = new ArrayList<Gauge>();
 	private String restriction;
@@ -78,5 +77,30 @@ public class GaugeList implements IGenericMemberList,  Iterable<Gauge>
 	public void clear() 
 	{
 		gaugeList.clear();
+	}
+
+	@Override
+	public void add(Gauge addi)
+	{
+		this.gaugeList.add(addi);
+	}
+
+	@Override
+	public void addAll(IGenericMemberList<Gauge> list)
+	{
+		this.gaugeList.addAll(list.getList());
+	}
+
+	@Override
+	public Gauge get(int index)
+	{
+		return gaugeList.get(index);
+	}
+
+	@Override
+	@JsonIgnore
+	public List<Gauge> getList()
+	{
+		return this.gaugeList;
 	}
 }

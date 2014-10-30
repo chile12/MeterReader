@@ -1,9 +1,9 @@
 package ccc.android.meterreader.helpfuls;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.app.Activity;
 
 public class FinishReceiver extends BroadcastReceiver 
 {
